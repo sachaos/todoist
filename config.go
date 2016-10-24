@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -10,27 +11,43 @@ type Config struct {
 	Token string `json:"token"`
 }
 
-func ParseConfig(filename string) (Config, interface{}) {
+func ParseConfigFile(filename string) (Config, error) {
 	var c Config
 	jsonString, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return c, "Error, NotFound config file"
+		return c, CommandFailed
 	}
 	err = json.Unmarshal(jsonString, &c)
 	if err != nil {
-		return c, "Error, config file parse error"
+		return c, CommandFailed
 	}
 	return c, nil
 }
 
-func CreateConfig(filename string, config Config) interface{} {
+func CreateConfigFile(filename string, config Config) error {
 	buf, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
-		return "Error, Failed to marshal json"
+		return CommandFailed
 	}
 	err2 := ioutil.WriteFile(filename, buf, os.ModePerm)
 	if err2 != nil {
-		return "Error, Failed to write config file"
+		return CommandFailed
+	}
+	return nil
+}
+
+func Setup(filename string) error {
+	var err error
+	var token string
+	config, err = ParseConfigFile(default_config_path)
+	if err != nil {
+		fmt.Printf("Input API Token: ")
+		fmt.Scan(&token)
+		config = Config{Token: token}
+		err = CreateConfigFile(default_config_path, config)
+		if err != nil {
+			return CommandFailed
+		}
 	}
 	return nil
 }

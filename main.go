@@ -1,52 +1,40 @@
 package main
 
 import (
-	"fmt"
+	"errors"
+	"github.com/urfave/cli"
 	"os"
-	"text/tabwriter"
+)
+
+var (
+	default_config_path = os.Getenv("HOME") + "/.todoist.config.json"
+	default_cache_path  = os.Getenv("HOME") + "/.todoist.cache.json"
+	CommandFailed       = errors.New("Command Failed")
+	config              = Config{}
 )
 
 func main() {
-	var config Config
-	var token string
-	var sync Sync
-	config, err := ParseConfig(os.Getenv("HOME") + "/.todoist.config.json")
+	err := Setup(default_config_path)
 	if err != nil {
-		fmt.Scan(&token)
-		config = Config{Token: token}
-		err = CreateConfig(os.Getenv("HOME")+"/.todoist.config.json", config)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		return
 	}
-	token = config.Token
-
-	sync, err = LoadCache(os.Getenv("HOME") + "/.todoist.cache.json")
-	if err != nil {
-		sync, err = FetchCache(token)
-		if err != nil {
-			return
-		}
-		err = SaveCache(os.Getenv("HOME")+"/.todoist.cache.json", sync)
-		if err != nil {
-			return
-		}
+	app := cli.NewApp()
+	app.Name = "todoist"
+	app.Usage = "Todoist cli client"
+	app.Version = "0.1.0"
+	app.Commands = []cli.Command{
+		{
+			Name:    "list",
+			Aliases: []string{"l"},
+			Usage:   "Shows all tasks",
+			Action:  List,
+		},
+		// {
+		// 	Name:    "add",
+		// 	Aliases: []string{"a"},
+		// 	Usage:   "Add task",
+		// 	Action:  Add,
+		// },
 	}
-
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
-
-	for _, item := range sync.Items {
-		fmt.Fprintf(w, "%d\tp%d\t%s\t%s\n", item.ID, item.Priority, LabelsString(item, sync.Labels), item.Content)
-		// for _, label_id := range item.LabelIDs {
-		// 	label, err := FindByID(sync.Labels, label_id)
-		// 	if err != nil {
-		// 		return
-		// 	}
-		// 	fmt.Printf("@%s", label.Name)
-		// }
-		// fmt.Printf("\n")
-	}
-	w.Flush()
+	app.Run(os.Args)
 }
