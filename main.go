@@ -10,11 +10,10 @@ var (
 	default_config_path = os.Getenv("HOME") + "/.todoist.config.json"
 	default_cache_path  = os.Getenv("HOME") + "/.todoist.cache.json"
 	CommandFailed       = errors.New("Command Failed")
-	config              = Config{}
 )
 
 func main() {
-	err := Setup(default_config_path)
+	config, err := Setup(default_config_path)
 	if err != nil {
 		return
 	}
@@ -27,14 +26,26 @@ func main() {
 			Name:    "list",
 			Aliases: []string{"l"},
 			Usage:   "Shows all tasks",
-			Action:  List,
+			Action: func(c *cli.Context) error {
+				return List(config, c)
+			},
 		},
-		// {
-		// 	Name:    "add",
-		// 	Aliases: []string{"a"},
-		// 	Usage:   "Add task",
-		// 	Action:  Add,
-		// },
+		{
+			Name:    "add",
+			Aliases: []string{"a"},
+			Usage:   "Add task",
+			Action: func(c *cli.Context) error {
+				return Add(config, c)
+			},
+		},
+		{
+			Name:    "complete",
+			Aliases: []string{"c"},
+			Usage:   "Complete task",
+			Action: func(c *cli.Context) error {
+				return Complete(config, c)
+			},
+		},
 	}
 	app.Run(os.Args)
 }

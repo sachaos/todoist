@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 )
 
-func List(c *cli.Context) error {
+func List(config Config, c *cli.Context) error {
 	var sync lib.Sync
 
 	sync, err := lib.LoadCache(default_cache_path)

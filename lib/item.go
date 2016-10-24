@@ -1,6 +1,10 @@
 package lib
 
 import (
+	"encoding/json"
+	"github.com/satori/go.uuid"
+	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -41,4 +45,50 @@ func LabelsString(item Item, labels []Label) string {
 		label_names = append(label_names, "@"+label.Name)
 	}
 	return strings.Join(label_names, ",")
+}
+
+func AddItem(item Item, token string) error {
+	var commands []Command
+	command := Command{
+		UUID:   uuid.NewV4().String(),
+		TempID: uuid.NewV4().String(),
+		Type:   "item_add",
+	}
+	command.Args = item
+	commands = append(commands, command)
+	commands_text, err := json.Marshal(commands)
+	if err != nil {
+		return PostFailed
+	}
+	_, err = http.PostForm(
+		"https://todoist.com/API/v7/sync",
+		url.Values{"token": {token}, "commands": {string(commands_text)}},
+	)
+	if err != nil {
+		return PostFailed
+	}
+	return nil
+}
+
+func CompleteItem(ids []int, token string) error {
+	var commands []Command
+	command := Command{
+		UUID:   uuid.NewV4().String(),
+		TempID: uuid.NewV4().String(),
+		Type:   "item_complete",
+	}
+	command.Args = map[string]interface{}{"ids": ids}
+	commands = append(commands, command)
+	commands_text, err := json.Marshal(commands)
+	if err != nil {
+		return PostFailed
+	}
+	_, err = http.PostForm(
+		"https://todoist.com/API/v7/sync",
+		url.Values{"token": {token}, "commands": {string(commands_text)}},
+	)
+	if err != nil {
+		return PostFailed
+	}
+	return nil
 }

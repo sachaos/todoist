@@ -36,9 +36,10 @@ func CreateConfigFile(filename string, config Config) error {
 	return nil
 }
 
-func Setup(filename string) error {
+func Setup(filename string) (Config, error) {
 	var err error
 	var token string
+	config := Config{}
 	config, err = ParseConfigFile(default_config_path)
 	if err != nil {
 		fmt.Printf("Input API Token: ")
@@ -46,8 +47,8 @@ func Setup(filename string) error {
 		config = Config{Token: token}
 		err = CreateConfigFile(default_config_path, config)
 		if err != nil {
-			return CommandFailed
+			return config, CommandFailed
 		}
 	}
-	return nil
+	return config, nil
 }

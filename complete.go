@@ -3,14 +3,21 @@ package main
 import (
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
+	"strconv"
 )
 
-func Add(config Config, c *cli.Context) error {
+func Complete(config Config, c *cli.Context) error {
 	var sync lib.Sync
-	item := lib.Item{}
+	item_ids := []int{}
+	for _, arg := range c.Args() {
+		item_id, err := strconv.Atoi(arg)
+		if err != nil {
+			return err
+		}
+		item_ids = append(item_ids, item_id)
+	}
 
-	item.Content = c.Args().First()
-	err := lib.AddItem(item, config.Token)
+	err := lib.CompleteItem(item_ids, config.Token)
 	if err != nil {
 		return err
 	}
