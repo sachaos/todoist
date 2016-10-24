@@ -1,4 +1,4 @@
-package main
+package lib
 
 type Label struct {
 	Color     int    `json:"color"`

@@ -1,4 +1,4 @@
-package main
+package lib
 
 type User struct {
 	AutoReminder      int         `json:"auto_reminder"`

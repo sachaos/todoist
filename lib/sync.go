@@ -1,11 +1,16 @@
-package main
+package lib
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+)
+
+var (
+	SyncFailed = errors.New("Sync Failed")
 )
 
 type Sync struct {
@@ -69,49 +74,49 @@ type Sync struct {
 	User          User     `json:"user"`
 }
 
-func FetchCache(token string) (Sync, interface{}) {
+func FetchCache(token string) (Sync, error) {
 	var sync Sync
 	resp, err := http.PostForm(
 		"https://todoist.com/API/v7/sync",
 		url.Values{"token": {token}, "sync_token": {"*"}, "resource_types": {"[\"all\"]"}},
 	)
 	if err != nil {
-		return Sync{}, err
+		return Sync{}, SyncFailed
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return Sync{}, err
+		return Sync{}, SyncFailed
 	}
 	defer resp.Body.Close()
 
 	err = json.Unmarshal(body, &sync)
 	if err != nil {
-		return Sync{}, err
+		return Sync{}, SyncFailed
 	}
 	return sync, nil
 }
 
-func LoadCache(filename string) (Sync, interface{}) {
+func LoadCache(filename string) (Sync, error) {
 	var s Sync
 	jsonString, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return s, "Error, NotFound config file"
+		return s, SyncFailed
 	}
 	err = json.Unmarshal(jsonString, &s)
 	if err != nil {
-		return s, "Error, cache file parse error"
+		return s, SyncFailed
 	}
 	return s, nil
 }
 
-func SaveCache(filename string, sync Sync) interface{} {
+func SaveCache(filename string, sync Sync) error {
 	buf, err := json.MarshalIndent(sync, "", "  ")
 	if err != nil {
-		return "Error, Failed to marshal json"
+		return SyncFailed
 	}
 	err2 := ioutil.WriteFile(filename, buf, os.ModePerm)
 	if err2 != nil {
-		return "Error, Failed to write cache file"
+		return SyncFailed
 	}
 	return nil
 }

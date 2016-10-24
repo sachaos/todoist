@@ -1,4 +1,4 @@
-package main
+package lib
 
 type Project struct {
 	Collapsed    int         `json:"collapsed"`
