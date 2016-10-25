@@ -46,6 +46,14 @@ func main() {
 				return Complete(config, c)
 			},
 		},
+		{
+			Name:    "sync",
+			Aliases: []string{"s"},
+			Usage:   "Sync cache",
+			Action: func(c *cli.Context) error {
+				return Sync(config, c)
+			},
+		},
 	}
 	app.Run(os.Args)
 }
