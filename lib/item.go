@@ -70,15 +70,18 @@ func AddItem(item Item, token string) error {
 	return nil
 }
 
-func CompleteItem(ids []int, token string) error {
+func CloseItem(ids []int, token string) error {
 	var commands []Command
-	command := Command{
-		UUID:   uuid.NewV4().String(),
-		TempID: uuid.NewV4().String(),
-		Type:   "item_complete",
+	var command Command
+	for _, id := range ids {
+		command = Command{
+			UUID:   uuid.NewV4().String(),
+			TempID: uuid.NewV4().String(),
+			Type:   "item_close",
+		}
+		command.Args = map[string]interface{}{"id": id}
+		commands = append(commands, command)
 	}
-	command.Args = map[string]interface{}{"ids": ids}
-	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
 	if err != nil {
 		return PostFailed

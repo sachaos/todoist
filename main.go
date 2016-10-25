@@ -39,11 +39,11 @@ func main() {
 			},
 		},
 		{
-			Name:    "complete",
+			Name:    "close",
 			Aliases: []string{"c"},
-			Usage:   "Complete task",
+			Usage:   "Close task",
 			Action: func(c *cli.Context) error {
-				return Complete(config, c)
+				return Close(config, c)
 			},
 		},
 		{

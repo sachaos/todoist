@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func Complete(config Config, c *cli.Context) error {
+func Close(config Config, c *cli.Context) error {
 	var sync lib.Sync
 	item_ids := []int{}
 	for _, arg := range c.Args() {
@@ -17,7 +17,7 @@ func Complete(config Config, c *cli.Context) error {
 		item_ids = append(item_ids, item_id)
 	}
 
-	err := lib.CompleteItem(item_ids, config.Token)
+	err := lib.CloseItem(item_ids, config.Token)
 	if err != nil {
 		return err
 	}
