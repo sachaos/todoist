@@ -10,6 +10,7 @@ func Add(config Config, c *cli.Context) error {
 	item := lib.Item{}
 
 	item.Content = c.Args().First()
+	item.Priority = 1
 	err := lib.AddItem(item, config.Token)
 	if err != nil {
 		return err
