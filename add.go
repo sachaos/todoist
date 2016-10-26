@@ -9,11 +9,15 @@ func Add(config Config, c *cli.Context) error {
 	var sync lib.Sync
 	item := lib.Item{}
 
+	if !c.Args().Present() {
+		return CommandFailed
+	}
+
 	item.Content = c.Args().First()
 	item.Priority = 1
 	err := lib.AddItem(item, config.Token)
 	if err != nil {
-		return err
+		return CommandFailed
 	}
 
 	sync, err = lib.FetchCache(config.Token)
