@@ -17,9 +17,13 @@ func Close(config Config, c *cli.Context) error {
 		item_ids = append(item_ids, item_id)
 	}
 
+	if len(item_ids) == 0 {
+		return CommandFailed
+	}
+
 	err := lib.CloseItem(item_ids, config.Token)
 	if err != nil {
-		return err
+		return CommandFailed
 	}
 
 	sync, err = lib.FetchCache(config.Token)
