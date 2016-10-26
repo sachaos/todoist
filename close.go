@@ -7,7 +7,6 @@ import (
 )
 
 func Close(config Config, c *cli.Context) error {
-	var sync lib.Sync
 	item_ids := []int{}
 	for _, arg := range c.Args() {
 		item_id, err := strconv.Atoi(arg)
@@ -26,11 +25,7 @@ func Close(config Config, c *cli.Context) error {
 		return CommandFailed
 	}
 
-	sync, err = lib.FetchCache(config.Token)
-	if err != nil {
-		return CommandFailed
-	}
-	err = lib.SaveCache(default_cache_path, sync)
+	err = Sync(config, c)
 	if err != nil {
 		return CommandFailed
 	}
