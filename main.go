@@ -19,7 +19,7 @@ func main() {
 	}
 	app := cli.NewApp()
 	app.Name = "todoist"
-	app.Usage = "Todoist cli client"
+	app.Usage = "Todoist CLI Client"
 	app.Version = "0.1.0"
 	app.Commands = []cli.Command{
 		{
