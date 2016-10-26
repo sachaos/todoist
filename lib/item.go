@@ -54,7 +54,7 @@ func AddItem(item Item, token string) error {
 		TempID: uuid.NewV4().String(),
 		Type:   "item_add",
 	}
-	command.Args = item
+	command.Args = map[string]interface{}{"content": item.Content}
 	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
 	if err != nil {
