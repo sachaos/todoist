@@ -28,14 +28,6 @@ func List(config Config, c *cli.Context) error {
 
 	for _, item := range sync.Items {
 		fmt.Fprintf(w, "%d\tp%d\t%s\t%s\n", item.ID, item.Priority, lib.LabelsString(item, sync.Labels), item.Content)
-		// for _, label_id := range item.LabelIDs {
-		// 	label, err := FindByID(sync.Labels, label_id)
-		// 	if err != nil {
-		// 		return
-		// 	}
-		// 	fmt.Printf("@%s", label.Name)
-		// }
-		// fmt.Printf("\n")
 	}
 	w.Flush()
 	return nil
