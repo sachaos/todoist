@@ -73,11 +73,22 @@ func main() {
 			},
 		},
 		{
+			Name:  "labels",
+			Usage: "Shows all labels",
+			Action: func(c *cli.Context) error {
+				return Labels(config, c)
+			},
+		},
+		{
 			Name:    "sync",
 			Aliases: []string{"s"},
 			Usage:   "Sync cache",
 			Action: func(c *cli.Context) error {
-				return Sync(config, c)
+				_, err := Sync(config, c)
+				if err != nil {
+					return err
+				}
+				return nil
 			},
 		},
 	}

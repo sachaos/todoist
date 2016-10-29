@@ -8,11 +8,10 @@ import (
 	"text/tabwriter"
 )
 
-func List(config Config, c *cli.Context) error {
+func Labels(config Config, c *cli.Context) error {
 	var sync lib.Sync
 
 	sync, err := lib.LoadCache(default_cache_path)
-
 	if err != nil {
 		sync, err = Sync(config, c)
 		if err != nil {
@@ -23,8 +22,8 @@ func List(config Config, c *cli.Context) error {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
-	for _, item := range sync.Items {
-		fmt.Fprintf(w, "%d\tp%d\t%s\t%s\n", item.ID, item.Priority, lib.LabelsString(item, sync.Labels), item.Content)
+	for _, label := range sync.Labels {
+		fmt.Fprintf(w, "%d\t%s\n", label.ID, label.Name)
 	}
 	w.Flush()
 	return nil

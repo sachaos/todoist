@@ -19,7 +19,7 @@ func Add(config Config, c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err = Sync(config, c)
+	_, err = Sync(config, c)
 	if err != nil {
 		return CommandFailed
 	}
