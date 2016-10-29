@@ -80,6 +80,13 @@ func main() {
 			},
 		},
 		{
+			Name:  "projects",
+			Usage: "Shows all projects",
+			Action: func(c *cli.Context) error {
+				return Projects(config, c)
+			},
+		},
+		{
 			Name:    "sync",
 			Aliases: []string{"s"},
 			Usage:   "Sync cache",
