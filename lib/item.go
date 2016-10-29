@@ -54,7 +54,37 @@ func AddItem(item Item, token string) error {
 		TempID: uuid.NewV4().String(),
 		Type:   "item_add",
 	}
-	command.Args = map[string]interface{}{"content": item.Content}
+	command.Args = map[string]interface{}{
+		"content":  item.Content,
+		"priority": item.Priority,
+	}
+	commands = append(commands, command)
+	commands_text, err := json.Marshal(commands)
+	if err != nil {
+		return PostFailed
+	}
+	_, err = http.PostForm(
+		"https://todoist.com/API/v7/sync",
+		url.Values{"token": {token}, "commands": {string(commands_text)}},
+	)
+	if err != nil {
+		return PostFailed
+	}
+	return nil
+}
+
+func UpdateItem(item Item, token string) error {
+	var commands []Command
+	command := Command{
+		UUID:   uuid.NewV4().String(),
+		TempID: uuid.NewV4().String(),
+		Type:   "item_update",
+	}
+	command.Args = map[string]interface{}{
+		"id":       item.ID,
+		"content":  item.Content,
+		"priority": item.Priority,
+	}
 	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
 	if err != nil {

@@ -21,6 +21,17 @@ func main() {
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
 	app.Version = "0.1.0"
+
+	contentFlag := cli.StringFlag{
+		Name:  "content, c",
+		Usage: "content",
+	}
+	priorityFlag := cli.IntFlag{
+		Name:  "priority, p",
+		Value: 1,
+		Usage: "priority (1-4)",
+	}
+
 	app.Commands = []cli.Command{
 		{
 			Name:    "list",
@@ -36,6 +47,21 @@ func main() {
 			Usage:   "Add task",
 			Action: func(c *cli.Context) error {
 				return Add(config, c)
+			},
+			Flags: []cli.Flag{
+				priorityFlag,
+			},
+		},
+		{
+			Name:    "modify",
+			Aliases: []string{"m"},
+			Usage:   "Modify task",
+			Action: func(c *cli.Context) error {
+				return Modify(config, c)
+			},
+			Flags: []cli.Flag{
+				contentFlag,
+				priorityFlag,
 			},
 		},
 		{
