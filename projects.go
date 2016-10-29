@@ -23,7 +23,7 @@ func Projects(config Config, c *cli.Context) error {
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
 	for _, project := range sync.Projects {
-		fmt.Fprintf(w, "%d\t%s\n", project.ID, project.Name)
+		fmt.Fprintf(w, "%d\t%s\n", project.ID, "#"+project.Name)
 	}
 	w.Flush()
 	return nil

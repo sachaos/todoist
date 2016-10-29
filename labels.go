@@ -23,7 +23,7 @@ func Labels(config Config, c *cli.Context) error {
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
 	for _, label := range sync.Labels {
-		fmt.Fprintf(w, "%d\t%s\n", label.ID, label.Name)
+		fmt.Fprintf(w, "%d\t%s\n", label.ID, "@"+label.Name)
 	}
 	w.Flush()
 	return nil

@@ -26,9 +26,9 @@ type Sync struct {
 		Name      string `json:"name"`
 		Query     string `json:"query"`
 	} `json:"filters"`
-	FullSync          bool    `json:"full_sync"`
-	Items             []Item  `json:"items"`
-	Labels            []Label `json:"labels"`
+	FullSync          bool   `json:"full_sync"`
+	Items             []Item `json:"items"`
+	Labels            Labels `json:"labels"`
 	LiveNotifications []struct {
 		CompletedTasks   int    `json:"completed_tasks"`
 		Created          int    `json:"created"`
@@ -57,7 +57,7 @@ type Sync struct {
 		UidsToNotify   interface{} `json:"uids_to_notify"`
 	} `json:"notes"`
 	ProjectNotes []interface{} `json:"project_notes"`
-	Projects     []Project     `json:"projects"`
+	Projects     Projects      `json:"projects"`
 	Reminders    []struct {
 		DateLang     string `json:"date_lang"`
 		DueDateUtc   string `json:"due_date_utc"`

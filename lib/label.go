@@ -8,8 +8,10 @@ type Label struct {
 	Name      string `json:"name"`
 }
 
-func FindByID(lables []Label, id int) (Label, interface{}) {
-	for _, label := range lables {
+type Labels []Label
+
+func (labels Labels) FindByID(id int) (Label, interface{}) {
+	for _, label := range labels {
 		if label.ID == id {
 			return label, nil
 		}

@@ -35,10 +35,18 @@ type Item struct {
 	UserID         int         `json:"user_id"`
 }
 
-func LabelsString(item Item, labels []Label) string {
+func (item Item) ProjectString(projects Projects) string {
+	project, err := projects.FindByID(item.ProjectID)
+	if err != nil {
+		return ""
+	}
+	return "#" + project.Name
+}
+
+func (item Item) LabelsString(labels Labels) string {
 	label_names := make([]string, 0)
 	for _, label_id := range item.LabelIDs {
-		label, err := FindByID(labels, label_id)
+		label, err := labels.FindByID(label_id)
 		if err != nil {
 			return "Error"
 		}

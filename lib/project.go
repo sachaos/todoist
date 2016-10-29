@@ -14,3 +14,14 @@ type Project struct {
 	ParentID     interface{} `json:"parent_id"`
 	Shared       bool        `json:"shared"`
 }
+
+type Projects []Project
+
+func (projects Projects) FindByID(id int) (Project, interface{}) {
+	for _, project := range projects {
+		if project.ID == id {
+			return project, nil
+		}
+	}
+	return Project{}, "NotFound"
+}
