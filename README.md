@@ -25,7 +25,7 @@ $ todoist --help
 NAME:
    todoist - Todoist CLI Client
 
-USAGE:p
+USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
@@ -49,8 +49,28 @@ GLOBAL OPTIONS:
 ## Install
 
 ```
-go get github.com/sachaos/todoist
+$ go get github.com/sachaos/todoist
 ```
+
+### Register API token
+
+When you run `todoist` first time, you will be asked your Todoist API token.
+Please input Todoist API token and register it.
+
+### Use with peco
+
+**RECOMMENDED**
+
+install *peco* and load `todoist_functions.sh` on your `.bashrc` or `.zshrc`, like below.
+
+```
+$ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
+```
+
+## TODO
+
+* DueDate view & flag option
+* Refactoring
 
 ## Licence
 
