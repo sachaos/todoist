@@ -67,6 +67,15 @@ install *peco* and load `todoist_functions.sh` on your `.bashrc` or `.zshrc`, li
 $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 ```
 
+#### keybind
+
+```
+<C-x> t p: select project with peco
+<C-x> t l: select labels with peco
+<C-x> t c: select task and close
+```
+
+
 ## TODO
 
 * DueDate view & flag option
