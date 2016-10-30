@@ -35,6 +35,40 @@ type Item struct {
 	UserID         int         `json:"user_id"`
 }
 
+func (item Item) AddParam() interface{} {
+	param := map[string]interface{}{}
+	if item.Content != "" {
+		param["content"] = item.Content
+	}
+	if len(item.LabelIDs) != 0 {
+		param["labels"] = item.LabelIDs
+	}
+	if item.Priority != 0 {
+		param["priority"] = item.Priority
+	}
+	if item.ProjectID != 0 {
+		param["project_id"] = item.ProjectID
+	}
+	return param
+}
+
+func (item Item) UpdateParam() interface{} {
+	param := map[string]interface{}{}
+	if item.ID != 0 {
+		param["id"] = item.ID
+	}
+	if item.Content != "" {
+		param["content"] = item.Content
+	}
+	if len(item.LabelIDs) != 0 {
+		param["labels"] = item.LabelIDs
+	}
+	if item.Priority != 0 {
+		param["priority"] = item.Priority
+	}
+	return param
+}
+
 func (item Item) ProjectString(projects Projects) string {
 	project, err := projects.FindByID(item.ProjectID)
 	if err != nil {
@@ -61,10 +95,7 @@ func AddItem(item Item, token string) error {
 		UUID:   uuid.NewV4().String(),
 		TempID: uuid.NewV4().String(),
 		Type:   "item_add",
-	}
-	command.Args = map[string]interface{}{
-		"content":  item.Content,
-		"priority": item.Priority,
+		Args:   item.AddParam(),
 	}
 	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
@@ -87,11 +118,7 @@ func UpdateItem(item Item, token string) error {
 		UUID:   uuid.NewV4().String(),
 		TempID: uuid.NewV4().String(),
 		Type:   "item_update",
-	}
-	command.Args = map[string]interface{}{
-		"id":       item.ID,
-		"content":  item.Content,
-		"priority": item.Priority,
+		Args:   item.UpdateParam(),
 	}
 	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
