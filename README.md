@@ -81,10 +81,6 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 * DueDate view & flag option
 * Refactoring
 
-## Licence
-
-[MIT](https://github.com/tcnksm/tool/blob/master/LICENCE)
-
 ## Author
 
 [sachaos](https://github.com/sachaos)
