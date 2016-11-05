@@ -29,7 +29,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.1.0
+   0.1.1
 
 COMMANDS:
      list, l    Shows all tasks
@@ -79,7 +79,6 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 ## TODO
 
 * DueDate view & flag option
-* Move item to another project
 * Refactoring
 
 ## Author
