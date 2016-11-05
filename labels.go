@@ -8,17 +8,7 @@ import (
 	"text/tabwriter"
 )
 
-func Labels(config Config, c *cli.Context) error {
-	var sync lib.Sync
-
-	sync, err := lib.LoadCache(default_cache_path)
-	if err != nil {
-		sync, err = Sync(config, c)
-		if err != nil {
-			return err
-		}
-	}
-
+func Labels(config Config, sync lib.Sync, c *cli.Context) error {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 

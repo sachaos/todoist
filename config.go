@@ -11,6 +11,23 @@ type Config struct {
 	Token string `json:"token"`
 }
 
+func LoadConfig(filename string) (Config, error) {
+	var err error
+	var token string
+	config := Config{}
+	config, err = ParseConfigFile(default_config_path)
+	if err != nil {
+		fmt.Printf("Input API Token: ")
+		fmt.Scan(&token)
+		config = Config{Token: token}
+		err = CreateConfigFile(default_config_path, config)
+		if err != nil {
+			return config, CommandFailed
+		}
+	}
+	return config, nil
+}
+
 func ParseConfigFile(filename string) (Config, error) {
 	var c Config
 	jsonString, err := ioutil.ReadFile(filename)
@@ -34,21 +51,4 @@ func CreateConfigFile(filename string, config Config) error {
 		return CommandFailed
 	}
 	return nil
-}
-
-func Setup(filename string) (Config, error) {
-	var err error
-	var token string
-	config := Config{}
-	config, err = ParseConfigFile(default_config_path)
-	if err != nil {
-		fmt.Printf("Input API Token: ")
-		fmt.Scan(&token)
-		config = Config{Token: token}
-		err = CreateConfigFile(default_config_path, config)
-		if err != nil {
-			return config, CommandFailed
-		}
-	}
-	return config, nil
 }

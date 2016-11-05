@@ -2,15 +2,9 @@ package lib
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
-)
-
-var (
-	SyncFailed = errors.New("Sync Failed")
 )
 
 type Sync struct {
@@ -27,7 +21,7 @@ type Sync struct {
 		Query     string `json:"query"`
 	} `json:"filters"`
 	FullSync          bool   `json:"full_sync"`
-	Items             []Item `json:"items"`
+	Items             Items  `json:"items"`
 	Labels            Labels `json:"labels"`
 	LiveNotifications []struct {
 		CompletedTasks   int    `json:"completed_tasks"`
@@ -74,7 +68,7 @@ type Sync struct {
 	User          User     `json:"user"`
 }
 
-func FetchCache(token string) (Sync, error) {
+func SyncAll(token string) (Sync, error) {
 	var sync Sync
 	resp, err := http.PostForm(
 		"https://todoist.com/API/v7/sync",
@@ -94,29 +88,4 @@ func FetchCache(token string) (Sync, error) {
 		return Sync{}, SyncFailed
 	}
 	return sync, nil
-}
-
-func LoadCache(filename string) (Sync, error) {
-	var s Sync
-	jsonString, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return s, SyncFailed
-	}
-	err = json.Unmarshal(jsonString, &s)
-	if err != nil {
-		return s, SyncFailed
-	}
-	return s, nil
-}
-
-func SaveCache(filename string, sync Sync) error {
-	buf, err := json.MarshalIndent(sync, "", "  ")
-	if err != nil {
-		return SyncFailed
-	}
-	err2 := ioutil.WriteFile(filename, buf, os.ModePerm)
-	if err2 != nil {
-		return SyncFailed
-	}
-	return nil
 }

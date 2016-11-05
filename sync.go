@@ -7,11 +7,11 @@ import (
 
 func Sync(config Config, c *cli.Context) (lib.Sync, error) {
 	var sync lib.Sync
-	sync, err := lib.FetchCache(config.Token)
+	sync, err := lib.SyncAll(config.Token)
 	if err != nil {
 		return sync, CommandFailed
 	}
-	err = lib.SaveCache(default_cache_path, sync)
+	err = WriteCache(default_cache_path, sync)
 	if err != nil {
 		return sync, CommandFailed
 	}

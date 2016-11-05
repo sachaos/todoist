@@ -13,7 +13,8 @@ var (
 )
 
 func main() {
-	config, err := Setup(default_config_path)
+	sync, err := LoadCache(default_cache_path)
+	config, err := LoadConfig(default_config_path)
 	if err != nil {
 		return
 	}
@@ -46,7 +47,7 @@ func main() {
 			Aliases: []string{"l"},
 			Usage:   "Shows all tasks",
 			Action: func(c *cli.Context) error {
-				return List(config, c)
+				return List(config, sync, c)
 			},
 		},
 		{
@@ -54,7 +55,7 @@ func main() {
 			Aliases: []string{"a"},
 			Usage:   "Add task",
 			Action: func(c *cli.Context) error {
-				return Add(config, c)
+				return Add(config, sync, c)
 			},
 			Flags: []cli.Flag{
 				priorityFlag,
@@ -67,12 +68,13 @@ func main() {
 			Aliases: []string{"m"},
 			Usage:   "Modify task",
 			Action: func(c *cli.Context) error {
-				return Modify(config, c)
+				return Modify(config, sync, c)
 			},
 			Flags: []cli.Flag{
 				contentFlag,
 				priorityFlag,
 				labelIDsFlag,
+				projectIDFlag,
 			},
 		},
 		{
@@ -87,14 +89,14 @@ func main() {
 			Name:  "labels",
 			Usage: "Shows all labels",
 			Action: func(c *cli.Context) error {
-				return Labels(config, c)
+				return Labels(config, sync, c)
 			},
 		},
 		{
 			Name:  "projects",
 			Usage: "Shows all projects",
 			Action: func(c *cli.Context) error {
-				return Projects(config, c)
+				return Projects(config, sync, c)
 			},
 		},
 		{

@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Add(config Config, c *cli.Context) error {
+func Add(config Config, sync lib.Sync, c *cli.Context) error {
 	item := lib.Item{}
 	if !c.Args().Present() {
 		return CommandFailed

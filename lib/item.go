@@ -36,6 +36,17 @@ type Item struct {
 	UserID         int         `json:"user_id"`
 }
 
+type Items []Item
+
+func (items Items) FindByID(id int) (Item, error) {
+	for _, item := range items {
+		if item.ID == id {
+			return item, nil
+		}
+	}
+	return Item{}, FindFailed
+}
+
 func (item Item) AddParam() interface{} {
 	param := map[string]interface{}{}
 	if item.Content != "" {
@@ -66,6 +77,16 @@ func (item Item) UpdateParam() interface{} {
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
+	}
+	return param
+}
+
+func (item Item) MoveParam(to_project Project) interface{} {
+	param := map[string]interface{}{
+		"project_items": map[string][]int{
+			strconv.Itoa(item.ProjectID): []int{item.ID},
+		},
+		"to_project": to_project.ID,
 	}
 	return param
 }
@@ -162,18 +183,14 @@ func CloseItem(ids []int, token string) error {
 	return nil
 }
 
-func MoveItem(item Item, token string) error {
+func MoveItem(item Item, to_project Project, token string) error {
 	var commands []Command
 	var command Command
 	command = Command{
 		UUID:   uuid.NewV4().String(),
 		TempID: uuid.NewV4().String(),
 		Type:   "item_move",
-	}
-	command.Args = map[string]map[string][]int{
-		"project_items": map[string][]int{
-			strconv.Itoa(item.ProjectID): []int{item.ID},
-		},
+		Args:   item.MoveParam(to_project),
 	}
 	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
