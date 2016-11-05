@@ -5,6 +5,7 @@ import (
 	"github.com/satori/go.uuid"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -147,6 +148,34 @@ func CloseItem(ids []int, token string) error {
 		command.Args = map[string]interface{}{"id": id}
 		commands = append(commands, command)
 	}
+	commands_text, err := json.Marshal(commands)
+	if err != nil {
+		return PostFailed
+	}
+	_, err = http.PostForm(
+		"https://todoist.com/API/v7/sync",
+		url.Values{"token": {token}, "commands": {string(commands_text)}},
+	)
+	if err != nil {
+		return PostFailed
+	}
+	return nil
+}
+
+func MoveItem(item Item, token string) error {
+	var commands []Command
+	var command Command
+	command = Command{
+		UUID:   uuid.NewV4().String(),
+		TempID: uuid.NewV4().String(),
+		Type:   "item_move",
+	}
+	command.Args = map[string]map[string][]int{
+		"project_items": map[string][]int{
+			strconv.Itoa(item.ProjectID): []int{item.ID},
+		},
+	}
+	commands = append(commands, command)
 	commands_text, err := json.Marshal(commands)
 	if err != nil {
 		return PostFailed
