@@ -12,6 +12,11 @@ var (
 	CommandFailed       = errors.New("Command Failed")
 )
 
+const (
+	ShortDateTimeFormat = "06/1/2(Mon) 15:04"
+	ShortDateFormat     = "06/1/2(Mon)"
+)
+
 func main() {
 	sync, err := LoadCache(default_cache_path)
 	config, err := LoadConfig(default_config_path)

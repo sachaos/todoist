@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Item struct {
@@ -19,7 +20,7 @@ type Item struct {
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
-	DueDateUtc     interface{} `json:"due_date_utc"`
+	DueDateUtc     string      `json:"due_date_utc"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	ID             int         `json:"id"`
 	InHistory      int         `json:"in_history"`
@@ -37,6 +38,11 @@ type Item struct {
 }
 
 type Items []Item
+
+func (item Item) DueDateTime() time.Time {
+	t, _ := time.Parse(DateFormat, item.DueDateUtc)
+	return t
+}
 
 func (items Items) FindByID(id int) (Item, error) {
 	for _, item := range items {
