@@ -78,7 +78,7 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 
 ## TODO
 
-* DueDate view & flag option
+* DueDate set option
 * Refactoring
 
 ## Author
