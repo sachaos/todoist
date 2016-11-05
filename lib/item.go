@@ -1,10 +1,6 @@
 package lib
 
 import (
-	"encoding/json"
-	"github.com/satori/go.uuid"
-	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -118,97 +114,35 @@ func (item Item) LabelsString(labels Labels) string {
 }
 
 func AddItem(item Item, token string) error {
-	var commands []Command
-	command := Command{
-		UUID:   uuid.NewV4().String(),
-		TempID: uuid.NewV4().String(),
-		Type:   "item_add",
-		Args:   item.AddParam(),
+	commands := Commands{
+		NewCommand("item_add", item.AddParam()),
 	}
-	commands = append(commands, command)
-	commands_text, err := json.Marshal(commands)
-	if err != nil {
-		return PostFailed
-	}
-	_, err = http.PostForm(
-		"https://todoist.com/API/v7/sync",
-		url.Values{"token": {token}, "commands": {string(commands_text)}},
-	)
-	if err != nil {
-		return PostFailed
-	}
-	return nil
+	_, err := SyncRequest(commands.UrlValues(token))
+	return err
 }
 
 func UpdateItem(item Item, token string) error {
-	var commands []Command
-	command := Command{
-		UUID:   uuid.NewV4().String(),
-		TempID: uuid.NewV4().String(),
-		Type:   "item_update",
-		Args:   item.UpdateParam(),
+	commands := Commands{
+		NewCommand("item_update", item.UpdateParam()),
 	}
-	commands = append(commands, command)
-	commands_text, err := json.Marshal(commands)
-	if err != nil {
-		return PostFailed
-	}
-	_, err = http.PostForm(
-		"https://todoist.com/API/v7/sync",
-		url.Values{"token": {token}, "commands": {string(commands_text)}},
-	)
-	if err != nil {
-		return PostFailed
-	}
-	return nil
+	_, err := SyncRequest(commands.UrlValues(token))
+	return err
 }
 
 func CloseItem(ids []int, token string) error {
-	var commands []Command
-	var command Command
+	var commands Commands
 	for _, id := range ids {
-		command = Command{
-			UUID:   uuid.NewV4().String(),
-			TempID: uuid.NewV4().String(),
-			Type:   "item_close",
-		}
-		command.Args = map[string]interface{}{"id": id}
+		command := NewCommand("item_close", map[string]interface{}{"id": id})
 		commands = append(commands, command)
 	}
-	commands_text, err := json.Marshal(commands)
-	if err != nil {
-		return PostFailed
-	}
-	_, err = http.PostForm(
-		"https://todoist.com/API/v7/sync",
-		url.Values{"token": {token}, "commands": {string(commands_text)}},
-	)
-	if err != nil {
-		return PostFailed
-	}
-	return nil
+	_, err := SyncRequest(commands.UrlValues(token))
+	return err
 }
 
 func MoveItem(item Item, to_project Project, token string) error {
-	var commands []Command
-	var command Command
-	command = Command{
-		UUID:   uuid.NewV4().String(),
-		TempID: uuid.NewV4().String(),
-		Type:   "item_move",
-		Args:   item.MoveParam(to_project),
+	commands := Commands{
+		NewCommand("item_move", item.MoveParam(to_project)),
 	}
-	commands = append(commands, command)
-	commands_text, err := json.Marshal(commands)
-	if err != nil {
-		return PostFailed
-	}
-	_, err = http.PostForm(
-		"https://todoist.com/API/v7/sync",
-		url.Values{"token": {token}, "commands": {string(commands_text)}},
-	)
-	if err != nil {
-		return PostFailed
-	}
-	return nil
+	_, err := SyncRequest(commands.UrlValues(token))
+	return err
 }

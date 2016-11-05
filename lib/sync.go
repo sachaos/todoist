@@ -2,8 +2,6 @@ package lib
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 )
 
@@ -70,22 +68,12 @@ type Sync struct {
 
 func SyncAll(token string) (Sync, error) {
 	var sync Sync
-	resp, err := http.PostForm(
-		"https://todoist.com/API/v7/sync",
+	body, err := SyncRequest(
 		url.Values{"token": {token}, "sync_token": {"*"}, "resource_types": {"[\"all\"]"}},
 	)
-	if err != nil {
-		return Sync{}, SyncFailed
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return Sync{}, SyncFailed
-	}
-	defer resp.Body.Close()
-
 	err = json.Unmarshal(body, &sync)
 	if err != nil {
-		return Sync{}, SyncFailed
+		return Sync{}, err
 	}
 	return sync, nil
 }

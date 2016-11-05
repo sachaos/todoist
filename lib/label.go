@@ -16,5 +16,5 @@ func (labels Labels) FindByID(id int) (Label, interface{}) {
 			return label, nil
 		}
 	}
-	return Label{}, "NotFound"
+	return Label{}, FindFailed
 }

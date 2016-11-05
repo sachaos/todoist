@@ -23,5 +23,5 @@ func (projects Projects) FindByID(id int) (Project, interface{}) {
 			return project, nil
 		}
 	}
-	return Project{}, "NotFound"
+	return Project{}, FindFailed
 }
