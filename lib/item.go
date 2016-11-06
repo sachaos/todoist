@@ -93,12 +93,12 @@ func (item Item) MoveParam(to_project Project) interface{} {
 	return param
 }
 
-func (item Item) ProjectString(projects Projects) string {
+func (item Item) ProjectName(projects Projects) string {
 	project, err := projects.FindByID(item.ProjectID)
 	if err != nil {
 		return ""
 	}
-	return "#" + project.Name
+	return project.Name
 }
 
 func (item Item) LabelsString(labels Labels) string {

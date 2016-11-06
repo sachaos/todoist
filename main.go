@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/fatih/color"
 	"github.com/urfave/cli"
 	"os"
 )
@@ -44,6 +45,19 @@ func main() {
 	projectIDFlag := cli.IntFlag{
 		Name:  "project-id, P",
 		Usage: "project id",
+	}
+
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name: "color",
+		},
+	}
+
+	app.Before = func(c *cli.Context) error {
+		if !c.Bool("color") {
+			color.NoColor = true
+		}
+		return nil
 	}
 
 	app.Commands = []cli.Command{

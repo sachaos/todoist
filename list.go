@@ -6,31 +6,24 @@ import (
 	"github.com/urfave/cli"
 	"os"
 	"text/tabwriter"
-	"time"
 )
 
-func DueDateString(item lib.Item) string {
-	due_date := item.DueDateTime()
-	if (due_date == time.Time{}) {
-		return ""
-	}
-	due_date = due_date.Local()
-	if !item.AllDay {
-		return due_date.Format(ShortDateTimeFormat)
-	}
-	return due_date.Format(ShortDateFormat)
-}
-
 func List(config Config, sync lib.Sync, c *cli.Context) error {
+	colorList := ColorList()
+	projectNames := []string{}
+	for _, project := range sync.Projects {
+		projectNames = append(projectNames, project.Name)
+	}
+	projectColorHash := GenerateColorHash(projectNames, colorList)
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
 	for _, item := range sync.Items {
-		fmt.Fprintf(w, "%d\tp%d\t%s\t%s\t%s\t%s\n",
-			item.ID,
-			item.Priority,
-			DueDateString(item),
-			item.ProjectString(sync.Projects),
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+			IdFormat(item.ID),
+			PriorityFormat(item.Priority),
+			DueDateFormat(item.DueDateTime(), item.AllDay),
+			ProjectFormat(item.ProjectName(sync.Projects), projectColorHash),
 			item.LabelsString(sync.Labels),
 			item.Content,
 		)
