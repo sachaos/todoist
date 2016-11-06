@@ -57,7 +57,7 @@ func PriorityFormat(priority int) string {
 }
 
 func ProjectFormat(projectName string, projectColorHash map[string]color.Attribute) string {
-	return color.New(projectColorHash[projectName]).SprintFunc()(projectName)
+	return color.New(projectColorHash[projectName]).SprintFunc()("#" + projectName)
 }
 
 func dueDateString(dueDate time.Time, allDay bool) string {
