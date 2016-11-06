@@ -27,10 +27,10 @@ NAME:
 
 USAGE:
    todoist [global options] command [command options] [arguments...]
-
+   
 VERSION:
-   0.1.1
-
+   0.2.0
+   
 COMMANDS:
      list, l    Shows all tasks
      add, a     Add task
@@ -42,6 +42,7 @@ COMMANDS:
      help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
+   --color        
    --help, -h     show help
    --version, -v  print the version
 ```
