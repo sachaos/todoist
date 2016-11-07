@@ -62,7 +62,7 @@ Please input Todoist API token and register it.
 
 **RECOMMENDED**
 
-install *peco* and load `todoist_functions.sh` on your `.bashrc` or `.zshrc`, like below.
+install *peco* and load `todoist_functions.sh` on your `.zshrc`, like below.
 
 ```
 $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
