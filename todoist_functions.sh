@@ -1,3 +1,19 @@
+# todoist find item
+function peco-todoist-item () {
+    local SELECTED_ITEM="$(todoist list | peco | head -n1 | cut -d ' ' -f 1)"
+    if [ -n "$SELECTED_ITEM" ]; then
+        if [ -n "$LBUFFER" ]; then
+            local new_left="${LBUFFER%\ } $SELECTED_ITEM"
+        else
+            local new_left="$SELECTED_ITEM"
+        fi
+        BUFFER=${new_left}${RBUFFER}
+        CURSOR=${#new_left}
+    fi
+}
+zle -N peco-todoist-item
+bindkey "^xtt" peco-todoist-item
+
 # todoist find project
 function peco-todoist-project () {
     local SELECTED_PROJECT="$(todoist projects | peco | head -n1 | cut -d ' ' -f 1)"
