@@ -29,7 +29,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
    
 VERSION:
-   0.2.0
+   0.2.1
    
 COMMANDS:
      list, l    Shows all tasks
@@ -38,6 +38,7 @@ COMMANDS:
      close, c   Close task
      labels     Shows all labels
      projects   Shows all projects
+     karma      Shows karma
      sync, s    Sync cache
      help, h    Shows a list of commands or help for one command
 
