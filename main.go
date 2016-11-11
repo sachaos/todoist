@@ -119,6 +119,13 @@ func main() {
 			},
 		},
 		{
+			Name:  "karma",
+			Usage: "Show karma",
+			Action: func(c *cli.Context) error {
+				return Karma(config, sync, c)
+			},
+		},
+		{
 			Name:    "sync",
 			Aliases: []string{"s"},
 			Usage:   "Sync cache",
