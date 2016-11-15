@@ -35,6 +35,8 @@ func Modify(config Config, sync lib.Sync, c *cli.Context) error {
 		return ids
 	}(c.String("label-ids"))
 
+	item.DateString = c.String("date")
+
 	next_project.ID = c.Int("project-id")
 
 	if !c.Args().Present() {

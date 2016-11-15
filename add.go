@@ -29,6 +29,8 @@ func Add(config Config, sync lib.Sync, c *cli.Context) error {
 		return ids
 	}(c.String("label-ids"))
 
+	item.DateString = c.String("date")
+
 	err := lib.AddItem(item, config.Token)
 	if err != nil {
 		return CommandFailed

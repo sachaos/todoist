@@ -46,6 +46,10 @@ func main() {
 		Name:  "project-id, P",
 		Usage: "project id",
 	}
+	dateFlag := cli.StringFlag{
+		Name:  "date, d",
+		Usage: "date string (today, 2016/10/02, 2016/09/02 18:00)",
+	}
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -80,6 +84,7 @@ func main() {
 				priorityFlag,
 				labelIDsFlag,
 				projectIDFlag,
+				dateFlag,
 			},
 		},
 		{
@@ -94,6 +99,7 @@ func main() {
 				priorityFlag,
 				labelIDsFlag,
 				projectIDFlag,
+				dateFlag,
 			},
 		},
 		{

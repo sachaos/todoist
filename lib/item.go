@@ -54,6 +54,9 @@ func (item Item) AddParam() interface{} {
 	if item.Content != "" {
 		param["content"] = item.Content
 	}
+	if item.DateString != "" {
+		param["date_string"] = item.DateString
+	}
 	if len(item.LabelIDs) != 0 {
 		param["labels"] = item.LabelIDs
 	}
@@ -73,6 +76,9 @@ func (item Item) UpdateParam() interface{} {
 	}
 	if item.Content != "" {
 		param["content"] = item.Content
+	}
+	if item.DateString != "" {
+		param["date_string"] = item.DateString
 	}
 	if len(item.LabelIDs) != 0 {
 		param["labels"] = item.LabelIDs
