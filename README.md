@@ -81,7 +81,7 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 
 ## TODO
 
-* DueDate set option
+* List completed tasks
 * Refactoring
 
 ## Author
