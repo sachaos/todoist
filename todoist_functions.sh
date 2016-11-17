@@ -19,9 +19,9 @@ function peco-todoist-project () {
     local SELECTED_PROJECT="$(todoist projects | peco | head -n1 | cut -d ' ' -f 1)"
     if [ -n "$SELECTED_PROJECT" ]; then
         if [ -n "$LBUFFER" ]; then
-            local new_left="${LBUFFER%\ } $SELECTED_PROJECT"
+            local new_left="${LBUFFER%\ } -P $SELECTED_PROJECT"
         else
-            local new_left="$SELECTED_PROJECT"
+            local new_left="-P $SELECTED_PROJECT"
         fi
         BUFFER=${new_left}${RBUFFER}
         CURSOR=${#new_left}
@@ -35,9 +35,9 @@ function peco-todoist-labels () {
     local SELECTED_LABELS="$(todoist labels | peco | cut -d ' ' -f 1 | tr '\n' ',' | sed -e 's/,$//')"
     if [ -n "$SELECTED_LABELS" ]; then
         if [ -n "$LBUFFER" ]; then
-            local new_left="${LBUFFER%\ } $SELECTED_LABELS"
+            local new_left="${LBUFFER%\ } -L $SELECTED_LABELS"
         else
-            local new_left="$SELECTED_LABELS"
+            local new_left="-L $SELECTED_LABELS"
         fi
         BUFFER=${new_left}${RBUFFER}
         CURSOR=${#new_left}
