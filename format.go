@@ -77,7 +77,7 @@ func DueDateFormat(dueDate time.Time, allDay bool) string {
 	dueDateColor := color.New(color.Bold)
 	if duration > 0 {
 		dueDateColor.Add(color.FgWhite).Add(color.BgRed)
-	} else if duration > -1*time.Hour {
+	} else if duration > -12*time.Hour {
 		dueDateColor.Add(color.FgHiRed).Add(color.BgBlack)
 	} else if duration > -24*time.Hour {
 		dueDateColor.Add(color.FgHiYellow).Add(color.BgBlack)
