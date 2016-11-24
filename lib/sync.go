@@ -31,7 +31,7 @@ type Sync struct {
 		NotificationKey  string `json:"notification_key"`
 		NotificationType string `json:"notification_type"`
 		PromoImg         string `json:"promo_img"`
-		SeqNo            int    `json:"seq_no"`
+		SeqNo            int64  `json:"seq_no"`
 		TopProcent       int    `json:"top_procent"`
 	} `json:"live_notifications"`
 	LiveNotificationsLastReadID int           `json:"live_notifications_last_read_id"`
