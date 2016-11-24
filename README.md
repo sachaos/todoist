@@ -8,6 +8,8 @@ Todoist CLI client
 [Todoist](https://todoist.com/) is a cool TODO list web application.
 This program will let you use the Todoist in CLI.
 
+![color image](https://cloud.githubusercontent.com/assets/6121271/20603278/2261b424-b2a4-11e6-8fa7-d533e2144942.png)
+
 ## Demo (with [peco](https://github.com/peco/peco))
 
 ### Add Task
