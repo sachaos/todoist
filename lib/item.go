@@ -7,10 +7,10 @@ import (
 )
 
 type BaseItem struct {
-	Content   string `json:"content"`
-	ID        int    `json:"id"`
-	ProjectID int    `json:"project_id"`
-	UserID    int    `json:"user_id"`
+	*HaveID
+	*HaveProjectID
+	Content string `json:"content"`
+	UserID  int    `json:"user_id"`
 }
 
 type CompletedItem struct {
@@ -18,6 +18,11 @@ type CompletedItem struct {
 	CompletedDate string      `json:"completed_date"`
 	MetaData      interface{} `json:"meta_data"`
 	TaskID        int         `json:"task_id"`
+}
+
+func (item CompletedItem) CompletedDateTime() time.Time {
+	t, _ := time.Parse(DateFormat, item.CompletedDate)
+	return t
 }
 
 type CompletedItems []CompletedItem
@@ -110,14 +115,6 @@ func (item Item) MoveParam(to_project Project) interface{} {
 		"to_project": to_project.ID,
 	}
 	return param
-}
-
-func (item Item) ProjectName(projects Projects) string {
-	project, err := projects.FindByID(item.ProjectID)
-	if err != nil {
-		return ""
-	}
-	return project.Name
 }
 
 func (item Item) LabelsString(labels Labels) string {

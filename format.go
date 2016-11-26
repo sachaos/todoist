@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/fatih/color"
+	"github.com/sachaos/todoist/lib"
 	"strconv"
 	"time"
 )
@@ -37,8 +38,8 @@ func GenerateColorHash(keys []string, colorList []color.Attribute) map[string]co
 	return colorHash
 }
 
-func IdFormat(id int) string {
-	return color.BlueString(strconv.Itoa(id))
+func IdFormat(carrier lib.IDCarrier) string {
+	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
 func PriorityFormat(priority int) string {
@@ -56,7 +57,8 @@ func PriorityFormat(priority int) string {
 	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority))
 }
 
-func ProjectFormat(projectName string, projectColorHash map[string]color.Attribute) string {
+func ProjectFormat(carrier lib.ProjectIDCarrier, projects lib.Projects, projectColorHash map[string]color.Attribute) string {
+	projectName := carrier.GetProjectName(projects)
 	return color.New(projectColorHash[projectName]).SprintFunc()("#" + projectName)
 }
 
@@ -85,4 +87,16 @@ func DueDateFormat(dueDate time.Time, allDay bool) string {
 		dueDateColor.Add(color.FgHiBlue).Add(color.BgBlack)
 	}
 	return dueDateColor.SprintFunc()(dueDateString)
+}
+
+func completedDateString(completedDate time.Time) string {
+	if (completedDate == time.Time{}) {
+		return ""
+	}
+	completedDate = completedDate.Local()
+	return completedDate.Format(ShortDateTimeFormat)
+}
+
+func CompletedDateFormat(completedDate time.Time) string {
+	return completedDateString(completedDate)
 }

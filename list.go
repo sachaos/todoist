@@ -20,10 +20,10 @@ func List(config Config, sync lib.Sync, c *cli.Context) error {
 
 	for _, item := range sync.Items {
 		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
-			IdFormat(item.ID),
+			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DueDateTime(), item.AllDay),
-			ProjectFormat(item.ProjectName(sync.Projects), projectColorHash),
+			ProjectFormat(item, sync.Projects, projectColorHash),
 			item.LabelsString(sync.Labels),
 			item.Content,
 		)

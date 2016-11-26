@@ -9,6 +9,7 @@ import (
 )
 
 func CompletedList(config Config, sync lib.Sync, c *cli.Context) error {
+	colorList := ColorList()
 	projectNames := []string{}
 	for _, project := range sync.Projects {
 		projectNames = append(projectNames, project.Name)
@@ -18,11 +19,15 @@ func CompletedList(config Config, sync lib.Sync, c *cli.Context) error {
 		return err
 	}
 
+	projectColorHash := GenerateColorHash(projectNames, colorList)
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
 	for _, item := range completed.Items {
-		fmt.Fprintf(w, "%s\n",
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\n",
+			IdFormat(item),
+			CompletedDateFormat(item.CompletedDateTime()),
+			ProjectFormat(item, sync.Projects, projectColorHash),
 			item.Content,
 		)
 	}
