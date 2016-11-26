@@ -15,12 +15,12 @@ func LoadConfig(filename string) (Config, error) {
 	var err error
 	var token string
 	config := Config{}
-	config, err = ParseConfigFile(default_config_path)
+	config, err = ParseConfigFile(filename)
 	if err != nil {
 		fmt.Printf("Input API Token: ")
 		fmt.Scan(&token)
 		config = Config{Token: token}
-		err = CreateConfigFile(default_config_path, config)
+		err = CreateConfigFile(filename, config)
 		if err != nil {
 			return config, CommandFailed
 		}
