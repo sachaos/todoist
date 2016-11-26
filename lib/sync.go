@@ -68,7 +68,7 @@ type Sync struct {
 
 func SyncAll(token string) (Sync, error) {
 	var sync Sync
-	body, err := SyncRequest(
+	body, err := APIRequest("sync",
 		url.Values{"token": {token}, "sync_token": {"*"}, "resource_types": {"[\"all\"]"}},
 	)
 	err = json.Unmarshal(body, &sync)

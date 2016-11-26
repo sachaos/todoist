@@ -74,6 +74,13 @@ func main() {
 			},
 		},
 		{
+			Name:  "completed-list",
+			Usage: "Shows all completed tasks (only premium user)",
+			Action: func(c *cli.Context) error {
+				return CompletedList(config, sync, c)
+			},
+		},
+		{
 			Name:    "add",
 			Aliases: []string{"a"},
 			Usage:   "Add task",
