@@ -7,14 +7,14 @@ import (
 )
 
 type BaseItem struct {
-	*HaveID
-	*HaveProjectID
+	HaveID
+	HaveProjectID
 	Content string `json:"content"`
 	UserID  int    `json:"user_id"`
 }
 
 type CompletedItem struct {
-	*BaseItem
+	BaseItem
 	CompletedDate string      `json:"completed_date"`
 	MetaData      interface{} `json:"meta_data"`
 	TaskID        int         `json:"task_id"`
@@ -28,7 +28,7 @@ func (item CompletedItem) CompletedDateTime() time.Time {
 type CompletedItems []CompletedItem
 
 type Item struct {
-	*BaseItem
+	BaseItem
 	AllDay         bool        `json:"all_day"`
 	AssignedByUID  int         `json:"assigned_by_uid"`
 	Checked        int         `json:"checked"`
