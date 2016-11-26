@@ -31,18 +31,19 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
    
 VERSION:
-   0.2.2
+   0.3.0
    
 COMMANDS:
-     list, l    Shows all tasks
-     add, a     Add task
-     modify, m  Modify task
-     close, c   Close task
-     labels     Shows all labels
-     projects   Shows all projects
-     karma      Shows karma
-     sync, s    Sync cache
-     help, h    Shows a list of commands or help for one command
+     list, l         Shows all tasks
+     completed-list  Shows all completed tasks (only premium user)
+     add, a          Add task
+     modify, m       Modify task
+     close, c        Close task
+     labels          Shows all labels
+     projects        Shows all projects
+     karma           Show karma
+     sync, s         Sync cache
+     help, h         Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --color        
@@ -83,7 +84,6 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 
 ## TODO
 
-* List completed tasks
 * Refactoring
 
 ## Author
