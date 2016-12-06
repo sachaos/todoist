@@ -155,6 +155,14 @@ func CloseItem(ids []int, token string) error {
 	return err
 }
 
+func DeleteItem(ids []int, token string) error {
+	commands := Commands{
+		NewCommand("item_delete", map[string]interface{}{"ids": ids}),
+	}
+	_, err := SyncRequest(commands.UrlValues(token))
+	return err
+}
+
 func MoveItem(item Item, to_project Project, token string) error {
 	commands := Commands{
 		NewCommand("item_move", item.MoveParam(to_project)),

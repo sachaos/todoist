@@ -118,6 +118,14 @@ func main() {
 			},
 		},
 		{
+			Name:    "delete",
+			Aliases: []string{"d"},
+			Usage:   "Delete task",
+			Action: func(c *cli.Context) error {
+				return Delete(config, c)
+			},
+		},
+		{
 			Name:  "labels",
 			Usage: "Shows all labels",
 			Action: func(c *cli.Context) error {
