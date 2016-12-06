@@ -78,7 +78,7 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 <C-x> t t: select task with peco
 <C-x> t p: select project with peco
 <C-x> t l: select labels with peco
-<C-x> t c: select task and close
+<C-x> t c: select task and close with peco
 ```
 
 
@@ -86,6 +86,8 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 
 * Refactoring
 * Nested tasks, projects
+* Delete task command
+* Restrict view option
 
 ## Author
 
