@@ -31,7 +31,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
    
 VERSION:
-   0.3.0
+   0.4.0
    
 COMMANDS:
      list, l         Shows all tasks
@@ -39,6 +39,7 @@ COMMANDS:
      add, a          Add task
      modify, m       Modify task
      close, c        Close task
+     delete, d       Delete task
      labels          Shows all labels
      projects        Shows all projects
      karma           Show karma
