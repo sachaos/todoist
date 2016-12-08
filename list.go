@@ -25,7 +25,7 @@ func List(config Config, sync lib.Sync, c *cli.Context) error {
 			DueDateFormat(item.DueDateTime(), item.AllDay),
 			ProjectFormat(item, sync.Projects, projectColorHash),
 			item.LabelsString(sync.Labels),
-			LinkFormat(item.Content),
+			LinkFormat(item),
 		)
 	}
 	w.Flush()

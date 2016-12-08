@@ -1,9 +1,14 @@
 package lib
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
+)
+
+var (
+	linkRegex = regexp.MustCompile(`\[(.*)\]\((.*)\)`)
 )
 
 type BaseItem struct {
@@ -65,6 +70,14 @@ func (items Items) FindByID(id int) (Item, error) {
 		}
 	}
 	return Item{}, FindFailed
+}
+
+func (item Item) GetContentTitle() string {
+	return linkRegex.ReplaceAllString(item.Content, "$1")
+}
+
+func (item Item) HasURL() bool {
+	return linkRegex.MatchString(item.Content)
 }
 
 func (item Item) AddParam() interface{} {

@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/fatih/color"
 	"github.com/sachaos/todoist/lib"
-	"regexp"
 	"strconv"
 	"time"
 )
@@ -43,13 +42,12 @@ func IdFormat(carrier lib.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
-func LinkFormat(content string) string {
-	c := color.New(color.Underline)
-	rep := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
-	if rep.MatchString(content) {
-		return c.SprintFunc()(rep.ReplaceAllString(content, "$1"))
+func LinkFormat(item lib.Item) string {
+	if item.HasURL() {
+		c := color.New(color.Underline)
+		return c.SprintFunc()(item.GetContentTitle())
 	}
-	return content
+	return item.GetContentTitle()
 }
 
 func PriorityFormat(priority int) string {
