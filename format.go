@@ -44,9 +44,10 @@ func IdFormat(carrier lib.IDCarrier) string {
 }
 
 func LinkFormat(content string) string {
+	c := color.New(color.Underline)
 	rep := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
 	if rep.MatchString(content) {
-		return rep.ReplaceAllString(content, "$1")
+		return c.SprintFunc()(rep.ReplaceAllString(content, "$1"))
 	}
 	return content
 }
