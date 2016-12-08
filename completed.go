@@ -28,7 +28,7 @@ func CompletedList(config Config, sync lib.Sync, c *cli.Context) error {
 			IdFormat(item),
 			CompletedDateFormat(item.CompletedDateTime()),
 			ProjectFormat(item, sync.Projects, projectColorHash),
-			item.Content,
+			ContentFormat(item),
 		)
 	}
 	w.Flush()

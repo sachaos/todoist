@@ -12,6 +12,10 @@ type IDCarrier interface {
 	GetID() int
 }
 
+type ContentCarrier interface {
+	GetContent() string
+}
+
 type ProjectIDCarrier interface {
 	GetProjectID() int
 	GetProjectName(Projects) string

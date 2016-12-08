@@ -18,6 +18,10 @@ type BaseItem struct {
 	UserID  int    `json:"user_id"`
 }
 
+func (bitem BaseItem) GetContent() string {
+	return bitem.Content
+}
+
 type CompletedItem struct {
 	BaseItem
 	CompletedDate string      `json:"completed_date"`
@@ -72,12 +76,12 @@ func (items Items) FindByID(id int) (Item, error) {
 	return Item{}, FindFailed
 }
 
-func (item Item) GetContentTitle() string {
-	return linkRegex.ReplaceAllString(item.Content, "$1")
+func GetContentTitle(item ContentCarrier) string {
+	return linkRegex.ReplaceAllString(item.GetContent(), "$1")
 }
 
-func (item Item) HasURL() bool {
-	return linkRegex.MatchString(item.Content)
+func HasURL(item ContentCarrier) bool {
+	return linkRegex.MatchString(item.GetContent())
 }
 
 func (item Item) AddParam() interface{} {

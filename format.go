@@ -42,12 +42,12 @@ func IdFormat(carrier lib.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
-func LinkFormat(item lib.Item) string {
-	if item.HasURL() {
+func ContentFormat(item lib.ContentCarrier) string {
+	if lib.HasURL(item) {
 		c := color.New(color.Underline)
-		return c.SprintFunc()(item.GetContentTitle())
+		return c.SprintFunc()(lib.GetContentTitle(item))
 	}
-	return item.GetContentTitle()
+	return lib.GetContentTitle(item)
 }
 
 func PriorityFormat(priority int) string {
