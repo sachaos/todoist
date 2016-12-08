@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/fatih/color"
 	"github.com/sachaos/todoist/lib"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -40,6 +41,14 @@ func GenerateColorHash(keys []string, colorList []color.Attribute) map[string]co
 
 func IdFormat(carrier lib.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
+}
+
+func LinkFormat(content string) string {
+	rep := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
+	if rep.MatchString(content) {
+		return rep.ReplaceAllString(content, "$1")
+	}
+	return content
 }
 
 func PriorityFormat(priority int) string {
