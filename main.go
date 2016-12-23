@@ -50,6 +50,10 @@ func main() {
 		Name:  "date, d",
 		Usage: "date string (today, 2016/10/02, 2016/09/02 18:00)",
 	}
+	browseFlag := cli.BoolFlag{
+		Name:  "browse, o",
+		Usage: "when contain URL, open it",
+	}
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -71,6 +75,16 @@ func main() {
 			Usage:   "Shows all tasks",
 			Action: func(c *cli.Context) error {
 				return List(config, sync, c)
+			},
+		},
+		{
+			Name:  "show",
+			Usage: "Show task detail",
+			Action: func(c *cli.Context) error {
+				return Show(config, sync, c)
+			},
+			Flags: []cli.Flag{
+				browseFlag,
 			},
 		},
 		{

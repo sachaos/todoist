@@ -80,6 +80,13 @@ func GetContentTitle(item ContentCarrier) string {
 	return linkRegex.ReplaceAllString(item.GetContent(), "$1")
 }
 
+func GetContentURL(item ContentCarrier) string {
+	if HasURL(item) {
+		return linkRegex.ReplaceAllString(item.GetContent(), "$2")
+	}
+	return ""
+}
+
 func HasURL(item ContentCarrier) bool {
 	return linkRegex.MatchString(item.GetContent())
 }
