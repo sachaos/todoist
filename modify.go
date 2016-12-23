@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"strconv"
 	"strings"
+
+	"github.com/sachaos/todoist/lib"
+	"github.com/spf13/viper"
+	"github.com/urfave/cli"
 )
 
-func Modify(config Config, sync lib.Sync, c *cli.Context) error {
+func Modify(sync lib.Sync, c *cli.Context) error {
 	item := lib.Item{}
 	next_project := lib.Project{}
 	if !c.Args().Present() {
@@ -43,17 +45,17 @@ func Modify(config Config, sync lib.Sync, c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err = lib.UpdateItem(item, config.Token)
+	err = lib.UpdateItem(item, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}
 
-	err = lib.MoveItem(item, next_project, config.Token)
+	err = lib.MoveItem(item, next_project, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}
 
-	_, err = Sync(config, c)
+	_, err = Sync(c)
 	if err != nil {
 		return CommandFailed
 	}

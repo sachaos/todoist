@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"strconv"
 	"strings"
+
+	"github.com/sachaos/todoist/lib"
+	"github.com/spf13/viper"
+	"github.com/urfave/cli"
 )
 
-func Add(config Config, sync lib.Sync, c *cli.Context) error {
+func Add(sync lib.Sync, c *cli.Context) error {
 	item := lib.Item{}
 	if !c.Args().Present() {
 		return CommandFailed
@@ -31,12 +33,12 @@ func Add(config Config, sync lib.Sync, c *cli.Context) error {
 
 	item.DateString = c.String("date")
 
-	err := lib.AddItem(item, config.Token)
+	err := lib.AddItem(item, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}
 
-	_, err = Sync(config, c)
+	_, err = Sync(c)
 	if err != nil {
 		return CommandFailed
 	}

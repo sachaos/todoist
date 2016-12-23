@@ -1,12 +1,14 @@
 package main
 
 import (
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"strconv"
+
+	"github.com/sachaos/todoist/lib"
+	"github.com/spf13/viper"
+	"github.com/urfave/cli"
 )
 
-func Delete(config Config, c *cli.Context) error {
+func Delete(c *cli.Context) error {
 	item_ids := []int{}
 	for _, arg := range c.Args() {
 		item_id, err := strconv.Atoi(arg)
@@ -20,12 +22,12 @@ func Delete(config Config, c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err := lib.DeleteItem(item_ids, config.Token)
+	err := lib.DeleteItem(item_ids, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}
 
-	_, err = Sync(config, c)
+	_, err = Sync(c)
 	if err != nil {
 		return CommandFailed
 	}

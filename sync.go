@@ -2,12 +2,13 @@ package main
 
 import (
 	"github.com/sachaos/todoist/lib"
+	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
-func Sync(config Config, c *cli.Context) (lib.Sync, error) {
+func Sync(c *cli.Context) (lib.Sync, error) {
 	var sync lib.Sync
-	sync, err := lib.SyncAll(config.Token)
+	sync, err := lib.SyncAll(viper.GetString("token"))
 	if err != nil {
 		return sync, CommandFailed
 	}

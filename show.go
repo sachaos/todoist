@@ -10,7 +10,7 @@ import (
 	"text/tabwriter"
 )
 
-func Show(config Config, sync lib.Sync, c *cli.Context) error {
+func Show(sync lib.Sync, c *cli.Context) error {
 	item_id, err := strconv.Atoi(c.Args().First())
 	if err != nil {
 		return err

@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"os"
 	"text/tabwriter"
+
+	"github.com/sachaos/todoist/lib"
+	"github.com/spf13/viper"
+	"github.com/urfave/cli"
 )
 
-func CompletedList(config Config, sync lib.Sync, c *cli.Context) error {
+func CompletedList(sync lib.Sync, c *cli.Context) error {
 	colorList := ColorList()
 	projectNames := []string{}
 	for _, project := range sync.Projects {
 		projectNames = append(projectNames, project.Name)
 	}
-	completed, err := lib.CompletedAll(config.Token)
+	completed, err := lib.CompletedAll(viper.GetString("token"))
 	if err != nil {
 		return err
 	}

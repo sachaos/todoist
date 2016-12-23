@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 )
 
-func Projects(config Config, sync lib.Sync, c *cli.Context) error {
+func Projects(sync lib.Sync, c *cli.Context) error {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
