@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 )
 
-func List(sync lib.Sync, c *cli.Context) error {
+func List(sync todoist.Sync, c *cli.Context) error {
 	colorList := ColorList()
 	projectNames := []string{}
 	for _, project := range sync.Projects {

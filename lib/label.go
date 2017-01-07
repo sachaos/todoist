@@ -1,4 +1,4 @@
-package lib
+package todoist
 
 type Label struct {
 	Color     int    `json:"color"`

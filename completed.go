@@ -10,13 +10,13 @@ import (
 	"github.com/urfave/cli"
 )
 
-func CompletedList(sync lib.Sync, c *cli.Context) error {
+func CompletedList(sync todoist.Sync, c *cli.Context) error {
 	colorList := ColorList()
 	projectNames := []string{}
 	for _, project := range sync.Projects {
 		projectNames = append(projectNames, project.Name)
 	}
-	completed, err := lib.CompletedAll(viper.GetString("token"))
+	completed, err := todoist.CompletedAll(viper.GetString("token"))
 	if err != nil {
 		return err
 	}

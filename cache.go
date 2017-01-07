@@ -7,19 +7,19 @@ import (
 	"os"
 )
 
-func LoadCache(filename string) (lib.Sync, error) {
+func LoadCache(filename string) (todoist.Sync, error) {
 	sync, err := ReadCache(filename)
 	if err != nil {
 		err = WriteCache(default_cache_path, sync)
 		if err != nil {
-			return lib.Sync{}, CommandFailed
+			return todoist.Sync{}, CommandFailed
 		}
 	}
 	return sync, nil
 }
 
-func ReadCache(filename string) (lib.Sync, error) {
-	var s lib.Sync
+func ReadCache(filename string) (todoist.Sync, error) {
+	var s todoist.Sync
 	jsonString, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return s, CommandFailed
@@ -31,7 +31,7 @@ func ReadCache(filename string) (lib.Sync, error) {
 	return s, nil
 }
 
-func WriteCache(filename string, sync lib.Sync) error {
+func WriteCache(filename string, sync todoist.Sync) error {
 	buf, err := json.MarshalIndent(sync, "", "  ")
 	if err != nil {
 		return CommandFailed

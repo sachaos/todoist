@@ -22,7 +22,7 @@ func Delete(c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err := lib.DeleteItem(item_ids, viper.GetString("token"))
+	err := todoist.DeleteItem(item_ids, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func Karma(sync lib.Sync, c *cli.Context) error {
+func Karma(sync todoist.Sync, c *cli.Context) error {
 	fmt.Println(sync.User.Karma)
 	return nil
 }

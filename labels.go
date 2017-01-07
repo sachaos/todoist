@@ -8,7 +8,7 @@ import (
 	"text/tabwriter"
 )
 
-func Labels(sync lib.Sync, c *cli.Context) error {
+func Labels(sync todoist.Sync, c *cli.Context) error {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 

@@ -38,16 +38,16 @@ func GenerateColorHash(keys []string, colorList []color.Attribute) map[string]co
 	return colorHash
 }
 
-func IdFormat(carrier lib.IDCarrier) string {
+func IdFormat(carrier todoist.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
-func ContentFormat(item lib.ContentCarrier) string {
-	if lib.HasURL(item) {
+func ContentFormat(item todoist.ContentCarrier) string {
+	if todoist.HasURL(item) {
 		c := color.New(color.Underline)
-		return c.SprintFunc()(lib.GetContentTitle(item))
+		return c.SprintFunc()(todoist.GetContentTitle(item))
 	}
-	return lib.GetContentTitle(item)
+	return todoist.GetContentTitle(item)
 }
 
 func PriorityFormat(priority int) string {
@@ -65,7 +65,7 @@ func PriorityFormat(priority int) string {
 	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority))
 }
 
-func ProjectFormat(carrier lib.ProjectIDCarrier, projects lib.Projects, projectColorHash map[string]color.Attribute) string {
+func ProjectFormat(carrier todoist.ProjectIDCarrier, projects todoist.Projects, projectColorHash map[string]color.Attribute) string {
 	projectName := carrier.GetProjectName(projects)
 	return color.New(projectColorHash[projectName]).SprintFunc()("#" + projectName)
 }

@@ -1,4 +1,4 @@
-package lib
+package todoist
 
 type HaveID struct {
 	ID int `json:"id"`

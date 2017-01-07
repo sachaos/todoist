@@ -1,4 +1,4 @@
-package lib
+package todoist
 
 type Project struct {
 	Collapsed    int         `json:"collapsed"`

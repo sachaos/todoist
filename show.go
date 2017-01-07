@@ -10,7 +10,7 @@ import (
 	"text/tabwriter"
 )
 
-func Show(sync lib.Sync, c *cli.Context) error {
+func Show(sync todoist.Sync, c *cli.Context) error {
 	item_id, err := strconv.Atoi(c.Args().First())
 	if err != nil {
 		return err
@@ -36,10 +36,10 @@ func Show(sync lib.Sync, c *cli.Context) error {
 	fmt.Fprintf(w, "Labels\t%s\n", item.LabelsString(sync.Labels))
 	fmt.Fprintf(w, "Priority\t%s\n", PriorityFormat(item.Priority))
 	fmt.Fprintf(w, "DueDate\t%s\n", DueDateFormat(item.DueDateTime(), item.AllDay))
-	if lib.HasURL(item) {
-		fmt.Fprintf(w, "URL\t%s\n", lib.GetContentURL(item))
+	if todoist.HasURL(item) {
+		fmt.Fprintf(w, "URL\t%s\n", todoist.GetContentURL(item))
 		if c.Bool("browse") {
-			browser.OpenURL(lib.GetContentURL(item))
+			browser.OpenURL(todoist.GetContentURL(item))
 		}
 	}
 

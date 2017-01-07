@@ -1,4 +1,4 @@
-package lib
+package todoist
 
 type User struct {
 	AutoReminder      int         `json:"auto_reminder"`

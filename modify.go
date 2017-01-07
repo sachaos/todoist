@@ -9,9 +9,9 @@ import (
 	"github.com/urfave/cli"
 )
 
-func Modify(sync lib.Sync, c *cli.Context) error {
-	item := lib.Item{}
-	next_project := lib.Project{}
+func Modify(sync todoist.Sync, c *cli.Context) error {
+	item := todoist.Item{}
+	next_project := todoist.Project{}
 	if !c.Args().Present() {
 		return CommandFailed
 	}
@@ -45,12 +45,12 @@ func Modify(sync lib.Sync, c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err = lib.UpdateItem(item, viper.GetString("token"))
+	err = todoist.UpdateItem(item, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}
 
-	err = lib.MoveItem(item, next_project, viper.GetString("token"))
+	err = todoist.MoveItem(item, next_project, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}

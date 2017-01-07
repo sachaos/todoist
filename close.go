@@ -22,7 +22,7 @@ func Close(c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err := lib.CloseItem(item_ids, viper.GetString("token"))
+	err := todoist.CloseItem(item_ids, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}

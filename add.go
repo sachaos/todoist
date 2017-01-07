@@ -9,8 +9,8 @@ import (
 	"github.com/urfave/cli"
 )
 
-func Add(sync lib.Sync, c *cli.Context) error {
-	item := lib.Item{}
+func Add(sync todoist.Sync, c *cli.Context) error {
+	item := todoist.Item{}
 	if !c.Args().Present() {
 		return CommandFailed
 	}
@@ -33,7 +33,7 @@ func Add(sync lib.Sync, c *cli.Context) error {
 
 	item.DateString = c.String("date")
 
-	err := lib.AddItem(item, viper.GetString("token"))
+	err := todoist.AddItem(item, viper.GetString("token"))
 	if err != nil {
 		return CommandFailed
 	}

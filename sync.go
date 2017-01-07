@@ -6,9 +6,9 @@ import (
 	"github.com/urfave/cli"
 )
 
-func Sync(c *cli.Context) (lib.Sync, error) {
-	var sync lib.Sync
-	sync, err := lib.SyncAll(viper.GetString("token"))
+func Sync(c *cli.Context) (todoist.Sync, error) {
+	var sync todoist.Sync
+	sync, err := todoist.SyncAll(viper.GetString("token"))
 	if err != nil {
 		return sync, CommandFailed
 	}
