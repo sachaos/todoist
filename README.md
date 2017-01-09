@@ -64,13 +64,12 @@ $ go get github.com/sachaos/todoist
 When you run `todoist` first time, you will be asked your Todoist API token.
 Please input Todoist API token and register it.
 
-### 
-
 ### Use with peco
 
 **RECOMMENDED**
 
 install *peco* and load `todoist_functions.sh` on your `.zshrc`, like below.
+
 fish version is here. [ka2n/fish-peco_todoist](https://github.com/ka2n/fish-peco_todoist) Thanks @ka2n!
 
 ```
