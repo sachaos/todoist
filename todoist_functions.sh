@@ -62,3 +62,11 @@ function peco-todoist-delete() {
 }
 zle -N peco-todoist-delete
 bindkey "^xtk" peco-todoist-delete
+
+# todoist open
+function peco-todoist-open() {
+    local SELECTED_ITEMS="$(eval ${select_items_command})"
+    todoist-exec-with-select-task "show --open" $SELECTED_ITEM
+}
+zle -N peco-todoist-open
+bindkey "^xto" peco-todoist-open
