@@ -22,17 +22,17 @@ type Sync struct {
 	Items             Items  `json:"items"`
 	Labels            Labels `json:"labels"`
 	LiveNotifications []struct {
-		CompletedTasks   int    `json:"completed_tasks"`
-		Created          int    `json:"created"`
-		DateReached      int    `json:"date_reached"`
-		ID               int    `json:"id"`
-		IsDeleted        int    `json:"is_deleted"`
-		KarmaLevel       int    `json:"karma_level"`
-		NotificationKey  string `json:"notification_key"`
-		NotificationType string `json:"notification_type"`
-		PromoImg         string `json:"promo_img"`
-		SeqNo            int64  `json:"seq_no"`
-		TopProcent       int    `json:"top_procent"`
+		CompletedTasks   int     `json:"completed_tasks"`
+		Created          int     `json:"created"`
+		DateReached      int     `json:"date_reached"`
+		ID               int     `json:"id"`
+		IsDeleted        int     `json:"is_deleted"`
+		KarmaLevel       int     `json:"karma_level"`
+		NotificationKey  string  `json:"notification_key"`
+		NotificationType string  `json:"notification_type"`
+		PromoImg         string  `json:"promo_img"`
+		SeqNo            int64   `json:"seq_no"`
+		TopProcent       float32 `json:"top_procent"`
 	} `json:"live_notifications"`
 	LiveNotificationsLastReadID int           `json:"live_notifications_last_read_id"`
 	Locations                   []interface{} `json:"locations"`
