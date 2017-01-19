@@ -1,13 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/pkg/browser"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
-	"os"
 	"strconv"
-	"text/tabwriter"
 )
 
 func Show(sync todoist.Sync, c *cli.Context) error {
@@ -27,22 +24,26 @@ func Show(sync todoist.Sync, c *cli.Context) error {
 		projectNames = append(projectNames, project.Name)
 	}
 	projectColorHash := GenerateColorHash(projectNames, colorList)
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
-	fmt.Fprintf(w, "ID\t%s\n", IdFormat(item))
-	fmt.Fprintf(w, "Content\t%s\n", ContentFormat(item))
-	fmt.Fprintf(w, "Project\t%s\n", ProjectFormat(item, sync.Projects, projectColorHash))
-	fmt.Fprintf(w, "Labels\t%s\n", item.LabelsString(sync.Labels))
-	fmt.Fprintf(w, "Priority\t%s\n", PriorityFormat(item.Priority))
-	fmt.Fprintf(w, "DueDate\t%s\n", DueDateFormat(item.DueDateTime(), item.AllDay))
+	records := [][]string{
+		[]string{"ID", IdFormat(item)},
+		[]string{"Content", ContentFormat(item)},
+		[]string{"Project", ProjectFormat(item, sync.Projects, projectColorHash)},
+		[]string{"Labels", item.LabelsString(sync.Labels)},
+		[]string{"Priority", PriorityFormat(item.Priority)},
+		[]string{"DueDate", DueDateFormat(item.DueDateTime(), item.AllDay)},
+		[]string{"URL", todoist.GetContentURL(item)},
+	}
+	defer writer.Flush()
+
+	for _, record := range records {
+		writer.Write(record)
+	}
+
 	if todoist.HasURL(item) {
-		fmt.Fprintf(w, "URL\t%s\n", todoist.GetContentURL(item))
 		if c.Bool("browse") {
 			browser.OpenURL(todoist.GetContentURL(item))
 		}
 	}
-
-	w.Flush()
 	return nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"encoding/csv"
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
@@ -18,6 +19,7 @@ var (
 	configPath         = os.Getenv("HOME")
 	default_cache_path = os.Getenv("HOME") + "/.todoist.cache.json"
 	CommandFailed      = errors.New("Command Failed")
+	writer             Writer
 )
 
 const (
@@ -90,11 +92,20 @@ func main() {
 		cli.BoolFlag{
 			Name: "color",
 		},
+		cli.BoolFlag{
+			Name: "csv",
+		},
 	}
 
 	app.Before = func(c *cli.Context) error {
 		if !c.Bool("color") {
 			color.NoColor = true
+		}
+
+		if c.GlobalBool("csv") {
+			writer = csv.NewWriter(os.Stdout)
+		} else {
+			writer = NewTSVWriter(os.Stdout)
 		}
 		return nil
 	}

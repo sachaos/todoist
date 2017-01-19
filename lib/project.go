@@ -1,10 +1,10 @@
 package todoist
 
 type Project struct {
+	HaveID
 	Collapsed    int         `json:"collapsed"`
 	Color        int         `json:"color"`
 	HasMoreNotes bool        `json:"has_more_notes"`
-	ID           int         `json:"id"`
 	InboxProject bool        `json:"inbox_project"`
 	Indent       int         `json:"indent"`
 	IsArchived   int         `json:"is_archived"`

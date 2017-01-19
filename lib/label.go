@@ -1,8 +1,8 @@
 package todoist
 
 type Label struct {
+	HaveID
 	Color     int    `json:"color"`
-	ID        int    `json:"id"`
 	IsDeleted int    `json:"is_deleted"`
 	ItemOrder int    `json:"item_order"`
 	Name      string `json:"name"`

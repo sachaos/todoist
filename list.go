@@ -1,11 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
-	"os"
-	"text/tabwriter"
 )
 
 func List(sync todoist.Sync, c *cli.Context) error {
@@ -15,19 +12,19 @@ func List(sync todoist.Sync, c *cli.Context) error {
 		projectNames = append(projectNames, project.Name)
 	}
 	projectColorHash := GenerateColorHash(projectNames, colorList)
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
+
+	defer writer.Flush()
 
 	for _, item := range sync.Items {
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n",
+		writer.Write([]string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DueDateTime(), item.AllDay),
 			ProjectFormat(item, sync.Projects, projectColorHash),
 			item.LabelsString(sync.Labels),
 			ContentFormat(item),
-		)
+		})
 	}
-	w.Flush()
+
 	return nil
 }

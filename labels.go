@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 	"os"
@@ -12,9 +11,11 @@ func Labels(sync todoist.Sync, c *cli.Context) error {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
+	defer writer.Flush()
+
 	for _, label := range sync.Labels {
-		fmt.Fprintf(w, "%d\t%s\n", label.ID, "@"+label.Name)
+		writer.Write([]string{IdFormat(label), "@" + label.Name})
 	}
-	w.Flush()
+
 	return nil
 }
