@@ -31,7 +31,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.5.3
+   0.6.0
 
 COMMANDS:
      list, l         Shows all tasks
@@ -49,6 +49,7 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --color
+   --csv
    --help, -h     show help
    --version, -v  print the version
 ```
