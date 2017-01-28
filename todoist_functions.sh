@@ -39,6 +39,14 @@ function peco-todoist-labels () {
 zle -N peco-todoist-labels
 bindkey "^xtl" peco-todoist-labels
 
+# todoist select date
+function peco-todoist-date () {
+    local SELECTED_DATE="$(for ((i = 0; i <= 30; i++)); do date -v+${i}d '+%d/%m/%Y %a' ;done | peco | cut -d ' ' -f 1)"
+    insert-in-buffer "'${SELECTED_DATE}'" "-d"
+}
+zle -N peco-todoist-date
+bindkey "^xtd" peco-todoist-date
+
 function todoist-exec-with-select-task () {
     if [ -n "$2" ]; then
         BUFFER="todoist $1 $(echo "$2" | tr '\n' ' ')"
