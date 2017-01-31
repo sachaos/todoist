@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/fatih/color"
 	"github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -18,17 +20,17 @@ func ColorList() []color.Attribute {
 	}
 }
 
-func GenerateColorHash(keys []string, colorList []color.Attribute) map[string]color.Attribute {
-	colorHash := map[string]color.Attribute{}
+func GenerateColorHash(ids []int, colorList []color.Attribute) map[int]color.Attribute {
+	colorHash := map[int]color.Attribute{}
 	colorNum := 0
-	for _, key := range keys {
+	for _, id := range ids {
 		var colorAttribute color.Attribute
-		value, ok := colorHash[key]
+		value, ok := colorHash[id]
 		if ok {
 			colorAttribute = value
 		} else {
 			colorAttribute = colorList[colorNum]
-			colorHash[key] = colorAttribute
+			colorHash[id] = colorAttribute
 			colorNum = colorNum + 1
 			if colorNum == len(colorList) {
 				colorNum = 0
@@ -42,10 +44,21 @@ func IdFormat(carrier todoist.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
+func ContentPrefix(node *Node, c *cli.Context) (prefix string) {
+	if c.GlobalBool("indent") {
+		prefix = prefix + strings.Repeat("    ", node.Value.GetIndent())
+	}
+	if c.GlobalBool("namespace") {
+		for _, pnode := range node.Parents() {
+			prefix = prefix + pnode.Value.(todoist.ContentCarrier).GetContent() + ":"
+		}
+	}
+	return
+}
+
 func ContentFormat(item todoist.ContentCarrier) string {
 	if todoist.HasURL(item) {
-		c := color.New(color.Underline)
-		return c.SprintFunc()(todoist.GetContentTitle(item))
+		return color.New(color.Underline).SprintFunc()(todoist.GetContentTitle(item))
 	}
 	return todoist.GetContentTitle(item)
 }
@@ -65,9 +78,17 @@ func PriorityFormat(priority int) string {
 	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority))
 }
 
-func ProjectFormat(carrier todoist.ProjectIDCarrier, projects todoist.Projects, projectColorHash map[string]color.Attribute) string {
-	projectName := carrier.GetProjectName(projects)
-	return color.New(projectColorHash[projectName]).SprintFunc()("#" + projectName)
+func ProjectFormat(id int, projectTree *Tree, projectColorHash map[int]color.Attribute, c *cli.Context) string {
+	var prefix string
+	var namePrefix string
+	node := projectTree.SearchById(id)
+	projectName := node.Value.(todoist.Project).Name
+	if c.GlobalBool("project-namespace") {
+		for _, pnode := range node.Parents() {
+			namePrefix = namePrefix + pnode.Value.(todoist.Project).Name + ":"
+		}
+	}
+	return prefix + color.New(projectColorHash[node.Value.GetID()]).SprintFunc()("#"+namePrefix+projectName)
 }
 
 func dueDateString(dueDate time.Time, allDay bool) string {

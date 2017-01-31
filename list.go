@@ -1,28 +1,42 @@
 package main
 
 import (
+	"container/list"
+
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 )
 
 func List(sync todoist.Sync, c *cli.Context) error {
 	colorList := ColorList()
-	projectNames := []string{}
+	projectTree := ProjectTree(sync)
+	var projectIds []int
 	for _, project := range sync.Projects {
-		projectNames = append(projectNames, project.Name)
+		projectIds = append(projectIds, project.GetID())
 	}
-	projectColorHash := GenerateColorHash(projectNames, colorList)
+	projectColorHash := GenerateColorHash(projectIds, colorList)
+
+	itemQue := list.New()
+	for _, item := range sync.Items {
+		itemQue.PushBack(item)
+	}
+
+	tree, err := NewTree(itemQue)
+	if err != nil {
+		return err
+	}
 
 	defer writer.Flush()
 
-	for _, item := range sync.Items {
+	for _, node := range tree.Traverse() {
+		item := node.Value.(todoist.Item)
 		writer.Write([]string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DueDateTime(), item.AllDay),
-			ProjectFormat(item, sync.Projects, projectColorHash),
+			ProjectFormat(item.ProjectID, projectTree, projectColorHash, c),
 			item.LabelsString(sync.Labels),
-			ContentFormat(item),
+			ContentPrefix(node, c) + ContentFormat(item),
 		})
 	}
 

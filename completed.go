@@ -8,16 +8,17 @@ import (
 
 func CompletedList(sync todoist.Sync, c *cli.Context) error {
 	colorList := ColorList()
-	projectNames := []string{}
+	projectTree := ProjectTree(sync)
+	var projectIds []int
 	for _, project := range sync.Projects {
-		projectNames = append(projectNames, project.Name)
+		projectIds = append(projectIds, project.GetID())
 	}
+	projectColorHash := GenerateColorHash(projectIds, colorList)
+
 	completed, err := todoist.CompletedAll(viper.GetString("token"))
 	if err != nil {
 		return err
 	}
-
-	projectColorHash := GenerateColorHash(projectNames, colorList)
 
 	defer writer.Flush()
 
@@ -25,7 +26,7 @@ func CompletedList(sync todoist.Sync, c *cli.Context) error {
 		writer.Write([]string{
 			IdFormat(item),
 			CompletedDateFormat(item.CompletedDateTime()),
-			ProjectFormat(item, sync.Projects, projectColorHash),
+			ProjectFormat(item.ProjectID, projectTree, projectColorHash, c),
 			ContentFormat(item),
 		})
 	}

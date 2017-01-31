@@ -95,6 +95,15 @@ func main() {
 		cli.BoolFlag{
 			Name: "csv",
 		},
+		cli.BoolFlag{
+			Name: "namespace",
+		},
+		cli.BoolFlag{
+			Name: "indent",
+		},
+		cli.BoolFlag{
+			Name: "project-namespace",
+		},
 	}
 
 	app.Before = func(c *cli.Context) error {

@@ -38,6 +38,8 @@ type CompletedItems []CompletedItem
 
 type Item struct {
 	BaseItem
+	HaveParentID
+	HaveIndent
 	AllDay         bool        `json:"all_day"`
 	AssignedByUID  int         `json:"assigned_by_uid"`
 	Checked        int         `json:"checked"`
@@ -49,12 +51,10 @@ type Item struct {
 	DueDateUtc     string      `json:"due_date_utc"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	InHistory      int         `json:"in_history"`
-	Indent         int         `json:"indent"`
 	IsArchived     int         `json:"is_archived"`
 	IsDeleted      int         `json:"is_deleted"`
 	ItemOrder      int         `json:"item_order"`
 	LabelIDs       []int       `json:"labels"`
-	ParentID       interface{} `json:"parent_id"`
 	Priority       int         `json:"priority"`
 	ResponsibleUID interface{} `json:"responsible_uid"`
 	SyncID         interface{} `json:"sync_id"`

@@ -19,16 +19,17 @@ func Show(sync todoist.Sync, c *cli.Context) error {
 	}
 
 	colorList := ColorList()
-	projectNames := []string{}
+	projectTree := ProjectTree(sync)
+	var projectIds []int
 	for _, project := range sync.Projects {
-		projectNames = append(projectNames, project.Name)
+		projectIds = append(projectIds, project.GetID())
 	}
-	projectColorHash := GenerateColorHash(projectNames, colorList)
+	projectColorHash := GenerateColorHash(projectIds, colorList)
 
 	records := [][]string{
 		[]string{"ID", IdFormat(item)},
 		[]string{"Content", ContentFormat(item)},
-		[]string{"Project", ProjectFormat(item, sync.Projects, projectColorHash)},
+		[]string{"Project", ProjectFormat(item.ProjectID, projectTree, projectColorHash, c)},
 		[]string{"Labels", item.LabelsString(sync.Labels)},
 		[]string{"Priority", PriorityFormat(item.Priority)},
 		[]string{"DueDate", DueDateFormat(item.DueDateTime(), item.AllDay)},
