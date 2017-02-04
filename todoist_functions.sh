@@ -1,4 +1,4 @@
-select_items_command="todoist list | peco | cut -d ' ' -f 1 | tr '\n' ' '"
+select_items_command="todoist --namespace --project-namespace list | peco | cut -d ' ' -f 1 | tr '\n' ' '"
 
 function insert-in-buffer () {
     if [ -n "$1" ]; then
@@ -25,7 +25,7 @@ bindkey "^xtt" peco-todoist-item
 
 # todoist find project
 function peco-todoist-project () {
-    local SELECTED_PROJECT="$(todoist projects | peco | head -n1 | cut -d ' ' -f 1)"
+    local SELECTED_PROJECT="$(todoist --project-namespace projects | peco | head -n1 | cut -d ' ' -f 1)"
     insert-in-buffer "${SELECTED_PROJECT}" "-P"
 }
 zle -N peco-todoist-project
