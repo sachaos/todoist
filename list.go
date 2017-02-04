@@ -30,6 +30,9 @@ func List(sync todoist.Sync, c *cli.Context) error {
 
 	for _, node := range tree.Traverse() {
 		item := node.Value.(todoist.Item)
+		if item.Checked == 1 {
+			continue
+		}
 		writer.Write([]string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
