@@ -31,7 +31,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.6.0
+   0.7.0
 
 COMMANDS:
      list, l         Shows all tasks
@@ -48,10 +48,13 @@ COMMANDS:
      help, h         Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --color
-   --csv
-   --help, -h     show help
-   --version, -v  print the version
+   --color              colorize output
+   --csv                output in CSV format
+   --namespace          display parent task like namespace
+   --indent             display children task with indent
+   --project-namespace  display parent project like namespace
+   --help, -h           show help
+   --version, -v        print the version
 ```
 
 ## Install
