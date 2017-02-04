@@ -90,19 +90,24 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name: "color",
+			Name:  "color",
+			Usage: "colorize output",
 		},
 		cli.BoolFlag{
-			Name: "csv",
+			Name:  "csv",
+			Usage: "output in CSV format",
 		},
 		cli.BoolFlag{
-			Name: "namespace",
+			Name:  "namespace",
+			Usage: "display parent task like namespace",
 		},
 		cli.BoolFlag{
-			Name: "indent",
+			Name:  "indent",
+			Usage: "display children task with indent",
 		},
 		cli.BoolFlag{
-			Name: "project-namespace",
+			Name:  "project-namespace",
+			Usage: "display parent project like namespace",
 		},
 	}
 
