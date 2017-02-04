@@ -87,12 +87,12 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 <C-x> t p: select project with peco
 <C-x> t l: select labels with peco
 <C-x> t c: select task and close with peco
+<C-x> t d: select date
 ```
 
 ## TODO
 
 * Refactoring
-* Nested tasks, projects
 * Restrict view option
 
 ## Author
