@@ -88,6 +88,7 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 <C-x> t l: select labels with peco
 <C-x> t c: select task and close with peco
 <C-x> t d: select date
+<C-x> t o: select task, and open it with browser when has url
 ```
 
 ## TODO
