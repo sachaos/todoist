@@ -2,6 +2,7 @@ package main
 
 import (
 	"container/list"
+	"sort"
 
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
@@ -17,6 +18,7 @@ func List(sync todoist.Sync, c *cli.Context) error {
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
 	itemQue := list.New()
+	sort.Sort(sync.Items)
 	for _, item := range sync.Items {
 		itemQue.PushBack(item)
 	}
