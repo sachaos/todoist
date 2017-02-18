@@ -8,7 +8,6 @@ import (
 
 func CompletedList(sync todoist.Sync, c *cli.Context) error {
 	colorList := ColorList()
-	projectTree := ProjectTree(sync)
 	var projectIds []int
 	for _, project := range sync.Projects {
 		projectIds = append(projectIds, project.GetID())
@@ -26,7 +25,7 @@ func CompletedList(sync todoist.Sync, c *cli.Context) error {
 		writer.Write([]string{
 			IdFormat(item),
 			CompletedDateFormat(item.CompletedDateTime()),
-			ProjectFormat(item.ProjectID, projectTree, projectColorHash, c),
+			ProjectFormat(item.ProjectID, sync.Projects, projectColorHash, c),
 			ContentFormat(item),
 		})
 	}

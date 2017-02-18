@@ -28,6 +28,7 @@ func ReadCache(filename string) (todoist.Sync, error) {
 	if err != nil {
 		return s, CommandFailed
 	}
+	s.ConstructItemOrder()
 	return s, nil
 }
 

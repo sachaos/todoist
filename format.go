@@ -78,17 +78,25 @@ func PriorityFormat(priority int) string {
 	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority))
 }
 
-func ProjectFormat(id int, projectTree *Tree, projectColorHash map[int]color.Attribute, c *cli.Context) string {
+func ProjectFormat(id int, projects todoist.Projects, projectColorHash map[int]color.Attribute, c *cli.Context) string {
 	var prefix string
 	var namePrefix string
-	node := projectTree.SearchById(id)
-	projectName := node.Value.(todoist.Project).Name
+	project, err := projects.SearchByID(id)
+	if err != nil {
+		panic(err)
+	}
+
+	projectName := project.Name
 	if c.GlobalBool("project-namespace") {
-		for _, pnode := range node.Parents() {
-			namePrefix = namePrefix + pnode.Value.(todoist.Project).Name + ":"
+		parentProjects, err := projects.SearchParents(project)
+		if err != nil {
+			panic(err)
+		}
+		for _, project := range parentProjects {
+			namePrefix = namePrefix + project.Name + ":"
 		}
 	}
-	return prefix + color.New(projectColorHash[node.Value.GetID()]).SprintFunc()("#"+namePrefix+projectName)
+	return prefix + color.New(projectColorHash[project.ID]).SprintFunc()("#"+namePrefix+projectName)
 }
 
 func dueDateString(dueDate time.Time, allDay bool) string {

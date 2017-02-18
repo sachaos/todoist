@@ -64,7 +64,7 @@ type Items []Item
 
 func (a Items) Len() int           { return len(a) }
 func (a Items) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a Items) Less(i, j int) bool { return a[i].ItemOrder < a[j].ItemOrder }
+func (a Items) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (item Item) DueDateTime() time.Time {
 	t, _ := time.Parse(DateFormat, item.DueDateUtc)

@@ -3,6 +3,7 @@ package todoist
 import (
 	"encoding/json"
 	"net/url"
+	"sort"
 )
 
 type Sync struct {
@@ -10,6 +11,8 @@ type Sync struct {
 	Collaborators      []interface{} `json:"collaborators"`
 	DayOrders          interface{}   `json:"day_orders"`
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
+	ItemOrders         ItemOrders    `json:"-"`
+	ProjectOrders      ItemOrders    `json:"-"`
 	Filters            []struct {
 		Color     int    `json:"color"`
 		ID        int    `json:"id"`
@@ -66,6 +69,24 @@ type Sync struct {
 	User          User     `json:"user"`
 }
 
+func (sync *Sync) ConstructItemOrder() {
+	sort.Sort(sync.Projects)
+	sort.Sort(sync.Items)
+
+	sync.ItemOrders = make(ItemOrders, len(sync.Items))
+	for i := 0; i < len(sync.Items); i++ {
+		item := sync.Items[i]
+		sync.ItemOrders[i] = ItemOrder{Num: item.ItemOrder, ID: item.ID, Data: item}
+	}
+	sort.Sort(sync.ItemOrders)
+	sync.ProjectOrders = make(ItemOrders, len(sync.Projects))
+	for i := 0; i < len(sync.Projects); i++ {
+		project := sync.Projects[i]
+		sync.ProjectOrders[i] = ItemOrder{Num: project.ItemOrder, ID: project.ID, Data: project}
+	}
+	sort.Sort(sync.ProjectOrders)
+}
+
 func SyncAll(token string) (Sync, error) {
 	var sync Sync
 	body, err := APIRequest("sync",
@@ -75,5 +96,6 @@ func SyncAll(token string) (Sync, error) {
 	if err != nil {
 		return Sync{}, err
 	}
+	sync.ConstructItemOrder()
 	return sync, nil
 }
