@@ -124,6 +124,11 @@ func main() {
 		return nil
 	}
 
+	app.Action = func(c *cli.Context) error {
+		TUI(sync, c)
+		return nil
+	}
+
 	app.Commands = []cli.Command{
 		{
 			Name:    "list",

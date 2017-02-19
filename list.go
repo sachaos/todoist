@@ -5,7 +5,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func List(sync todoist.Sync, c *cli.Context) error {
+func makeList(sync todoist.Sync, c *cli.Context) [][]string {
 	colorList := ColorList()
 	var projectIds []int
 	for _, project := range sync.Projects {
@@ -28,6 +28,11 @@ func List(sync todoist.Sync, c *cli.Context) error {
 			ContentPrefix(sync.Items, item, c) + ContentFormat(item),
 		})
 	}
+	return itemList
+}
+
+func List(sync todoist.Sync, c *cli.Context) error {
+	itemList := makeList(sync, c)
 
 	defer writer.Flush()
 
