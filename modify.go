@@ -10,7 +10,6 @@ import (
 )
 
 func Modify(sync todoist.Sync, c *cli.Context) error {
-	item := todoist.Item{}
 	next_project := todoist.Project{}
 	if !c.Args().Present() {
 		return CommandFailed
@@ -18,7 +17,8 @@ func Modify(sync todoist.Sync, c *cli.Context) error {
 
 	var err error
 	item_id, err := strconv.Atoi(c.Args().First())
-	item, err = sync.Items.FindByID(item_id)
+	idCarrier, err := todoist.SearchByID(sync.Items, item_id)
+	item := idCarrier.(todoist.Item)
 	if err != nil {
 		return err
 	}

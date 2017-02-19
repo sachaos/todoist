@@ -13,7 +13,8 @@ func Show(sync todoist.Sync, c *cli.Context) error {
 		return err
 	}
 
-	item, err := sync.Items.FindByID(item_id)
+	idCarrier, err := todoist.SearchByID(sync.Items, item_id)
+	item := idCarrier.(todoist.Item)
 	if err != nil {
 		return err
 	}

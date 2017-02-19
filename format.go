@@ -44,13 +44,17 @@ func IdFormat(carrier todoist.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
-func ContentPrefix(node *Node, c *cli.Context) (prefix string) {
+func ContentPrefix(items todoist.Items, item todoist.Item, c *cli.Context) (prefix string) {
 	if c.GlobalBool("indent") {
-		prefix = prefix + strings.Repeat("    ", node.Value.GetIndent())
+		prefix = prefix + strings.Repeat("    ", item.GetIndent())
 	}
 	if c.GlobalBool("namespace") {
-		for _, pnode := range node.Parents() {
-			prefix = prefix + pnode.Value.(todoist.ContentCarrier).GetContent() + ":"
+		parents, err := todoist.SearchParents(items, item)
+		if err != nil {
+			panic(err)
+		}
+		for _, parent := range parents {
+			prefix = prefix + parent.(todoist.ContentCarrier).GetContent() + ":"
 		}
 	}
 	return

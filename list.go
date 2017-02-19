@@ -25,7 +25,7 @@ func List(sync todoist.Sync, c *cli.Context) error {
 			DueDateFormat(item.DueDateTime(), item.AllDay),
 			ProjectFormat(item.ProjectID, sync.Projects, projectColorHash, c),
 			item.LabelsString(sync.Labels),
-			ContentFormat(item),
+			ContentPrefix(sync.Items, item, c) + ContentFormat(item),
 		})
 	}
 

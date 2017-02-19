@@ -66,18 +66,11 @@ func (a Items) Len() int           { return len(a) }
 func (a Items) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a Items) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
+func (a Items) At(i int) IDCarrier { return a[i] }
+
 func (item Item) DueDateTime() time.Time {
 	t, _ := time.Parse(DateFormat, item.DueDateUtc)
 	return t
-}
-
-func (items Items) FindByID(id int) (Item, error) {
-	for _, item := range items {
-		if item.ID == id {
-			return item, nil
-		}
-	}
-	return Item{}, FindFailed
 }
 
 func GetContentTitle(item ContentCarrier) string {
@@ -152,11 +145,11 @@ func (item Item) MoveParam(to_project Project) interface{} {
 func (item Item) LabelsString(labels Labels) string {
 	label_names := make([]string, 0)
 	for _, label_id := range item.LabelIDs {
-		label, err := labels.FindByID(label_id)
+		label, err := SearchByID(labels, label_id)
 		if err != nil {
 			return "Error"
 		}
-		label_names = append(label_names, "@"+label.Name)
+		label_names = append(label_names, "@"+label.(Label).Name)
 	}
 	return strings.Join(label_names, ",")
 }
