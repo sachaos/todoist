@@ -12,7 +12,7 @@ type Sync struct {
 	DayOrders          interface{}   `json:"day_orders"`
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
 	ItemOrders         ItemOrders    `json:"-"`
-	ProjectOrders      ItemOrders    `json:"-"`
+	ProjectOrders      Orders        `json:"-"`
 	Filters            []struct {
 		Color     int    `json:"color"`
 		ID        int    `json:"id"`
@@ -73,18 +73,23 @@ func (sync *Sync) ConstructItemOrder() {
 	sort.Sort(sync.Projects)
 	sort.Sort(sync.Items)
 
+	sync.ProjectOrders = make(Orders, len(sync.Projects))
+	for i := 0; i < len(sync.Projects); i++ {
+		project := sync.Projects[i]
+		sync.ProjectOrders[i] = Order{Num: project.ItemOrder, ID: project.ID, Data: project}
+	}
+	sort.Sort(sync.ProjectOrders)
+
 	sync.ItemOrders = make(ItemOrders, len(sync.Items))
 	for i := 0; i < len(sync.Items); i++ {
 		item := sync.Items[i]
-		sync.ItemOrders[i] = ItemOrder{Num: item.ItemOrder, ID: item.ID, Data: item}
+		project, err := SearchByID(sync.Projects, item.ProjectID)
+		if err != nil {
+			panic(err)
+		}
+		sync.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: project.(Project).ItemOrder}
 	}
 	sort.Sort(sync.ItemOrders)
-	sync.ProjectOrders = make(ItemOrders, len(sync.Projects))
-	for i := 0; i < len(sync.Projects); i++ {
-		project := sync.Projects[i]
-		sync.ProjectOrders[i] = ItemOrder{Num: project.ItemOrder, ID: project.ID, Data: project}
-	}
-	sort.Sort(sync.ProjectOrders)
 }
 
 func SyncAll(token string) (Sync, error) {
