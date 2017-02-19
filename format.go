@@ -81,22 +81,22 @@ func PriorityFormat(priority int) string {
 func ProjectFormat(id int, projects todoist.Projects, projectColorHash map[int]color.Attribute, c *cli.Context) string {
 	var prefix string
 	var namePrefix string
-	project, err := projects.SearchByID(id)
+	project, err := todoist.SearchByID(projects, id)
 	if err != nil {
 		panic(err)
 	}
 
-	projectName := project.Name
+	projectName := project.(todoist.Project).Name
 	if c.GlobalBool("project-namespace") {
-		parentProjects, err := projects.SearchParents(project)
+		parentProjects, err := todoist.SearchParents(projects, project.(todoist.Project))
 		if err != nil {
 			panic(err)
 		}
 		for _, project := range parentProjects {
-			namePrefix = namePrefix + project.Name + ":"
+			namePrefix = namePrefix + project.(todoist.Project).Name + ":"
 		}
 	}
-	return prefix + color.New(projectColorHash[project.ID]).SprintFunc()("#"+namePrefix+projectName)
+	return prefix + color.New(projectColorHash[project.GetID()]).SprintFunc()("#"+namePrefix+projectName)
 }
 
 func dueDateString(dueDate time.Time, allDay bool) string {
