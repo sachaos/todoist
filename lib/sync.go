@@ -13,6 +13,7 @@ type Sync struct {
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
 	ItemOrders         ItemOrders    `json:"-"`
 	ProjectOrders      Orders        `json:"-"`
+	LabelOrders        Orders        `json:"-"`
 	Filters            []struct {
 		Color     int    `json:"color"`
 		ID        int    `json:"id"`
@@ -72,6 +73,7 @@ type Sync struct {
 func (sync *Sync) ConstructItemOrder() {
 	sort.Sort(sync.Projects)
 	sort.Sort(sync.Items)
+	sort.Sort(sync.Labels)
 
 	sync.ProjectOrders = make(Orders, len(sync.Projects))
 	for i := 0; i < len(sync.Projects); i++ {
@@ -79,6 +81,13 @@ func (sync *Sync) ConstructItemOrder() {
 		sync.ProjectOrders[i] = Order{Num: project.ItemOrder, ID: project.ID, Data: project}
 	}
 	sort.Sort(sync.ProjectOrders)
+
+	sync.LabelOrders = make(Orders, len(sync.Labels))
+	for i := 0; i < len(sync.Labels); i++ {
+		label := sync.Labels[i]
+		sync.LabelOrders[i] = Order{Num: label.ItemOrder, ID: label.ID, Data: label}
+	}
+	sort.Sort(sync.LabelOrders)
 
 	sync.ItemOrders = make(ItemOrders, len(sync.Items))
 	for i := 0; i < len(sync.Items); i++ {
