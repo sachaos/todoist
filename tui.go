@@ -1,81 +1,51 @@
 package main
 
 import (
-	"github.com/mattn/go-runewidth"
-	"github.com/nsf/termbox-go"
+	"github.com/jroimartin/gocui"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
-	"time"
+	"log"
 )
 
-func charWidth(c rune) int {
-	w := runewidth.RuneWidth(c)
-	if w == 0 || w == 2 && runewidth.IsAmbiguousWidth(c) {
-		w = 1
-	}
-	return w
-}
+func layout(sync todoist.Sync, c *cli.Context, g *gocui.Gui) error {
 
-func stringWidth(s string) int {
-	w := 0
-	for _, c := range s {
-		w += charWidth(c)
-	}
-	return w
-}
-
-func drawLine(x, y int, str string) {
-	color := termbox.ColorDefault
-	backgroundColor := termbox.ColorDefault
-
-	w := x
-	for _, s := range str {
-		termbox.SetCell(w, y, s, color, backgroundColor)
-		w = w + charWidth(s)
-	}
-}
-
-func draw(sync todoist.Sync, c *cli.Context) {
-	// w, h := termbox.Size()
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-
-	itemList := makeList(sync, c)
-	for i, strings := range itemList {
-		var string string
-		for _, str := range strings {
-			string = string + " " + str
+	maxX, maxY := g.Size()
+	if v, err := g.SetView("hello", 0, 0, maxX-1, maxY-1); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
 		}
-		drawLine(0, i, string)
-	}
+		writer = NewTSVWriter(v)
+		itemList := makeList(sync, c)
 
-	termbox.Flush()
+		for _, strings := range itemList {
+			writer.Write(strings)
+		}
+
+		writer.Flush()
+	}
+	return nil
+}
+
+func quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
 }
 
 func TUI(sync todoist.Sync, c *cli.Context) {
-	err := termbox.Init()
+	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
-		panic(err)
+		log.Panicln(err)
 	}
-	defer termbox.Close()
+	defer g.Close()
 
-	event_queue := make(chan termbox.Event)
-	go func() {
-		for {
-			event_queue <- termbox.PollEvent()
-		}
-	}()
+	g.SetManagerFunc(func(g *gocui.Gui) error {
+		return layout(sync, c, g)
+	})
 
-	draw(sync, c)
-loop:
-	for {
-		select {
-		case ev := <-event_queue:
-			if ev.Type == termbox.EventKey && ev.Key == termbox.KeyEsc {
-				break loop
-			}
-		default:
-			draw(sync, c)
-			time.Sleep(10 * time.Millisecond)
-		}
+	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
+		log.Panicln(err)
+	}
+
+	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
+		log.Panicln(err)
 	}
 }
