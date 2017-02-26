@@ -12,7 +12,7 @@ type Sync struct {
 	DayOrders          interface{}   `json:"day_orders"`
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
 	ItemOrders         ItemOrders    `json:"-"`
-	ProjectOrders      Orders        `json:"-"`
+	ProjectOrders      ProjectOrders `json:"-"`
 	LabelOrders        Orders        `json:"-"`
 	Filters            []struct {
 		Color     int    `json:"color"`
@@ -75,10 +75,10 @@ func (sync *Sync) ConstructItemOrder() {
 	sort.Sort(sync.Items)
 	sort.Sort(sync.Labels)
 
-	sync.ProjectOrders = make(Orders, len(sync.Projects))
+	sync.ProjectOrders = make(ProjectOrders, len(sync.Projects))
 	for i := 0; i < len(sync.Projects); i++ {
 		project := sync.Projects[i]
-		sync.ProjectOrders[i] = Order{Num: project.ItemOrder, ID: project.ID, Data: project}
+		sync.ProjectOrders[i] = ProjectOrder{Indent: project.Indent, Order: Order{ID: project.ID, Data: project, Num: project.ItemOrder}}
 	}
 	sort.Sort(sync.ProjectOrders)
 
@@ -96,7 +96,7 @@ func (sync *Sync) ConstructItemOrder() {
 		if err != nil {
 			panic(err)
 		}
-		sync.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: project.(Project).ItemOrder}
+		sync.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, Indent: item.Indent, ProjectOrder: project.(Project).ItemOrder}
 	}
 	sort.Sort(sync.ItemOrders)
 }
