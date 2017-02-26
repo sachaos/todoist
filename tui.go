@@ -5,6 +5,7 @@ import (
 	"github.com/nsf/termbox-go"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -70,9 +71,8 @@ func TUIMakeList(sync todoist.Sync, c *cli.Context) [][]string {
 	return itemList
 }
 
-func draw(sync todoist.Sync, c *cli.Context, ptr int) {
+func draw(sync todoist.Sync, c *cli.Context, baseY, ptr int) int {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	y := 0
 
 	itemList := TUIMakeList(sync, c)
 	maxWidth := make([]int, len(itemList[0]))
@@ -90,6 +90,8 @@ func draw(sync todoist.Sync, c *cli.Context, ptr int) {
 		paddings[i+1] = paddings[i] + maxWidth[i] + 1
 	}
 
+	ptrY := 0
+	y := 0
 	var currentProject todoist.Project
 	for i, order := range sync.ItemOrders {
 		item := order.Data.(todoist.Item)
@@ -100,19 +102,31 @@ func draw(sync todoist.Sync, c *cli.Context, ptr int) {
 			}
 			currentProject = project.(todoist.Project)
 			y = y + 1
-			drawLine(0, y, currentProject.Name+" Tasks")
-			drawLine(0, y+1, "---")
+			drawLine(0, y-baseY, currentProject.Name+" Tasks")
+			drawLine(0, y+1-baseY, "---")
 			y = y + 2
 		}
-		y = y + drawItem(ptr, i, y, paddings, sync, c, itemList[i], order)
+		if ptr == i {
+			ptrY = y - baseY
+		}
+		y = y + drawItem(ptr, i, y-baseY, paddings, sync, c, itemList[i], order)
 	}
 
 	termbox.Flush()
+
+	return ptrY
 }
 
 func TUI(sync todoist.Sync, c *cli.Context) {
+	var ptrY int
 	ptr := 0
+	baseY := 0
 	err := termbox.Init()
+	_, iH := termbox.Size()
+	pageSize := iH / 2
+	itemCount := len(sync.ItemOrders)
+	log.Printf("start pageSize: %d", pageSize)
+
 	if err != nil {
 		panic(err)
 	}
@@ -125,7 +139,7 @@ func TUI(sync todoist.Sync, c *cli.Context) {
 		}
 	}()
 
-	draw(sync, c, ptr)
+	ptrY = draw(sync, c, baseY, ptr)
 loop:
 	for {
 		select {
@@ -136,6 +150,9 @@ loop:
 				}
 				if ev.Ch == 'j' {
 					ptr += 1
+					if ptr >= itemCount {
+						ptr = itemCount - 1
+					}
 				}
 				if ev.Ch == 'k' {
 					ptr -= 1
@@ -145,7 +162,17 @@ loop:
 				}
 			}
 		default:
-			draw(sync, c, ptr)
+			ptrY = draw(sync, c, baseY, ptr)
+			_, h := termbox.Size()
+
+			if ptrY >= h {
+				baseY = baseY + pageSize
+			} else if ptrY < 0 {
+				baseY = baseY - pageSize
+			}
+
+			log.Printf("h: %d, ptrY: %d, baseY: %d", h, ptrY, baseY)
+
 			time.Sleep(10 * time.Millisecond)
 		}
 	}
