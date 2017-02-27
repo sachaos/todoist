@@ -150,15 +150,21 @@ loop:
 				}
 				if ev.Ch == 'j' {
 					ptr += 1
-					if ptr >= itemCount {
-						ptr = itemCount - 1
-					}
 				}
 				if ev.Ch == 'k' {
 					ptr -= 1
-					if ptr < 0 {
-						ptr = 0
-					}
+				}
+				if ev.Key == termbox.KeyCtrlD {
+					ptr += pageSize
+				}
+				if ev.Key == termbox.KeyCtrlU {
+					ptr -= pageSize
+				}
+				if ptr < 0 {
+					ptr = 0
+				}
+				if ptr >= itemCount {
+					ptr = itemCount - 1
 				}
 			}
 		default:
