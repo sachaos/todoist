@@ -119,6 +119,7 @@ func drawItem(ptr int, num int, y int, paddings []int, sync todoist.Sync, c *cli
 	bg := termbox.ColorDefault
 	if ptr == num {
 		bg = termbox.ColorCyan
+		fg = termbox.ColorBlack
 	}
 	for i, string := range strings {
 		for _, c := range string {
