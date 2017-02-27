@@ -12,15 +12,16 @@ import (
 )
 
 type ItemView struct {
-	W         int
-	H         int
-	BaseY     int
-	Ptr       int
-	PtrY      int
-	ItemCount int
-	PageSize  int
-	sync      *todoist.Sync
-	context   *cli.Context
+	W              int
+	H              int
+	BaseY          int
+	Ptr            int
+	PtrY           int
+	ItemCount      int
+	PageSize       int
+	sync           *todoist.Sync
+	context        *cli.Context
+	ProjectIndexes []int
 }
 
 func createItemView(sync *todoist.Sync, c *cli.Context) (*ItemView, error) {
@@ -30,21 +31,41 @@ func createItemView(sync *todoist.Sync, c *cli.Context) (*ItemView, error) {
 	}
 	w, h := termbox.Size()
 	iv := &ItemView{
-		W:         w,
-		H:         h,
-		BaseY:     0,
-		Ptr:       0,
-		PtrY:      0,
-		ItemCount: len(sync.ItemOrders),
-		PageSize:  h / 2,
-		sync:      sync,
-		context:   c,
+		W:              w,
+		H:              h,
+		BaseY:          0,
+		Ptr:            0,
+		PtrY:           0,
+		ItemCount:      0,
+		PageSize:       h / 2,
+		sync:           sync,
+		context:        c,
+		ProjectIndexes: []int{},
 	}
+	iv.ResetItemCount()
 	return iv, nil
+}
+
+func (iv *ItemView) GetOrder(i int) *todoist.ItemOrder {
+	if i < 0 || i >= iv.ItemCount {
+		return nil
+	}
+	return &iv.sync.ItemOrders[i]
 }
 
 func (iv *ItemView) ResetItemCount() *ItemView {
 	iv.ItemCount = len(iv.sync.ItemOrders)
+	iv.ProjectIndexes = []int{}
+	preProjectOrder := -1
+	i := 0
+	for ; i < len(iv.sync.ItemOrders); i++ {
+		order := iv.sync.ItemOrders[i]
+		if preProjectOrder != order.ProjectOrder {
+			iv.ProjectIndexes = append(iv.ProjectIndexes, i)
+			preProjectOrder = order.ProjectOrder
+		}
+	}
+	iv.ProjectIndexes = append(iv.ProjectIndexes, i)
 	return iv
 }
 
@@ -70,9 +91,29 @@ func (iv *ItemView) MovePtr(count int) *ItemView {
 	return iv
 }
 
+func (iv *ItemView) isProjectTop(i int) bool {
+	for _, topIndex := range iv.ProjectIndexes {
+		if i == topIndex {
+			return true
+		}
+	}
+	return false
+}
+
 func (iv *ItemView) IncrementIndent() *ItemView {
+	if iv.isProjectTop(iv.Ptr) {
+		return iv
+	}
+	maxIndent := 100
+	order := iv.GetOrder(iv.Ptr - 1)
+	if order != nil {
+		maxIndent = order.Indent + 1
+	}
 	indent := &iv.sync.ItemOrders[iv.Ptr].Indent
 	*indent += 1
+	if *indent > maxIndent {
+		*indent = maxIndent
+	}
 	return iv
 }
 
@@ -245,8 +286,10 @@ loop:
 		default:
 			iv.draw()
 			iv.adjust()
+			iv.ResetItemCount()
 
 			log.Printf("h: %d, ptrY: %d, baseY: %d", iv.H, iv.PtrY, iv.BaseY)
+			log.Printf("indexes: %v", iv.ProjectIndexes)
 
 			time.Sleep(10 * time.Millisecond)
 		}
