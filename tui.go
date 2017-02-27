@@ -11,6 +11,61 @@ import (
 	"time"
 )
 
+type ItemView struct {
+	W         int
+	H         int
+	BaseY     int
+	Ptr       int
+	PtrY      int
+	ItemCount int
+	PageSize  int
+}
+
+func createItemView() (*ItemView, error) {
+	err := termbox.Init()
+	if err != nil {
+		return nil, err
+	}
+	w, h := termbox.Size()
+	iv := &ItemView{
+		W:         w,
+		H:         h,
+		BaseY:     0,
+		Ptr:       0,
+		PtrY:      0,
+		ItemCount: 0,
+		PageSize:  h / 2,
+	}
+	return iv, nil
+}
+
+func (iv *ItemView) SetItemCount(count int) *ItemView {
+	iv.ItemCount = count
+	return iv
+}
+
+func (iv *ItemView) MovePtrTo(count int) *ItemView {
+	iv.Ptr = count
+	if iv.Ptr < 0 {
+		iv.Ptr = 0
+	}
+	if iv.Ptr >= iv.ItemCount {
+		iv.Ptr = iv.ItemCount - 1
+	}
+	return iv
+}
+
+func (iv *ItemView) MovePtr(count int) *ItemView {
+	iv.Ptr = iv.Ptr + count
+	if iv.Ptr < 0 {
+		iv.Ptr = 0
+	}
+	if iv.Ptr >= iv.ItemCount {
+		iv.Ptr = iv.ItemCount - 1
+	}
+	return iv
+}
+
 func charWidth(c rune) int {
 	w := runewidth.RuneWidth(c)
 	if w == 0 || w == 2 && runewidth.IsAmbiguousWidth(c) {
@@ -71,7 +126,16 @@ func TUIMakeList(sync todoist.Sync, c *cli.Context) [][]string {
 	return itemList
 }
 
-func draw(sync todoist.Sync, c *cli.Context, baseY, ptr int) int {
+func (iv *ItemView) adjust() {
+	iv.W, iv.H = termbox.Size()
+	if iv.PtrY >= iv.H {
+		iv.BaseY = iv.BaseY + iv.PageSize
+	} else if iv.PtrY < 0 {
+		iv.BaseY = iv.BaseY - iv.PageSize
+	}
+}
+
+func (iv *ItemView) draw(sync todoist.Sync, c *cli.Context) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	itemList := TUIMakeList(sync, c)
@@ -90,7 +154,6 @@ func draw(sync todoist.Sync, c *cli.Context, baseY, ptr int) int {
 		paddings[i+1] = paddings[i] + maxWidth[i] + 1
 	}
 
-	ptrY := 0
 	y := 0
 	var currentProject todoist.Project
 	for i, order := range sync.ItemOrders {
@@ -102,34 +165,27 @@ func draw(sync todoist.Sync, c *cli.Context, baseY, ptr int) int {
 			}
 			currentProject = project.(todoist.Project)
 			y = y + 1
-			drawLine(0, y-baseY, currentProject.Name+" Tasks")
-			drawLine(0, y+1-baseY, "---")
+			drawLine(0, y-iv.BaseY, currentProject.Name+" Tasks")
+			drawLine(0, y+1-iv.BaseY, "---")
 			y = y + 2
 		}
-		if ptr == i {
-			ptrY = y - baseY
+		if iv.Ptr == i {
+			iv.PtrY = y - iv.BaseY
 		}
-		y = y + drawItem(ptr, i, y-baseY, paddings, sync, c, itemList[i], order)
+		y = y + drawItem(iv.Ptr, i, y-iv.BaseY, paddings, sync, c, itemList[i], order)
 	}
 
 	termbox.Flush()
-
-	return ptrY
 }
 
 func TUI(sync todoist.Sync, c *cli.Context) {
-	var ptrY int
-	ptr := 0
-	baseY := 0
-	err := termbox.Init()
-	_, iH := termbox.Size()
-	pageSize := iH / 2
-	itemCount := len(sync.ItemOrders)
-	log.Printf("start pageSize: %d", pageSize)
-
+	iv, err := createItemView()
 	if err != nil {
 		panic(err)
 	}
+	iv.SetItemCount(len(sync.ItemOrders))
+	// log.Printf("start pageSize: %d", iv.PageSize)
+
 	defer termbox.Close()
 
 	event_queue := make(chan termbox.Event)
@@ -139,7 +195,7 @@ func TUI(sync todoist.Sync, c *cli.Context) {
 		}
 	}()
 
-	ptrY = draw(sync, c, baseY, ptr)
+	iv.draw(sync, c)
 loop:
 	for {
 		select {
@@ -149,35 +205,23 @@ loop:
 					break loop
 				}
 				if ev.Ch == 'j' {
-					ptr += 1
+					iv.MovePtr(1)
 				}
 				if ev.Ch == 'k' {
-					ptr -= 1
+					iv.MovePtr(-1)
 				}
 				if ev.Key == termbox.KeyCtrlD {
-					ptr += pageSize
+					iv.MovePtr(iv.PageSize)
 				}
 				if ev.Key == termbox.KeyCtrlU {
-					ptr -= pageSize
-				}
-				if ptr < 0 {
-					ptr = 0
-				}
-				if ptr >= itemCount {
-					ptr = itemCount - 1
+					iv.MovePtr(-iv.PageSize)
 				}
 			}
 		default:
-			ptrY = draw(sync, c, baseY, ptr)
-			_, h := termbox.Size()
+			iv.draw(sync, c)
+			iv.adjust()
 
-			if ptrY >= h {
-				baseY = baseY + pageSize
-			} else if ptrY < 0 {
-				baseY = baseY - pageSize
-			}
-
-			log.Printf("h: %d, ptrY: %d, baseY: %d", h, ptrY, baseY)
+			log.Printf("h: %d, ptrY: %d, baseY: %d", iv.H, iv.PtrY, iv.BaseY)
 
 			time.Sleep(10 * time.Millisecond)
 		}
