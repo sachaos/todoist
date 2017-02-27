@@ -19,9 +19,11 @@ type ItemView struct {
 	PtrY      int
 	ItemCount int
 	PageSize  int
+	sync      *todoist.Sync
+	context   *cli.Context
 }
 
-func createItemView() (*ItemView, error) {
+func createItemView(sync *todoist.Sync, c *cli.Context) (*ItemView, error) {
 	err := termbox.Init()
 	if err != nil {
 		return nil, err
@@ -33,14 +35,16 @@ func createItemView() (*ItemView, error) {
 		BaseY:     0,
 		Ptr:       0,
 		PtrY:      0,
-		ItemCount: 0,
+		ItemCount: len(sync.ItemOrders),
 		PageSize:  h / 2,
+		sync:      sync,
+		context:   c,
 	}
 	return iv, nil
 }
 
-func (iv *ItemView) SetItemCount(count int) *ItemView {
-	iv.ItemCount = count
+func (iv *ItemView) ResetItemCount() *ItemView {
+	iv.ItemCount = len(iv.sync.ItemOrders)
 	return iv
 }
 
@@ -62,6 +66,21 @@ func (iv *ItemView) MovePtr(count int) *ItemView {
 	}
 	if iv.Ptr >= iv.ItemCount {
 		iv.Ptr = iv.ItemCount - 1
+	}
+	return iv
+}
+
+func (iv *ItemView) IncrementIndent() *ItemView {
+	indent := &iv.sync.ItemOrders[iv.Ptr].Indent
+	*indent += 1
+	return iv
+}
+
+func (iv *ItemView) DecrementIndent() *ItemView {
+	indent := &iv.sync.ItemOrders[iv.Ptr].Indent
+	*indent -= 1
+	if *indent < 1 {
+		*indent = 1
 	}
 	return iv
 }
@@ -135,10 +154,10 @@ func (iv *ItemView) adjust() {
 	}
 }
 
-func (iv *ItemView) draw(sync todoist.Sync, c *cli.Context) {
+func (iv *ItemView) draw() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
-	itemList := TUIMakeList(sync, c)
+	itemList := TUIMakeList(*iv.sync, iv.context)
 	maxWidth := make([]int, len(itemList[0]))
 	for i := 0; i < len(itemList[0]); i++ {
 		for _, strings := range itemList {
@@ -156,10 +175,10 @@ func (iv *ItemView) draw(sync todoist.Sync, c *cli.Context) {
 
 	y := 0
 	var currentProject todoist.Project
-	for i, order := range sync.ItemOrders {
+	for i, order := range iv.sync.ItemOrders {
 		item := order.Data.(todoist.Item)
 		if currentProject.ID != item.ProjectID {
-			project, err := todoist.SearchByID(sync.Projects, item.ProjectID)
+			project, err := todoist.SearchByID(iv.sync.Projects, item.ProjectID)
 			if err != nil {
 				panic(err)
 			}
@@ -172,18 +191,17 @@ func (iv *ItemView) draw(sync todoist.Sync, c *cli.Context) {
 		if iv.Ptr == i {
 			iv.PtrY = y - iv.BaseY
 		}
-		y = y + drawItem(iv.Ptr, i, y-iv.BaseY, paddings, sync, c, itemList[i], order)
+		y = y + drawItem(iv.Ptr, i, y-iv.BaseY, paddings, *iv.sync, iv.context, itemList[i], order)
 	}
 
 	termbox.Flush()
 }
 
 func TUI(sync todoist.Sync, c *cli.Context) {
-	iv, err := createItemView()
+	iv, err := createItemView(&sync, c)
 	if err != nil {
 		panic(err)
 	}
-	iv.SetItemCount(len(sync.ItemOrders))
 	// log.Printf("start pageSize: %d", iv.PageSize)
 
 	defer termbox.Close()
@@ -195,7 +213,7 @@ func TUI(sync todoist.Sync, c *cli.Context) {
 		}
 	}()
 
-	iv.draw(sync, c)
+	iv.draw()
 loop:
 	for {
 		select {
@@ -216,9 +234,15 @@ loop:
 				if ev.Key == termbox.KeyCtrlU {
 					iv.MovePtr(-iv.PageSize)
 				}
+				if ev.Ch == 'H' {
+					iv.DecrementIndent()
+				}
+				if ev.Ch == 'L' {
+					iv.IncrementIndent()
+				}
 			}
 		default:
-			iv.draw(sync, c)
+			iv.draw()
 			iv.adjust()
 
 			log.Printf("h: %d, ptrY: %d, baseY: %d", iv.H, iv.PtrY, iv.BaseY)
