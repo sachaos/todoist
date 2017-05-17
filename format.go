@@ -87,7 +87,8 @@ func ProjectFormat(id int, projects todoist.Projects, projectColorHash map[int]c
 	var namePrefix string
 	project, err := todoist.SearchByID(projects, id)
 	if err != nil {
-		panic(err)
+		// Accept unknown project ID
+		return color.New(color.FgCyan).SprintFunc()("Unknown")
 	}
 
 	projectName := project.(todoist.Project).Name
