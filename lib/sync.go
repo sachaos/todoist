@@ -93,10 +93,14 @@ func (sync *Sync) ConstructItemOrder() {
 	for i := 0; i < len(sync.Items); i++ {
 		item := sync.Items[i]
 		project, err := SearchByID(sync.Projects, item.ProjectID)
+		var pjtOrder int
 		if err != nil {
-			panic(err)
+			// Set unknown project order to 0
+			pjtOrder = 0
+		} else {
+			pjtOrder = project.(Project).ItemOrder
 		}
-		sync.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: project.(Project).ItemOrder}
+		sync.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: pjtOrder}
 	}
 	sort.Sort(sync.ItemOrders)
 }
