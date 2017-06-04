@@ -1,15 +1,17 @@
 package main
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
 	"github.com/sachaos/todoist/lib"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
-func Modify(sync todoist.Sync, c *cli.Context) error {
+func Modify(c *cli.Context) error {
+	client := GetClient(c)
+
 	next_project := todoist.Project{}
 	if !c.Args().Present() {
 		return CommandFailed
@@ -17,7 +19,7 @@ func Modify(sync todoist.Sync, c *cli.Context) error {
 
 	var err error
 	item_id, err := strconv.Atoi(c.Args().First())
-	idCarrier, err := todoist.SearchByID(sync.Items, item_id)
+	idCarrier, err := todoist.SearchByID(client.Store.Items, item_id)
 	item := idCarrier.(todoist.Item)
 	if err != nil {
 		return err
@@ -45,19 +47,16 @@ func Modify(sync todoist.Sync, c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err = todoist.UpdateItem(item, viper.GetString("token"))
-	if err != nil {
-		return CommandFailed
+	if err := client.UpdateItem(context.Background(), item); err != nil {
+		return err
 	}
 
-	err = todoist.MoveItem(item, next_project, viper.GetString("token"))
-	if err != nil {
-		return CommandFailed
+	if err := client.MoveItem(context.Background(), item, next_project); err != nil {
+		return err
 	}
 
-	_, err = Sync(c)
-	if err != nil {
-		return CommandFailed
+	if err := Sync(c); err != nil {
+		return err
 	}
 
 	return nil

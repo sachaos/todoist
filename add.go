@@ -1,15 +1,17 @@
 package main
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
 	"github.com/sachaos/todoist/lib"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
-func Add(sync todoist.Sync, c *cli.Context) error {
+func Add(c *cli.Context) error {
+	client := GetClient(c)
+
 	item := todoist.Item{}
 	if !c.Args().Present() {
 		return CommandFailed
@@ -33,14 +35,12 @@ func Add(sync todoist.Sync, c *cli.Context) error {
 
 	item.DateString = c.String("date")
 
-	err := todoist.AddItem(item, viper.GetString("token"))
-	if err != nil {
-		return CommandFailed
+	if err := client.AddItem(context.Background(), item); err != nil {
+		return err
 	}
 
-	_, err = Sync(c)
-	if err != nil {
-		return CommandFailed
+	if err := Sync(c); err != nil {
+		return err
 	}
 
 	return nil

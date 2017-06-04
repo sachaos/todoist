@@ -5,16 +5,18 @@ import (
 	"github.com/urfave/cli"
 )
 
-func List(sync todoist.Sync, c *cli.Context) error {
+func List(c *cli.Context) error {
+	client := GetClient(c)
+
 	colorList := ColorList()
 	var projectIds []int
-	for _, project := range sync.Projects {
+	for _, project := range client.Store.Projects {
 		projectIds = append(projectIds, project.GetID())
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
 	itemList := [][]string{}
-	for _, itemOrder := range sync.ItemOrders {
+	for _, itemOrder := range client.Store.ItemOrders {
 		item := itemOrder.Data.(todoist.Item)
 		if item.Checked == 1 {
 			continue
@@ -23,9 +25,9 @@ func List(sync todoist.Sync, c *cli.Context) error {
 			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DueDateTime(), item.AllDay),
-			ProjectFormat(item.ProjectID, sync.Projects, projectColorHash, c),
-			item.LabelsString(sync.Labels),
-			ContentPrefix(sync.Items, item, c) + ContentFormat(item),
+			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
+			item.LabelsString(client.Store.Labels),
+			ContentPrefix(client.Store.Items, item, c) + ContentFormat(item),
 		})
 	}
 

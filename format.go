@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/fatih/color"
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli"
 )
 
 func ColorList() []color.Attribute {

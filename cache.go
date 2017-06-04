@@ -2,38 +2,38 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/sachaos/todoist/lib"
 	"io/ioutil"
 	"os"
+
+	"github.com/sachaos/todoist/lib"
 )
 
-func LoadCache(filename string) (todoist.Sync, error) {
-	sync, err := ReadCache(filename)
+func LoadCache(filename string, s *todoist.Store) error {
+	err := ReadCache(filename, s)
 	if err != nil {
-		err = WriteCache(default_cache_path, sync)
+		err = WriteCache(default_cache_path, s)
 		if err != nil {
-			return todoist.Sync{}, CommandFailed
+			return CommandFailed
 		}
 	}
-	return sync, nil
+	return nil
 }
 
-func ReadCache(filename string) (todoist.Sync, error) {
-	var s todoist.Sync
+func ReadCache(filename string, s *todoist.Store) error {
 	jsonString, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return s, CommandFailed
+		return CommandFailed
 	}
 	err = json.Unmarshal(jsonString, &s)
 	if err != nil {
-		return s, CommandFailed
+		return CommandFailed
 	}
 	s.ConstructItemOrder()
-	return s, nil
+	return nil
 }
 
-func WriteCache(filename string, sync todoist.Sync) error {
-	buf, err := json.MarshalIndent(sync, "", "  ")
+func WriteCache(filename string, s *todoist.Store) error {
+	buf, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
 		return CommandFailed
 	}

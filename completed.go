@@ -1,21 +1,26 @@
 package main
 
 import (
+	"context"
+
 	"github.com/sachaos/todoist/lib"
-	"github.com/spf13/viper"
+
 	"github.com/urfave/cli"
 )
 
-func CompletedList(sync todoist.Sync, c *cli.Context) error {
+func CompletedList(c *cli.Context) error {
+	client := GetClient(c)
+
 	colorList := ColorList()
 	var projectIds []int
-	for _, project := range sync.Projects {
+	for _, project := range client.Store.Projects {
 		projectIds = append(projectIds, project.GetID())
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
-	completed, err := todoist.CompletedAll(viper.GetString("token"))
-	if err != nil {
+	var completed todoist.Completed
+
+	if err := client.CompletedAll(context.Background(), &completed); err != nil {
 		return err
 	}
 
@@ -25,7 +30,7 @@ func CompletedList(sync todoist.Sync, c *cli.Context) error {
 		writer.Write([]string{
 			IdFormat(item),
 			CompletedDateFormat(item.CompletedDateTime()),
-			ProjectFormat(item.ProjectID, sync.Projects, projectColorHash, c),
+			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
 			ContentFormat(item),
 		})
 	}

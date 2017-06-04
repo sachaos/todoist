@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"strconv"
 
-	"github.com/sachaos/todoist/lib"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
 func Close(c *cli.Context) error {
+	client := GetClient(c)
+
 	item_ids := []int{}
 	for _, arg := range c.Args() {
 		item_id, err := strconv.Atoi(arg)
@@ -22,14 +23,12 @@ func Close(c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err := todoist.CloseItem(item_ids, viper.GetString("token"))
-	if err != nil {
-		return CommandFailed
+	if err := client.CloseItem(context.Background(), item_ids); err != nil {
+		return err
 	}
 
-	_, err = Sync(c)
-	if err != nil {
-		return CommandFailed
+	if err := Sync(c); err != nil {
+		return err
 	}
 
 	return nil
