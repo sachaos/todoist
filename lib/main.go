@@ -1,10 +1,10 @@
 package todoist
 
 import (
+	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"fmt"
 	"net/http"
-	"net/url"
 )
 
 var (
@@ -12,26 +12,20 @@ var (
 )
 
 const (
+	Server     = "https://todoist.com/API/v7/"
 	DateFormat = "Mon 2 Jan 2006 15:04:05 +0000"
 )
 
-func APIRequest(endpoint string, params url.Values) ([]byte, error) {
-	resp, err := http.PostForm("https://todoist.com/API/v7/"+endpoint, params)
-	if err != nil {
-		return []byte{}, err
+func ParseAPIError(prefix string, resp *http.Response) error {
+	errMsg := fmt.Sprintf("%s: %s", prefix, resp.Status)
+	var e struct {
+		Error string `json:"error"`
 	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return []byte{}, err
+
+	json.NewDecoder(resp.Body).Decode(&e)
+	if e.Error != "" {
+		errMsg = fmt.Sprintf("%s: %s", errMsg, e.Error)
 	}
-	defer resp.Body.Close()
-	return body, nil
-}
 
-func CompletedAllRequest(params url.Values) ([]byte, error) {
-	return APIRequest("completed/get_all", params)
-}
-
-func SyncRequest(params url.Values) ([]byte, error) {
-	return APIRequest("sync", params)
+	return errors.New(errMsg)
 }

@@ -1,12 +1,10 @@
 package todoist
 
 import (
-	"encoding/json"
-	"net/url"
 	"sort"
 )
 
-type Sync struct {
+type Store struct {
 	CollaboratorStates []interface{} `json:"collaborator_states"`
 	Collaborators      []interface{} `json:"collaborators"`
 	DayOrders          interface{}   `json:"day_orders"`
@@ -70,29 +68,29 @@ type Sync struct {
 	User          User     `json:"user"`
 }
 
-func (sync *Sync) ConstructItemOrder() {
-	sort.Sort(sync.Projects)
-	sort.Sort(sync.Items)
-	sort.Sort(sync.Labels)
+func (s *Store) ConstructItemOrder() {
+	sort.Sort(s.Projects)
+	sort.Sort(s.Items)
+	sort.Sort(s.Labels)
 
-	sync.ProjectOrders = make(Orders, len(sync.Projects))
-	for i := 0; i < len(sync.Projects); i++ {
-		project := sync.Projects[i]
-		sync.ProjectOrders[i] = Order{Num: project.ItemOrder, ID: project.ID, Data: project}
+	s.ProjectOrders = make(Orders, len(s.Projects))
+	for i := 0; i < len(s.Projects); i++ {
+		project := s.Projects[i]
+		s.ProjectOrders[i] = Order{Num: project.ItemOrder, ID: project.ID, Data: project}
 	}
-	sort.Sort(sync.ProjectOrders)
+	sort.Sort(s.ProjectOrders)
 
-	sync.LabelOrders = make(Orders, len(sync.Labels))
-	for i := 0; i < len(sync.Labels); i++ {
-		label := sync.Labels[i]
-		sync.LabelOrders[i] = Order{Num: label.ItemOrder, ID: label.ID, Data: label}
+	s.LabelOrders = make(Orders, len(s.Labels))
+	for i := 0; i < len(s.Labels); i++ {
+		label := s.Labels[i]
+		s.LabelOrders[i] = Order{Num: label.ItemOrder, ID: label.ID, Data: label}
 	}
-	sort.Sort(sync.LabelOrders)
+	sort.Sort(s.LabelOrders)
 
-	sync.ItemOrders = make(ItemOrders, len(sync.Items))
-	for i := 0; i < len(sync.Items); i++ {
-		item := sync.Items[i]
-		project, err := SearchByID(sync.Projects, item.ProjectID)
+	s.ItemOrders = make(ItemOrders, len(s.Items))
+	for i := 0; i < len(s.Items); i++ {
+		item := s.Items[i]
+		project, err := SearchByID(s.Projects, item.ProjectID)
 		var pjtOrder int
 		if err != nil {
 			// Set unknown project order to 0
@@ -100,20 +98,7 @@ func (sync *Sync) ConstructItemOrder() {
 		} else {
 			pjtOrder = project.(Project).ItemOrder
 		}
-		sync.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: pjtOrder}
+		s.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: pjtOrder}
 	}
-	sort.Sort(sync.ItemOrders)
-}
-
-func SyncAll(token string) (Sync, error) {
-	var sync Sync
-	body, err := APIRequest("sync",
-		url.Values{"token": {token}, "sync_token": {"*"}, "resource_types": {"[\"all\"]"}},
-	)
-	err = json.Unmarshal(body, &sync)
-	if err != nil {
-		return Sync{}, err
-	}
-	sync.ConstructItemOrder()
-	return sync, nil
+	sort.Sort(s.ItemOrders)
 }
