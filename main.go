@@ -77,6 +77,10 @@ func main() {
 			Usage: "output in CSV format",
 		},
 		cli.BoolFlag{
+			Name:  "debug",
+			Usage: "output logs",
+		},
+		cli.BoolFlag{
 			Name:  "namespace",
 			Usage: "display parent task like namespace",
 		},
@@ -118,7 +122,8 @@ func main() {
 			}
 		}
 
-		config := &todoist.Config{AccessToken: token}
+		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug")}
+
 		client := todoist.NewClient(config)
 		client.Store = &store
 
@@ -131,7 +136,7 @@ func main() {
 			color.NoColor = true
 		}
 
-		if c.GlobalBool("csv") {
+		if c.Bool("csv") {
 			writer = csv.NewWriter(os.Stdout)
 		} else {
 			writer = NewTSVWriter(os.Stdout)

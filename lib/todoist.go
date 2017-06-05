@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"path"
@@ -12,6 +13,7 @@ import (
 
 type Config struct {
 	AccessToken string
+	DebugMode   bool
 }
 
 type Client struct {
@@ -27,7 +29,14 @@ func NewClient(config *Config) *Client {
 	}
 }
 
+func (c *Client) Log(format string, v ...interface{}) {
+	if c.config.DebugMode {
+		log.Printf(format, v...)
+	}
+}
+
 func (c *Client) doApi(ctx context.Context, method string, uri string, params url.Values, res interface{}) error {
+	c.Log("doAPi: called")
 	u, err := url.Parse(Server)
 	if err != nil {
 		return err
