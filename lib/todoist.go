@@ -59,6 +59,7 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 		return err
 	}
 
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req = req.WithContext(ctx)
 
 	c.Log("request: %#v", req)
