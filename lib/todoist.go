@@ -45,25 +45,36 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 
 	params.Add("token", c.config.AccessToken)
 
+	c.Log("config: %#v", c.config)
+
 	var body io.Reader
 	if method == http.MethodGet {
 		u.RawQuery = params.Encode()
 	} else {
 		body = strings.NewReader(params.Encode())
 	}
+
 	req, err := http.NewRequest(method, u.String(), body)
 	if err != nil {
 		return err
 	}
 
 	req = req.WithContext(ctx)
+
+	c.Log("request: %#v", req)
+	c.Log("request.URL: %#v", req.URL)
+	c.Log("params: %#v", body)
+
 	resp, err := c.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
+	c.Log("response: %#v", resp)
+
 	if resp.StatusCode != http.StatusOK {
+		c.Log(ParseAPIError("bad request", resp).Error())
 		return ParseAPIError("bad request", resp)
 	} else if res == nil {
 		return nil
