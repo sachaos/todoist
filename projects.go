@@ -5,18 +5,20 @@ import (
 	"github.com/urfave/cli"
 )
 
-func Projects(sync todoist.Sync, c *cli.Context) error {
+func Projects(c *cli.Context) error {
+	client := GetClient(c)
+
 	colorList := ColorList()
 	var projectIds []int
-	for _, project := range sync.Projects {
+	for _, project := range client.Store.Projects {
 		projectIds = append(projectIds, project.GetID())
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
 	itemList := [][]string{}
-	for _, itemOrder := range sync.ProjectOrders {
+	for _, itemOrder := range client.Store.ProjectOrders {
 		project := itemOrder.Data.(todoist.Project)
-		itemList = append(itemList, []string{IdFormat(project), ProjectFormat(project.ID, sync.Projects, projectColorHash, c)})
+		itemList = append(itemList, []string{IdFormat(project), ProjectFormat(project.ID, client.Store.Projects, projectColorHash, c)})
 	}
 
 	defer writer.Flush()

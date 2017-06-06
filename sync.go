@@ -1,21 +1,22 @@
 package main
 
 import (
-	"github.com/sachaos/todoist/lib"
-	"github.com/spf13/viper"
+	"context"
+
 	"github.com/urfave/cli"
 )
 
-func Sync(c *cli.Context) (todoist.Sync, error) {
-	var sync todoist.Sync
-	sync, err := todoist.SyncAll(viper.GetString("token"))
+func Sync(c *cli.Context) error {
+	client := GetClient(c)
+
+	err := client.Sync(context.Background())
 	if err != nil {
-		return sync, err
+		return err
 	}
-	err = WriteCache(default_cache_path, sync)
+	err = WriteCache(default_cache_path, client.Store)
 	if err != nil {
-		return sync, err
+		return err
 	}
 
-	return sync, nil
+	return nil
 }

@@ -2,8 +2,9 @@ package todoist
 
 import (
 	"encoding/json"
-	"github.com/satori/go.uuid"
 	"net/url"
+
+	"github.com/satori/go.uuid"
 )
 
 type Command struct {
@@ -24,13 +25,12 @@ func NewCommand(command_type string, command_args interface{}) Command {
 	}
 }
 
-func (commands Commands) UrlValues(token string) url.Values {
+func (commands Commands) UrlValues() url.Values {
 	commands_text, err := json.Marshal(commands)
 	if err != nil {
 		return url.Values{}
 	}
 	return url.Values{
-		"token":    {token},
 		"commands": {string(commands_text)},
 	}
 }

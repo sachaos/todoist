@@ -1,7 +1,8 @@
 package todoist
 
 import (
-	"encoding/json"
+	"context"
+	"net/http"
 	"net/url"
 )
 
@@ -10,12 +11,6 @@ type Completed struct {
 	Projects interface{}    `json:"projects"`
 }
 
-func CompletedAll(token string) (Completed, error) {
-	var completed Completed
-	body, err := APIRequest("completed/get_all", url.Values{"token": {token}})
-	err = json.Unmarshal(body, &completed)
-	if err != nil {
-		return Completed{}, err
-	}
-	return completed, nil
+func (c *Client) CompletedAll(ctx context.Context, r *Completed) error {
+	return c.doApi(ctx, http.MethodPost, "completed/get_all", url.Values{}, &r)
 }

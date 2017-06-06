@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"strconv"
 
-	"github.com/sachaos/todoist/lib"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
 func Delete(c *cli.Context) error {
+	client := GetClient(c)
+
 	item_ids := []int{}
 	for _, arg := range c.Args() {
 		item_id, err := strconv.Atoi(arg)
@@ -22,13 +23,11 @@ func Delete(c *cli.Context) error {
 		return CommandFailed
 	}
 
-	err := todoist.DeleteItem(item_ids, viper.GetString("token"))
-	if err != nil {
+	if err := client.DeleteItem(context.Background(), item_ids); err != nil {
 		return CommandFailed
 	}
 
-	_, err = Sync(c)
-	if err != nil {
+	if err := Sync(c); err != nil {
 		return CommandFailed
 	}
 

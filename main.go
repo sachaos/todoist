@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
+	"github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
@@ -30,37 +31,15 @@ const (
 	ShortDateFormat     = "06/1/2(Mon)"
 )
 
+func GetClient(c *cli.Context) *todoist.Client {
+	return c.App.Metadata["client"].(*todoist.Client)
+}
+
 func main() {
-	sync, err := LoadCache(default_cache_path)
-	if err != nil {
-		return
-	}
-
-	viper.SetConfigType(configType)
-	viper.SetConfigName(configName)
-	viper.AddConfigPath(configPath)
-	viper.AddConfigPath(".")
-	err = viper.ReadInConfig()
-
-	if err != nil {
-		var token string
-		fmt.Printf("Input API Token: ")
-		fmt.Scan(&token)
-		viper.Set("token", token)
-		buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
-		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s \n", err))
-		}
-		err = ioutil.WriteFile(filepath.Join(configPath, configName+"."+configType), buf, os.ModePerm)
-		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s \n", err))
-		}
-	}
-
 	app := cli.NewApp()
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
-	app.Version = "0.8.0"
+	app.Version = "0.9.0"
 
 	contentFlag := cli.StringFlag{
 		Name:  "content, c",
@@ -98,6 +77,10 @@ func main() {
 			Usage: "output in CSV format",
 		},
 		cli.BoolFlag{
+			Name:  "debug",
+			Usage: "output logs",
+		},
+		cli.BoolFlag{
 			Name:  "namespace",
 			Usage: "display parent task like namespace",
 		},
@@ -112,11 +95,48 @@ func main() {
 	}
 
 	app.Before = func(c *cli.Context) error {
+		var store todoist.Store
+
+		if err := LoadCache(default_cache_path, &store); err != nil {
+			return err
+		}
+
+		viper.SetConfigType(configType)
+		viper.SetConfigName(configName)
+		viper.AddConfigPath(configPath)
+		viper.AddConfigPath(".")
+
+		var token string
+
+		if err := viper.ReadInConfig(); err != nil {
+			fmt.Printf("Input API Token: ")
+			fmt.Scan(&token)
+			viper.Set("token", token)
+			buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			}
+			err = ioutil.WriteFile(filepath.Join(configPath, configName+"."+configType), buf, os.ModePerm)
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			}
+		}
+
+		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug")}
+
+		client := todoist.NewClient(config)
+		client.Store = &store
+
+		app.Metadata = map[string]interface{}{
+			"client": client,
+			"config": config,
+		}
+
 		if !c.Bool("color") {
 			color.NoColor = true
 		}
 
-		if c.GlobalBool("csv") {
+		if c.Bool("csv") {
 			writer = csv.NewWriter(os.Stdout)
 		} else {
 			writer = NewTSVWriter(os.Stdout)
@@ -129,34 +149,26 @@ func main() {
 			Name:    "list",
 			Aliases: []string{"l"},
 			Usage:   "Shows all tasks",
-			Action: func(c *cli.Context) error {
-				return List(sync, c)
-			},
+			Action:  List,
 		},
 		{
-			Name:  "show",
-			Usage: "Show task detail",
-			Action: func(c *cli.Context) error {
-				return Show(sync, c)
-			},
+			Name:   "show",
+			Usage:  "Show task detail",
+			Action: Show,
 			Flags: []cli.Flag{
 				browseFlag,
 			},
 		},
 		{
-			Name:  "completed-list",
-			Usage: "Shows all completed tasks (only premium user)",
-			Action: func(c *cli.Context) error {
-				return CompletedList(sync, c)
-			},
+			Name:   "completed-list",
+			Usage:  "Shows all completed tasks (only premium user)",
+			Action: CompletedList,
 		},
 		{
 			Name:    "add",
 			Aliases: []string{"a"},
 			Usage:   "Add task",
-			Action: func(c *cli.Context) error {
-				return Add(sync, c)
-			},
+			Action:  Add,
 			Flags: []cli.Flag{
 				priorityFlag,
 				labelIDsFlag,
@@ -168,9 +180,7 @@ func main() {
 			Name:    "modify",
 			Aliases: []string{"m"},
 			Usage:   "Modify task",
-			Action: func(c *cli.Context) error {
-				return Modify(sync, c)
-			},
+			Action:  Modify,
 			Flags: []cli.Flag{
 				contentFlag,
 				priorityFlag,
@@ -183,50 +193,34 @@ func main() {
 			Name:    "close",
 			Aliases: []string{"c"},
 			Usage:   "Close task",
-			Action: func(c *cli.Context) error {
-				return Close(c)
-			},
+			Action:  Close,
 		},
 		{
 			Name:    "delete",
 			Aliases: []string{"d"},
 			Usage:   "Delete task",
-			Action: func(c *cli.Context) error {
-				return Delete(c)
-			},
+			Action:  Delete,
 		},
 		{
-			Name:  "labels",
-			Usage: "Shows all labels",
-			Action: func(c *cli.Context) error {
-				return Labels(sync, c)
-			},
+			Name:   "labels",
+			Usage:  "Shows all labels",
+			Action: Labels,
 		},
 		{
-			Name:  "projects",
-			Usage: "Shows all projects",
-			Action: func(c *cli.Context) error {
-				return Projects(sync, c)
-			},
+			Name:   "projects",
+			Usage:  "Shows all projects",
+			Action: Projects,
 		},
 		{
-			Name:  "karma",
-			Usage: "Show karma",
-			Action: func(c *cli.Context) error {
-				return Karma(sync, c)
-			},
+			Name:   "karma",
+			Usage:  "Show karma",
+			Action: Karma,
 		},
 		{
 			Name:    "sync",
 			Aliases: []string{"s"},
 			Usage:   "Sync cache",
-			Action: func(c *cli.Context) error {
-				_, err := Sync(c)
-				if err != nil {
-					return err
-				}
-				return nil
-			},
+			Action:  Sync,
 		},
 	}
 	app.Run(os.Args)

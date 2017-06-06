@@ -1,6 +1,7 @@
 package todoist
 
 import (
+	"context"
 	"regexp"
 	"strconv"
 	"strings"
@@ -154,44 +155,39 @@ func (item Item) LabelsString(labels Labels) string {
 	return strings.Join(label_names, ",")
 }
 
-func AddItem(item Item, token string) error {
+func (c *Client) AddItem(ctx context.Context, item Item) error {
 	commands := Commands{
 		NewCommand("item_add", item.AddParam()),
 	}
-	_, err := SyncRequest(commands.UrlValues(token))
-	return err
+	return c.ExecCommands(ctx, commands)
 }
 
-func UpdateItem(item Item, token string) error {
+func (c *Client) UpdateItem(ctx context.Context, item Item) error {
 	commands := Commands{
 		NewCommand("item_update", item.UpdateParam()),
 	}
-	_, err := SyncRequest(commands.UrlValues(token))
-	return err
+	return c.ExecCommands(ctx, commands)
 }
 
-func CloseItem(ids []int, token string) error {
+func (c *Client) CloseItem(ctx context.Context, ids []int) error {
 	var commands Commands
 	for _, id := range ids {
 		command := NewCommand("item_close", map[string]interface{}{"id": id})
 		commands = append(commands, command)
 	}
-	_, err := SyncRequest(commands.UrlValues(token))
-	return err
+	return c.ExecCommands(ctx, commands)
 }
 
-func DeleteItem(ids []int, token string) error {
+func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
 	commands := Commands{
 		NewCommand("item_delete", map[string]interface{}{"ids": ids}),
 	}
-	_, err := SyncRequest(commands.UrlValues(token))
-	return err
+	return c.ExecCommands(ctx, commands)
 }
 
-func MoveItem(item Item, to_project Project, token string) error {
+func (c *Client) MoveItem(ctx context.Context, item Item, to_project Project) error {
 	commands := Commands{
 		NewCommand("item_move", item.MoveParam(to_project)),
 	}
-	_, err := SyncRequest(commands.UrlValues(token))
-	return err
+	return c.ExecCommands(ctx, commands)
 }
