@@ -27,8 +27,8 @@ const (
 	configName = ".todoist.config"
 	configType = "json"
 
-	ShortDateTimeFormat = "06/1/2(Mon) 15:04"
-	ShortDateFormat     = "06/1/2(Mon)"
+	ShortDateTimeFormat = "06/01/02(Mon) 15:04"
+	ShortDateFormat     = "06/01/02(Mon)"
 )
 
 func GetClient(c *cli.Context) *todoist.Client {
