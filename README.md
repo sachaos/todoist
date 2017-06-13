@@ -59,6 +59,8 @@ GLOBAL OPTIONS:
 
 ## Install
 
+You need version 1.7 or higher Golang.
+
 ```
 $ go get github.com/sachaos/todoist
 ```
