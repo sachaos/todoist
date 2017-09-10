@@ -13,14 +13,14 @@ func Show(c *cli.Context) error {
 
 	item_id, err := strconv.Atoi(c.Args().First())
 	if err != nil {
-		return err
+		return CommandFailed
 	}
 
 	idCarrier, err := todoist.SearchByID(client.Store.Items, item_id)
-	item := idCarrier.(todoist.Item)
 	if err != nil {
-		return err
+		return IdNotFound
 	}
+	item := idCarrier.(todoist.Item)
 
 	colorList := ColorList()
 	var projectIds []int

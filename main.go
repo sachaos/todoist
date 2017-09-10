@@ -19,7 +19,8 @@ import (
 var (
 	configPath         = os.Getenv("HOME")
 	default_cache_path = os.Getenv("HOME") + "/.todoist.cache.json"
-	CommandFailed      = errors.New("Command Failed")
+	CommandFailed      = errors.New("command failed")
+	IdNotFound         = errors.New("specified id not found")
 	writer             Writer
 )
 
@@ -223,5 +224,8 @@ func main() {
 			Action:  Sync,
 		},
 	}
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
+	}
 }
