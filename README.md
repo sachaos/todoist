@@ -31,7 +31,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.9.1
+   0.9.2
 
 COMMANDS:
      list, l         Shows all tasks

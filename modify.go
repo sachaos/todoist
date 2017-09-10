@@ -19,11 +19,14 @@ func Modify(c *cli.Context) error {
 
 	var err error
 	item_id, err := strconv.Atoi(c.Args().First())
-	idCarrier, err := todoist.SearchByID(client.Store.Items, item_id)
-	item := idCarrier.(todoist.Item)
 	if err != nil {
 		return err
 	}
+	idCarrier, err := todoist.SearchByID(client.Store.Items, item_id)
+	if err != nil {
+		return IdNotFound
+	}
+	item := idCarrier.(todoist.Item)
 	item.Content = c.String("content")
 	item.Priority = c.Int("priority")
 	item.LabelIDs = func(str string) []int {
