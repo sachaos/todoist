@@ -3,6 +3,7 @@ package main
 
 import (
     "text/scanner"
+    "strings"
 )
 
 type Expression interface{}
@@ -83,4 +84,11 @@ func (l *Lexer) Lex(lval *yySymType) int {
 
 func (l *Lexer) Error(e string) {
     panic(e)
+}
+
+func Filter(f string) (e Expression) {
+    l := new(Lexer)
+    l.Init(strings.NewReader(f))
+    yyParse(l)
+    return l.result
 }
