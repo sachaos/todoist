@@ -2,10 +2,7 @@
 package main
 
 import (
-    "fmt"
     "text/scanner"
-    "os"
-    "strings"
 )
 
 type Expression interface{}
