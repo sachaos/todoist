@@ -12,15 +12,20 @@ var priorityRegex = regexp.MustCompile("^p([1-4])$")
 // Eval ...
 func Eval(e Expression, item todoist.Item) (result bool, err error) {
 	result = false
-	matched := priorityRegex.FindStringSubmatch(e.(StringExpr).literal)
+	switch e.(type) {
+	case StringExpr:
+		matched := priorityRegex.FindStringSubmatch(e.(StringExpr).literal)
 
-	if len(matched) == 0 {
-		return
-	} else {
-		p, _ := strconv.Atoi(matched[1])
-		if p == item.Priority {
-			return true, err
+		if len(matched) == 0 {
+			return
+		} else {
+			p, _ := strconv.Atoi(matched[1])
+			if p == item.Priority {
+				return true, err
+			}
 		}
+	default:
+		return true, err
 	}
 	return
 }

@@ -12,6 +12,8 @@ type Token struct {
     literal string
 }
 
+type VoidExpr struct {}
+
 type StringExpr struct {
     literal string
 }
@@ -42,7 +44,11 @@ type PriorityExpr struct {
 %%
 
 filter
-    : expr
+    :
+    {
+        $$ = VoidExpr{}
+    }
+    | expr
     {
         $$ = $1
         yylex.(*Lexer).result = $$
