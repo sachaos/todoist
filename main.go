@@ -67,6 +67,10 @@ func main() {
 		Name:  "browse, o",
 		Usage: "when contain URL, open it",
 	}
+	filterFlag := cli.StringFlag{
+		Name:  "filter, f",
+		Usage: "filter expression",
+	}
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -151,6 +155,9 @@ func main() {
 			Aliases: []string{"l"},
 			Usage:   "Shows all tasks",
 			Action:  List,
+			Flags: []cli.Flag{
+				filterFlag,
+			},
 		},
 		{
 			Name:   "show",

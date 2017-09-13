@@ -14,11 +14,16 @@ func List(c *cli.Context) error {
 		projectIds = append(projectIds, project.GetID())
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
+	ex := Filter(c.String("filter"))
 
 	itemList := [][]string{}
 	for _, itemOrder := range client.Store.ItemOrders {
 		item := itemOrder.Data.(todoist.Item)
-		if item.Checked == 1 {
+		r, err := Eval(ex, item)
+		if err != nil {
+			return err
+		}
+		if !r || item.Checked == 1 {
 			continue
 		}
 		itemList = append(itemList, []string{
