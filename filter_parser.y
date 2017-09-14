@@ -24,10 +24,6 @@ type BoolInfixOpExpr struct {
     right Expression
 }
 
-type PriorityExpr struct {
-    priority int
-}
-
 %}
 
 %union{
