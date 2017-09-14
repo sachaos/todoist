@@ -8,3 +8,7 @@ filter_parser.go: filter_parser.y
 .PHONY: clean
 clean:
 	rm -f y.output
+
+.PHONY: test
+test:
+	go test -v
