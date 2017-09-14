@@ -27,18 +27,23 @@ func Eval(e Expression, item todoist.Item) (result bool, err error) {
 			return lr || rr, nil
 		}
 	case StringExpr:
-		matched := priorityRegex.FindStringSubmatch(e.(StringExpr).literal)
-
-		if len(matched) == 0 {
-			return
-		} else {
-			p, _ := strconv.Atoi(matched[1])
-			if p == item.Priority {
-				return true, err
-			}
-		}
+		e := e.(StringExpr)
+		return EvalAsPriority(e, item), err
 	default:
 		return true, err
 	}
 	return
+}
+
+func EvalAsPriority(e StringExpr, item todoist.Item) (result bool) {
+	matched := priorityRegex.FindStringSubmatch(e.literal)
+	if len(matched) == 0 {
+		return false
+	} else {
+		p, _ := strconv.Atoi(matched[1])
+		if p == item.Priority {
+			return true
+		}
+	}
+	return false
 }
