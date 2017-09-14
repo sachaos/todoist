@@ -15,4 +15,18 @@ func TestEval(t *testing.T) {
 
 	r, _ = Eval(Filter(""), todoist.Item{})
 	assert.Equal(t, r, true, "they should be equal")
+
+	r, _ = Eval(Filter("p1 | p2"), todoist.Item{Priority: 1})
+	assert.Equal(t, r, true, "they should be equal")
+	r, _ = Eval(Filter("p1 | p2"), todoist.Item{Priority: 2})
+	assert.Equal(t, r, true, "they should be equal")
+	r, _ = Eval(Filter("p1 | p2"), todoist.Item{Priority: 3})
+	assert.Equal(t, r, false, "they should be equal")
+
+	r, _ = Eval(Filter("p1 & p2"), todoist.Item{Priority: 1})
+	assert.Equal(t, r, false, "they should be equal")
+	r, _ = Eval(Filter("p1 & p2"), todoist.Item{Priority: 2})
+	assert.Equal(t, r, false, "they should be equal")
+	r, _ = Eval(Filter("p1 & p2"), todoist.Item{Priority: 3})
+	assert.Equal(t, r, false, "they should be equal")
 }
