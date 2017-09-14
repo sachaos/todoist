@@ -7,26 +7,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
+	actual, _ := Eval(Filter(f), item)
+	assert.Equal(t, expect, actual, "they should be equal")
+}
+
 func TestEval(t *testing.T) {
-	r, _ := Eval(Filter("p1"), todoist.Item{Priority: 1})
-	assert.Equal(t, r, true, "they should be equal")
-	r, _ = Eval(Filter("p2"), todoist.Item{Priority: 1})
-	assert.Equal(t, r, false, "they should be equal")
+	testFilterEval(t, "p1", todoist.Item{Priority: 1}, true)
+	testFilterEval(t, "p2", todoist.Item{Priority: 1}, false)
 
-	r, _ = Eval(Filter(""), todoist.Item{})
-	assert.Equal(t, r, true, "they should be equal")
+	testFilterEval(t, "", todoist.Item{}, true)
 
-	r, _ = Eval(Filter("p1 | p2"), todoist.Item{Priority: 1})
-	assert.Equal(t, r, true, "they should be equal")
-	r, _ = Eval(Filter("p1 | p2"), todoist.Item{Priority: 2})
-	assert.Equal(t, r, true, "they should be equal")
-	r, _ = Eval(Filter("p1 | p2"), todoist.Item{Priority: 3})
-	assert.Equal(t, r, false, "they should be equal")
+	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 1}, true)
+	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 2}, true)
+	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 3}, false)
 
-	r, _ = Eval(Filter("p1 & p2"), todoist.Item{Priority: 1})
-	assert.Equal(t, r, false, "they should be equal")
-	r, _ = Eval(Filter("p1 & p2"), todoist.Item{Priority: 2})
-	assert.Equal(t, r, false, "they should be equal")
-	r, _ = Eval(Filter("p1 & p2"), todoist.Item{Priority: 3})
-	assert.Equal(t, r, false, "they should be equal")
+	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 1}, false)
+	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 2}, false)
+	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 3}, false)
 }
