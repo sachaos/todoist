@@ -13,11 +13,15 @@ func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
 }
 
 func TestEval(t *testing.T) {
+	testFilterEval(t, "", todoist.Item{}, true)
+}
+
+func TestPriorityEval(t *testing.T) {
 	testFilterEval(t, "p1", todoist.Item{Priority: 1}, true)
 	testFilterEval(t, "p2", todoist.Item{Priority: 1}, false)
+}
 
-	testFilterEval(t, "", todoist.Item{}, true)
-
+func TestBoolInfixOpExp(t *testing.T) {
 	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 1}, true)
 	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 2}, true)
 	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 3}, false)
