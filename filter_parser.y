@@ -38,6 +38,11 @@ type DueDateExpr struct {
     allDay bool
 }
 
+func (d *DueDateExpr) SetOperation(op int) *DueDateExpr {
+    d.operation = op
+    return d
+}
+
 func atoi(a string) (i int) {
     i, _ = strconv.Atoi(a)
     return
@@ -64,6 +69,7 @@ var today = func() time.Time {
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
 %token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
+%token<token> DUE BEFORE
 %left '&' '|'
 
 %%
@@ -95,6 +101,12 @@ expr
     | '(' expr ')'
     {
         $$ = $2
+    }
+    | DUE BEFORE ':' s_datetime
+    {
+        e := $4.(DueDateExpr)
+        e.operation = DUE_BEFORE
+        $$ = e
     }
     | s_datetime
 
@@ -243,6 +255,10 @@ func (l *Lexer) Lex(lval *yySymType) int {
                 token = TOMORROW_IDENT
             } else if lowerToken == "yesterday" {
                 token = YESTERDAY_IDENT
+            } else if lowerToken == "due" {
+                token = DUE
+            } else if lowerToken == "before" {
+                token = BEFORE
             } else {
                 token = STRING
             }

@@ -54,6 +54,11 @@ func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
 			}
 		}
 		return false
+	case DUE_BEFORE:
+		if itemDueDate.Before(dueDate) {
+			return true
+		}
+		return false
 	default:
 		return true
 	}
