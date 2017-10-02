@@ -60,11 +60,12 @@ var today = func() time.Time {
 %type<expr> s_datetime
 %type<expr> s_date
 %type<expr> s_date_year
+%type<expr> s_overdue
 %type<expr> s_time
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
 %token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
-%token<token> DUE BEFORE AFTER
+%token<token> DUE BEFORE AFTER OVER OVERDUE
 %left '&' '|'
 
 %%
@@ -97,6 +98,10 @@ expr
     {
         $$ = $2
     }
+    | s_overdue
+    {
+        $$ = DueDateExpr{allDay: false, datetime: now(), operation: DUE_BEFORE}
+    }
     | DUE BEFORE ':' s_datetime
     {
         e := $4.(DueDateExpr)
@@ -110,6 +115,16 @@ expr
         $$ = e
     }
     | s_datetime
+
+s_overdue
+    : OVER DUE
+    {
+        $$ = $1
+    }
+    | OVERDUE
+    {
+        $$ = $1
+    }
 
 s_datetime
     : s_date_year s_time
@@ -241,6 +256,12 @@ var TodayIdentHash = map[string]bool {
     "tod": true,
 }
 
+var OverDueHash = map[string]bool {
+    "overdue": true,
+    "od": true,
+}
+
+
 func (l *Lexer) Lex(lval *yySymType) int {
     token := int(l.Scan())
     switch token {
@@ -262,6 +283,10 @@ func (l *Lexer) Lex(lval *yySymType) int {
                 token = BEFORE
             } else if lowerToken == "after" {
                 token = AFTER
+            } else if lowerToken == "over" {
+                token = OVER
+            } else if _, ok := OverDueHash[lowerToken]; ok {
+                token = OVERDUE
             } else {
                 token = STRING
             }
