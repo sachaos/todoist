@@ -35,6 +35,7 @@ const (
 type DueDateExpr struct {
     operation int
     datetime time.Time
+    allDay bool
 }
 
 func atoi(a string) (i int) {
@@ -96,18 +97,18 @@ expr
         $$ = $2
     }
     | s_datetime
-    {
-        $$ = DueDateExpr{operation: DUE_ON, datetime: $1.(time.Time)}
-    }
 
 s_datetime
     : s_date_year s_time
     {
         date := $1.(time.Time)
         time := $2.(time.Duration)
-        $$ = date.Add(time)
+        $$ = DueDateExpr{allDay: false, datetime: date.Add(time)}
     }
     | s_date_year
+    {
+        $$ = DueDateExpr{allDay: true, datetime: $1.(time.Time)}
+    }
     | s_time
     {
         nd := now().Sub(today())
@@ -115,19 +116,7 @@ s_datetime
         if (d <= nd) {
           d = d + time.Duration(int64(time.Hour) * 24)
         }
-        $$ = today().Add(d)
-    }
-    | TODAY_IDENT
-    {
-        $$ = today()
-    }
-    | TOMORROW_IDENT
-    {
-        $$ = today().AddDate(0, 0, 1)
-    }
-    | YESTERDAY_IDENT
-    {
-        $$ = today().AddDate(0, 0, -1)
+        $$ = DueDateExpr{allDay: false, datetime: today().Add(d)}
     }
 
 s_date_year
@@ -151,6 +140,18 @@ s_date_year
             date = date.AddDate(1, 0, 0)
         }
         $$ = date
+    }
+    | TODAY_IDENT
+    {
+        $$ = today()
+    }
+    | TOMORROW_IDENT
+    {
+        $$ = today().AddDate(0, 0, 1)
+    }
+    | YESTERDAY_IDENT
+    {
+        $$ = today().AddDate(0, 0, -1)
     }
 
 s_date
