@@ -100,6 +100,22 @@ func TestDateTimeFilter(t *testing.T) {
 		Filter("7am"), "they should be equal")
 }
 
+func TestSpecialDateTimeFilter(t *testing.T) {
+	timeNow := time.Date(2017, time.January, 1, 1, 0, 0, 0, time.Local)
+	setNow(timeNow)
+	assert.Equal(t,
+		time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local),
+		Filter("today"), "they should be equal")
+
+	assert.Equal(t,
+		time.Date(2017, time.January, 2, 0, 0, 0, 0, time.Local),
+		Filter("tomorrow"), "they should be equal")
+
+	assert.Equal(t,
+		time.Date(2016, time.December, 31, 0, 0, 0, 0, time.Local),
+		Filter("yesterday"), "they should be equal")
+}
+
 func TestDateTimeElapsedFilter(t *testing.T) {
 	timeNow := time.Date(2017, time.January, 2, 18, 0, 0, 0, time.Local)
 	setNow(timeNow)

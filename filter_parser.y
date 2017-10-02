@@ -49,10 +49,9 @@ var today = func() time.Time {
 %type<expr> s_date
 %type<expr> s_date_year
 %type<expr> s_time
-%token<token> STRING
-%token<token> NUMBER
-%token<token> MONTH_IDENT
-%token<token> TWELVE_CLOCK_IDENT
+%token<token> STRING NUMBER
+%token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
+%token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
 %left '&' '|'
 
 %%
@@ -95,9 +94,6 @@ s_datetime
         $$ = date.Add(time)
     }
     | s_date_year
-    {
-        $$ = $1
-    }
     | s_time
     {
         nd := now().Sub(today())
@@ -106,6 +102,18 @@ s_datetime
           d = d + time.Duration(int64(time.Hour) * 24)
         }
         $$ = today().Add(d)
+    }
+    | TODAY_IDENT
+    {
+        $$ = today()
+    }
+    | TOMORROW_IDENT
+    {
+        $$ = today().AddDate(0, 0, 1)
+    }
+    | YESTERDAY_IDENT
+    {
+        $$ = today().AddDate(0, 0, -1)
     }
 
 s_date_year
@@ -208,6 +216,12 @@ func (l *Lexer) Lex(lval *yySymType) int {
                 token = MONTH_IDENT
             } else if _, ok := TwelveClockIdentHash[l.TokenText()]; ok {
                 token = TWELVE_CLOCK_IDENT
+            } else if l.TokenText() == "today" {
+                token = TODAY_IDENT
+            } else if l.TokenText() == "tomorrow" {
+                token = TOMORROW_IDENT
+            } else if l.TokenText() == "yesterday" {
+                token = YESTERDAY_IDENT
             } else {
                 token = STRING
             }
