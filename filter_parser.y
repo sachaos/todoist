@@ -46,6 +46,7 @@ var today = func() time.Time {
 %type<expr> filter
 %type<expr> expr
 %type<expr> s_date
+%type<expr> s_date_year
 %type<expr> s_time
 %token<token> STRING
 %token<token> NUMBER
@@ -83,33 +84,30 @@ expr
     {
         $$ = $2
     }
-    | s_date s_time
+    | s_date_year s_time
     {
         date := $1.(time.Time)
         time := $2.(time.Duration)
         $$ = date.Add(time)
     }
-    | s_date
+    | s_date_year
     {
         $$ = $1
     }
     | s_time
     {
-        $$ = today().Add($1.(time.Duration))
+        nd := now().Sub(today())
+        d := $1.(time.Duration)
+        if (d <= nd) {
+          d = d + time.Duration(int64(time.Hour) * 24)
+        }
+        $$ = today().Add(d)
     }
 
-s_date
+s_date_year
     : NUMBER '/' NUMBER '/' NUMBER
     {
         $$ = time.Date(atoi($5.literal), time.Month(atoi($1.literal)), atoi($3.literal), 0, 0, 0, 0, time.Local)
-    }
-    | MONTH_IDENT NUMBER
-    {
-        $$ = time.Date(today().Year(), MonthIdentHash[$1.literal], atoi($2.literal), 0, 0, 0, 0, time.Local)
-    }
-    | NUMBER MONTH_IDENT
-    {
-        $$ = time.Date(today().Year(), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
     | MONTH_IDENT NUMBER NUMBER
     {
@@ -118,6 +116,25 @@ s_date
     | NUMBER MONTH_IDENT NUMBER
     {
         $$ = time.Date(atoi($3.literal), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
+    }
+    | s_date
+    {
+        tod := today()
+        date := $1.(time.Time)
+        if date.Before(tod) {
+            date = date.AddDate(1, 0, 0)
+        }
+        $$ = date
+    }
+
+s_date
+    : MONTH_IDENT NUMBER
+    {
+        $$ = time.Date(today().Year(), MonthIdentHash[$1.literal], atoi($2.literal), 0, 0, 0, 0, time.Local)
+    }
+    | NUMBER MONTH_IDENT
+    {
+        $$ = time.Date(today().Year(), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER '/' NUMBER
     {

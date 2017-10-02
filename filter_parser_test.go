@@ -52,7 +52,7 @@ func setNow(t time.Time) {
 }
 
 func TestDateTimeFilter(t *testing.T) {
-	timeNow := time.Now()
+	timeNow := time.Date(2017, time.January, 2, 1, 0, 0, 0, time.Local)
 	setNow(timeNow)
 
 	assert.Equal(t,
@@ -94,4 +94,28 @@ func TestDateTimeFilter(t *testing.T) {
 	assert.Equal(t,
 		time.Date(2020, time.February, 10, 15, 0, 0, 0, time.Local),
 		Filter("10 Feb 2020 3pm"), "they should be equal")
+
+	assert.Equal(t,
+		time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day(), 7, 0, 0, 0, time.Local),
+		Filter("7am"), "they should be equal")
+}
+
+func TestDateTimeElapsedFilter(t *testing.T) {
+	timeNow := time.Date(2017, time.January, 2, 18, 0, 0, 0, time.Local)
+	setNow(timeNow)
+	assert.Equal(t,
+		time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day()+1, 16, 0, 0, 0, time.Local),
+		Filter("16:00"), "they should be equal")
+
+	timeNow = time.Date(2017, time.May, 16, 23, 59, 59, 0, time.Local)
+	setNow(timeNow)
+	assert.Equal(t,
+		time.Date(timeNow.Year(), time.May, 16, 0, 0, 0, 0, time.Local),
+		Filter("16/05"), "they should be equal")
+
+	timeNow = time.Date(2017, time.May, 17, 0, 0, 0, 0, time.Local)
+	setNow(timeNow)
+	assert.Equal(t,
+		time.Date(timeNow.Year()+1, time.May, 16, 0, 0, 0, 0, time.Local),
+		Filter("16/05"), "they should be equal")
 }
