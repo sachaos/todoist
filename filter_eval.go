@@ -42,6 +42,9 @@ func Eval(e Expression, item todoist.Item) (result bool, err error) {
 func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
 	itemDueDate := item.DueDateTime()
 	if (itemDueDate == time.Time{}) {
+		if e.operation == NO_DUE_DATE {
+			return true
+		}
 		return false
 	}
 	allDay := e.allDay
@@ -72,7 +75,7 @@ func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
 		}
 		return false
 	default:
-		return true
+		return false
 	}
 }
 

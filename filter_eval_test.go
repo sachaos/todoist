@@ -51,6 +51,13 @@ func TestDueOnEval(t *testing.T) {
 	testFilterEval(t, "10/2/2017 10:00", todoist.Item{DueDateUtc: "Mon 2 Oct 2017 01:00:00 +0000"}, false) // JST: Mon 2 Oct 2017 10:00:00
 }
 
+func TestNoDateEval(t *testing.T) {
+	testFilterEval(t, "no date", todoist.Item{DueDateUtc: ""}, true)
+	testFilterEval(t, "no due date", todoist.Item{DueDateUtc: ""}, true)
+
+	testFilterEval(t, "no date", todoist.Item{DueDateUtc: "Sun 1 Oct 2017 15:00:00 +0000"}, false) // JST: Mon 2 Oct 2017 00:00:00
+}
+
 func TestDueBeforeEval(t *testing.T) {
 	testFilterEval(t, "due before: 10/2/2017", todoist.Item{DueDateUtc: "Sun 1 Oct 2017 15:00:00 +0000"}, false)      // JST: Mon 2 Oct 2017 00:00:00
 	testFilterEval(t, "due before: 10/2/2017", todoist.Item{DueDateUtc: "Sun 1 Oct 2017 14:59:59 +0000"}, true)       // JST: Sun 1 Oct 2017 23:59:59

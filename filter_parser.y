@@ -30,6 +30,7 @@ const (
     DUE_ON int = iota
     DUE_BEFORE
     DUE_AFTER
+    NO_DUE_DATE
 )
 
 type DueDateExpr struct {
@@ -60,12 +61,12 @@ var today = func() time.Time {
 %type<expr> s_datetime
 %type<expr> s_date
 %type<expr> s_date_year
-%type<expr> s_overdue
+%type<expr> s_overdue s_nodate
 %type<expr> s_time
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
 %token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
-%token<token> DUE BEFORE AFTER OVER OVERDUE
+%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE
 %left '&' '|'
 
 %%
@@ -102,6 +103,10 @@ expr
     {
         $$ = DueDateExpr{allDay: false, datetime: now(), operation: DUE_BEFORE}
     }
+    | s_nodate
+    {
+        $$ = DueDateExpr{operation: NO_DUE_DATE}
+    }
     | DUE BEFORE ':' s_datetime
     {
         e := $4.(DueDateExpr)
@@ -115,6 +120,16 @@ expr
         $$ = e
     }
     | s_datetime
+
+s_nodate
+    : NO DATE
+    {
+        $$ = $1
+    }
+    | NO DUE DATE
+    {
+        $$ = $1
+    }
 
 s_overdue
     : OVER DUE
@@ -287,6 +302,10 @@ func (l *Lexer) Lex(lval *yySymType) int {
                 token = OVER
             } else if _, ok := OverDueHash[lowerToken]; ok {
                 token = OVERDUE
+            } else if lowerToken == "no" {
+                token = NO
+            } else if lowerToken == "date" {
+                token = DATE
             } else {
                 token = STRING
             }
