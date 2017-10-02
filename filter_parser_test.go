@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"time"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,77 +47,51 @@ func TestBoolInfixFilter(t *testing.T) {
 		Filter("p1 & (p2 | p3 )"), "the should be equal")
 }
 
+func setNow(t time.Time) {
+	now = func() time.Time { return t }
+}
+
 func TestDateTimeFilter(t *testing.T) {
+	timeNow := time.Now()
+	setNow(timeNow)
+
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			year:  2017,
-			month: 10,
-			day:   5,
-		},
+		time.Date(2017, time.October, 5, 0, 0, 0, 0, time.Local),
 		Filter("10/5/2017"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			month: 1,
-			day:   3,
-		},
+		time.Date(timeNow.Year(), time.January, 3, 0, 0, 0, 0, time.Local),
 		Filter("Jan 3"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			month: 8,
-			day:   8,
-		},
+		time.Date(timeNow.Year(), time.August, 8, 0, 0, 0, 0, time.Local),
 		Filter("8 August"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			year:  2020,
-			month: 2,
-			day:   10,
-		},
+		time.Date(2020, time.February, 10, 0, 0, 0, 0, time.Local),
 		Filter("10 Feb 2020"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			month: 5,
-			day:   16,
-		},
+		time.Date(timeNow.Year(), time.May, 16, 0, 0, 0, 0, time.Local),
 		Filter("16/05"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			hour:   16,
-			minute: 00,
-		},
+		time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day(), 16, 0, 0, 0, time.Local),
 		Filter("16:00"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			hour:   16,
-			minute: 10,
-			second: 3,
-		},
+		time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day(), 16, 10, 3, 0, time.Local),
 		Filter("16:10:03"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			hour: 15,
-		},
+		time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day(), 15, 0, 0, 0, time.Local),
 		Filter("3pm"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			hour: 7,
-		},
+		time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day(), 7, 0, 0, 0, time.Local),
 		Filter("7am"), "the should be equal")
 
 	assert.Equal(t,
-		SpecificDateTimeExpr{
-			year:  2020,
-			month: 2,
-			day:   10,
-			hour:  15,
-		},
+		time.Date(2020, time.February, 10, 15, 0, 0, 0, time.Local),
 		Filter("10 Feb 2020 3pm"), "the should be equal")
 }

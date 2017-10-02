@@ -5,6 +5,7 @@ import (
     "text/scanner"
     "strings"
     "strconv"
+    "time"
 )
 
 type Expression interface{}
@@ -19,15 +20,6 @@ type StringExpr struct {
     literal string
 }
 
-type SpecificDateTimeExpr struct {
-    year   int
-    month  int
-    day    int
-    hour   int
-    minute int
-    second int
-}
-
 type BoolInfixOpExpr struct {
     left Expression
     operator rune
@@ -37,6 +29,11 @@ type BoolInfixOpExpr struct {
 func atoi(a string) (i int) {
     i, _ = strconv.Atoi(a)
     return
+}
+
+var now = time.Now
+var today = func() time.Time {
+  return time.Date(now().Year(), now().Month(), now().Day(), 0, 0, 0, 0, time.Local)
 }
 
 %}
@@ -88,12 +85,9 @@ expr
     }
     | s_date s_time
     {
-        date := $1.(SpecificDateTimeExpr)
-        time := $2.(SpecificDateTimeExpr)
-        $$ = SpecificDateTimeExpr{
-            year: date.year, month: date.month, day: date.day,
-            hour: time.hour, minute: time.minute, second: time.second,
-        }
+        date := $1.(time.Time)
+        time := $2.(time.Duration)
+        $$ = date.Add(time)
     }
     | s_date
     {
@@ -101,43 +95,43 @@ expr
     }
     | s_time
     {
-        $$ = $1
+        $$ = today().Add($1.(time.Duration))
     }
 
 s_date
     : NUMBER '/' NUMBER '/' NUMBER
     {
-        $$ = SpecificDateTimeExpr{year: atoi($5.literal), month: atoi($1.literal), day: atoi($3.literal)}
+        $$ = time.Date(atoi($5.literal), time.Month(atoi($1.literal)), atoi($3.literal), 0, 0, 0, 0, time.Local)
     }
     | MONTH_IDENT NUMBER
     {
-        $$ = SpecificDateTimeExpr{month: MonthIdentHash[$1.literal], day: atoi($2.literal)}
+        $$ = time.Date(today().Year(), MonthIdentHash[$1.literal], atoi($2.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER MONTH_IDENT
     {
-        $$ = SpecificDateTimeExpr{month: MonthIdentHash[$2.literal], day: atoi($1.literal)}
+        $$ = time.Date(today().Year(), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
     | MONTH_IDENT NUMBER NUMBER
     {
-        $$ = SpecificDateTimeExpr{year: atoi($3.literal), month: MonthIdentHash[$1.literal], day: atoi($2.literal)}
+        $$ = time.Date(atoi($3.literal), MonthIdentHash[$1.literal], atoi($2.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER MONTH_IDENT NUMBER
     {
-        $$ = SpecificDateTimeExpr{year: atoi($3.literal), month: MonthIdentHash[$2.literal], day: atoi($1.literal)}
+        $$ = time.Date(atoi($3.literal), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER '/' NUMBER
     {
-        $$ = SpecificDateTimeExpr{month: atoi($3.literal), day: atoi($1.literal)}
+        $$ = time.Date(now().Year(), time.Month(atoi($3.literal)), atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
 
 s_time
     : NUMBER ':' NUMBER
     {
-        $$ = SpecificDateTimeExpr{hour: atoi($1.literal), minute: atoi($3.literal)}
+        $$ = time.Duration(int64(time.Hour) * int64(atoi($1.literal)) + int64(time.Minute) * int64(atoi($3.literal)))
     }
     | NUMBER ':' NUMBER ':' NUMBER
     {
-        $$ = SpecificDateTimeExpr{hour: atoi($1.literal), minute: atoi($3.literal), second: atoi($5.literal)}
+        $$ = time.Duration(int64(time.Hour) * int64(atoi($1.literal)) + int64(time.Minute) * int64(atoi($3.literal)) + int64(time.Second) * int64(atoi($5.literal)))
     }
     | NUMBER TWELVE_CLOCK_IDENT
     {
@@ -145,7 +139,7 @@ s_time
         if TwelveClockIdentHash[$2.literal] {
             hour = hour + 12
         }
-        $$ = SpecificDateTimeExpr{hour: hour}
+        $$ = time.Duration(int64(time.Hour) * int64(hour))
     }
 
 %%
@@ -155,29 +149,29 @@ type Lexer struct {
     result Expression
 }
 
-var MonthIdentHash = map[string]int{
-    "Jan": 1,
-    "Feb": 2,
-    "Mar": 3,
-    "Apr": 4,
-    "May": 5,
-    "June": 6,
-    "July": 7,
-    "Aug": 8,
-    "Sept": 9,
-    "Oct": 10,
-    "Nov": 11,
-    "Dec": 12,
+var MonthIdentHash = map[string]time.Month{
+    "Jan": time.January,
+    "Feb": time.February,
+    "Mar": time.March,
+    "Apr": time.April,
+    "May": time.May,
+    "June": time.June,
+    "July": time.July,
+    "Aug": time.August,
+    "Sept": time.September,
+    "Oct": time.October,
+    "Nov": time.November,
+    "Dec": time.December,
 
-    "January": 1,
-    "February": 2,
-    "March": 3,
-    "April": 4,
-    "August": 8,
-    "September": 9,
-    "October": 10,
-    "November": 11,
-    "December": 12,
+    "January": time.January,
+    "February": time.February,
+    "March": time.March,
+    "April": time.April,
+    "August": time.August,
+    "September": time.September,
+    "October": time.October,
+    "November": time.November,
+    "December": time.December,
 }
 
 var TwelveClockIdentHash = map[string]bool{
