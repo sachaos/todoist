@@ -45,6 +45,7 @@ var today = func() time.Time {
 
 %type<expr> filter
 %type<expr> expr
+%type<expr> s_datetime
 %type<expr> s_date
 %type<expr> s_date_year
 %type<expr> s_time
@@ -84,7 +85,10 @@ expr
     {
         $$ = $2
     }
-    | s_date_year s_time
+    | s_datetime
+
+s_datetime
+    : s_date_year s_time
     {
         date := $1.(time.Time)
         time := $2.(time.Duration)
