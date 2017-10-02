@@ -123,11 +123,11 @@ s_date_year
     }
     | MONTH_IDENT NUMBER NUMBER
     {
-        $$ = time.Date(atoi($3.literal), MonthIdentHash[$1.literal], atoi($2.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(atoi($3.literal), MonthIdentHash[strings.ToLower($1.literal)], atoi($2.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER MONTH_IDENT NUMBER
     {
-        $$ = time.Date(atoi($3.literal), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(atoi($3.literal), MonthIdentHash[strings.ToLower($2.literal)], atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
     | s_date
     {
@@ -142,11 +142,11 @@ s_date_year
 s_date
     : MONTH_IDENT NUMBER
     {
-        $$ = time.Date(today().Year(), MonthIdentHash[$1.literal], atoi($2.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(today().Year(), MonthIdentHash[strings.ToLower($1.literal)], atoi($2.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER MONTH_IDENT
     {
-        $$ = time.Date(today().Year(), MonthIdentHash[$2.literal], atoi($1.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(today().Year(), MonthIdentHash[strings.ToLower($2.literal)], atoi($1.literal), 0, 0, 0, 0, time.Local)
     }
     | NUMBER '/' NUMBER
     {
@@ -179,28 +179,28 @@ type Lexer struct {
 }
 
 var MonthIdentHash = map[string]time.Month{
-    "Jan": time.January,
-    "Feb": time.February,
-    "Mar": time.March,
-    "Apr": time.April,
-    "May": time.May,
-    "June": time.June,
-    "July": time.July,
-    "Aug": time.August,
-    "Sept": time.September,
-    "Oct": time.October,
-    "Nov": time.November,
-    "Dec": time.December,
+    "jan": time.January,
+    "feb": time.February,
+    "mar": time.March,
+    "apr": time.April,
+    "may": time.May,
+    "june": time.June,
+    "july": time.July,
+    "aug": time.August,
+    "sept": time.September,
+    "oct": time.October,
+    "nov": time.November,
+    "dec": time.December,
 
-    "January": time.January,
-    "February": time.February,
-    "March": time.March,
-    "April": time.April,
-    "August": time.August,
-    "September": time.September,
-    "October": time.October,
-    "November": time.November,
-    "December": time.December,
+    "january": time.January,
+    "february": time.February,
+    "march": time.March,
+    "april": time.April,
+    "august": time.August,
+    "september": time.September,
+    "october": time.October,
+    "november": time.November,
+    "december": time.December,
 }
 
 var TwelveClockIdentHash = map[string]bool{
@@ -208,19 +208,25 @@ var TwelveClockIdentHash = map[string]bool{
     "pm": true,
 }
 
+var TodayIdentHash = map[string]bool {
+    "today": true,
+    "tod": true,
+}
+
 func (l *Lexer) Lex(lval *yySymType) int {
     token := int(l.Scan())
     switch token {
         case scanner.Ident:
-            if _, ok := MonthIdentHash[l.TokenText()]; ok {
+            lowerToken := strings.ToLower(l.TokenText())
+            if _, ok := MonthIdentHash[lowerToken]; ok {
                 token = MONTH_IDENT
-            } else if _, ok := TwelveClockIdentHash[l.TokenText()]; ok {
+            } else if _, ok := TwelveClockIdentHash[lowerToken]; ok {
                 token = TWELVE_CLOCK_IDENT
-            } else if l.TokenText() == "today" {
+            } else if _, ok := TodayIdentHash[lowerToken]; ok {
                 token = TODAY_IDENT
-            } else if l.TokenText() == "tomorrow" {
+            } else if lowerToken == "tomorrow" {
                 token = TOMORROW_IDENT
-            } else if l.TokenText() == "yesterday" {
+            } else if lowerToken == "yesterday" {
                 token = YESTERDAY_IDENT
             } else {
                 token = STRING

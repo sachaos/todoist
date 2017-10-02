@@ -108,6 +108,14 @@ func TestSpecialDateTimeFilter(t *testing.T) {
 		Filter("today"), "they should be equal")
 
 	assert.Equal(t,
+		time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local),
+		Filter("tod"), "they should be equal")
+
+	assert.Equal(t,
+		time.Date(2017, time.January, 1, 0, 0, 0, 0, time.Local),
+		Filter("Today"), "they should be equal")
+
+	assert.Equal(t,
 		time.Date(2017, time.January, 2, 0, 0, 0, 0, time.Local),
 		Filter("tomorrow"), "they should be equal")
 
