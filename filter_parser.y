@@ -26,6 +26,17 @@ type BoolInfixOpExpr struct {
     right Expression
 }
 
+const (
+    DUE_ON int = iota
+    DUE_BEFORE
+    DUE_AFTER
+)
+
+type DueDateExpr struct {
+    operation int
+    datetime time.Time
+}
+
 func atoi(a string) (i int) {
     i, _ = strconv.Atoi(a)
     return
@@ -85,6 +96,9 @@ expr
         $$ = $2
     }
     | s_datetime
+    {
+        $$ = DueDateExpr{operation: DUE_ON, datetime: $1.(time.Time)}
+    }
 
 s_datetime
     : s_date_year s_time
