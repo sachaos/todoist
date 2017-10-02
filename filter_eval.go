@@ -59,6 +59,15 @@ func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
 			return true
 		}
 		return false
+	case DUE_AFTER:
+		endDateTime := dueDate
+		if allDay {
+			endDateTime = dueDate.AddDate(0, 0, 1).Add(-time.Duration(time.Microsecond))
+		}
+		if itemDueDate.After(endDateTime) {
+			return true
+		}
+		return false
 	default:
 		return true
 	}
