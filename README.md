@@ -59,7 +59,7 @@ GLOBAL OPTIONS:
 
 ## Install
 
-You need version 1.7 or higher Golang.
+You need version 1.7 or higher Golang, and [golang/dep: Go dependency management tool](https://github.com/golang/dep).
 
 ```
 $ git clone https://github.com/sachaos/todoist.git
