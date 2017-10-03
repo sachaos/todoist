@@ -1,12 +1,15 @@
 .PHONY: install
-install: filter_parser.go
+install: prepare
 	go install
 
 .PHONY: test
-test: filter_parser.go
+test: prepare
 	go test -v
 
-filter_parser.go: filter_parser.y
+.PHONY: prepare
+prepare: filter_parser.y
+	dep ensure
+	go get -u golang.org/x/tools/cmd/goyacc
 	goyacc -o filter_parser.go filter_parser.y
 
 .PHONY: clean
