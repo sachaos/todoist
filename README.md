@@ -62,7 +62,9 @@ GLOBAL OPTIONS:
 You need version 1.7 or higher Golang.
 
 ```
-$ go get github.com/sachaos/todoist
+$ git clone https://github.com/sachaos/todoist.git
+$ cd todoist
+$ make install
 ```
 
 ### Register API token
