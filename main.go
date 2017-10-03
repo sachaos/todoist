@@ -40,7 +40,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
-	app.Version = "0.9.2"
+	app.Version = "0.10.0"
 
 	contentFlag := cli.StringFlag{
 		Name:  "content, c",
@@ -66,6 +66,10 @@ func main() {
 	browseFlag := cli.BoolFlag{
 		Name:  "browse, o",
 		Usage: "when contain URL, open it",
+	}
+	filterFlag := cli.StringFlag{
+		Name:  "filter, f",
+		Usage: "filter expression",
 	}
 
 	app.Flags = []cli.Flag{
@@ -151,6 +155,9 @@ func main() {
 			Aliases: []string{"l"},
 			Usage:   "Shows all tasks",
 			Action:  List,
+			Flags: []cli.Flag{
+				filterFlag,
+			},
 		},
 		{
 			Name:   "show",
