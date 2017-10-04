@@ -59,6 +59,15 @@ GLOBAL OPTIONS:
 
 ## Install
 
+### Homebrew (Mac OS)
+
+```
+$ brew tap sachaos/todoist
+$ brew install todoist
+```
+
+### Build it yourself
+
 You need version 1.7 or higher Golang, and [golang/dep: Go dependency management tool](https://github.com/golang/dep).
 
 ```
