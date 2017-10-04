@@ -33,6 +33,13 @@ func Eval(e Expression, item todoist.Item) (result bool, err error) {
 	case DueDateExpr:
 		e := e.(DueDateExpr)
 		return EvalDueDate(e, item), err
+	case NotOpExpr:
+		e := e.(NotOpExpr)
+		r, err := Eval(e.expr, item)
+		if err != nil {
+			return false, nil
+		}
+		return !r, nil
 	default:
 		return true, err
 	}

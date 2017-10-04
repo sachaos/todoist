@@ -32,6 +32,12 @@ func TestBoolInfixOpExp(t *testing.T) {
 	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 3}, false)
 }
 
+func TestNotOpEval(t *testing.T) {
+	testFilterEval(t, "!p1", todoist.Item{Priority: 1}, false)
+	testFilterEval(t, "!(p1 | p2)", todoist.Item{Priority: 2}, false)
+	testFilterEval(t, "!(p1 | p2)", todoist.Item{Priority: 3}, true)
+}
+
 func TestDueOnEval(t *testing.T) {
 	timeNow := time.Date(2017, time.October, 2, 1, 0, 0, 0, time.Local) // JST: Mon 2 Oct 2017 00:00:00
 	setNow(timeNow)
