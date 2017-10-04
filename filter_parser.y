@@ -26,6 +26,10 @@ type BoolInfixOpExpr struct {
     right Expression
 }
 
+type NotOpExpr struct {
+    expr Expression
+}
+
 const (
     DUE_ON int = iota
     DUE_BEFORE
@@ -98,6 +102,10 @@ expr
     | '(' expr ')'
     {
         $$ = $2
+    }
+    | '!' expr
+    {
+        $$ = NotOpExpr{expr: $2}
     }
     | s_overdue
     {
