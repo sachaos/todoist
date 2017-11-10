@@ -2,3 +2,4 @@ filter_parser.go
 y.output
 
 _vendor-*
+vendor

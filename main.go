@@ -230,6 +230,12 @@ func main() {
 			Usage:   "Sync cache",
 			Action:  Sync,
 		},
+		{
+			Name:    "quick",
+			Aliases: []string{"q"},
+			Usage:   "Quick add a task",
+			Action:  Quick,
+		},
 	}
 	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
