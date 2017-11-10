@@ -45,6 +45,7 @@ COMMANDS:
      projects        Shows all projects
      karma           Show karma
      sync, s         Sync cache
+     quick, q        Quick add a task
      help, h         Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
