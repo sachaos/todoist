@@ -14,5 +14,6 @@ func Quick(c *cli.Context) error {
 	}
 
 	client.QuickCommand(context.Background(), c.Args().First())
-	return nil
+
+	return Sync(c)
 }
