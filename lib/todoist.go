@@ -94,6 +94,16 @@ func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
 	return c.doApi(ctx, http.MethodPost, "sync", commands.UrlValues(), &r)
 }
 
+func (c *Client) QuickCommand(ctx context.Context, text string) error {
+	var r ExecResult
+
+	values := url.Values{
+		"text": {text},
+	}
+
+	return c.doApi(ctx, http.MethodPost, "quick/add", values, &r)
+}
+
 func (c *Client) Sync(ctx context.Context) error {
 	params := url.Values{"sync_token": {"*"}, "resource_types": {"[\"all\"]"}}
 
