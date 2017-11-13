@@ -17,9 +17,8 @@ func List(c *cli.Context) error {
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 	ex := Filter(c.String("filter"))
 
-  orderItemsCount := len(client.Store.ItemOrders)
-	itemList := make([][]string, orderItemsCount, orderItemsCount)
-	for i, itemOrder := range client.Store.ItemOrders {
+	itemList := make([][]string, 0, len(client.Store.ItemOrders))
+	for _, itemOrder := range client.Store.ItemOrders {
 		item := itemOrder.Data.(todoist.Item)
 		r, err := Eval(ex, item)
 		if err != nil {
@@ -28,14 +27,14 @@ func List(c *cli.Context) error {
 		if !r || item.Checked == 1 {
 			continue
 		}
-		itemList[i] = []string{
+		itemList = append(itemList, []string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DueDateTime(), item.AllDay),
 			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
 			item.LabelsString(client.Store.Labels),
 			ContentPrefix(client.Store.Items, item, c) + ContentFormat(item),
-		}
+		})
 	}
 
 	defer writer.Flush()
