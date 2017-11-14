@@ -9,14 +9,15 @@ func List(c *cli.Context) error {
 	client := GetClient(c)
 
 	colorList := ColorList()
-	var projectIds []int
-	for _, project := range client.Store.Projects {
-		projectIds = append(projectIds, project.GetID())
+	projectsCount := len(client.Store.Projects)
+	projectIds := make([]int, projectsCount, projectsCount)
+	for i, project := range client.Store.Projects {
+		projectIds[i] = project.GetID()
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 	ex := Filter(c.String("filter"))
 
-	itemList := [][]string{}
+	itemList := make([][]string, 0, len(client.Store.ItemOrders))
 	for _, itemOrder := range client.Store.ItemOrders {
 		item := itemOrder.Data.(todoist.Item)
 		r, err := Eval(ex, item)
