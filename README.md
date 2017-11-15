@@ -58,6 +58,19 @@ GLOBAL OPTIONS:
    --version, -v        print the version
 ```
 
+### `list --filter`
+
+You can filter tasks by `--filter` option on `list` subcommand.  
+The filter syntax is base on [todoist official filter syntax](https://support.todoist.com/hc/en-us/articles/205248842-Filters).
+
+Supported filter is [here](https://github.com/sachaos/todoist/issues/15#issuecomment-334140101).
+
+#### e.g. List tasks which over due date and have high priority
+
+```
+todoist list --filter '(overdue | today) & !p1'
+```
+
 ## Install
 
 ### Homebrew (Mac OS)
