@@ -168,9 +168,10 @@ func main() {
 			},
 		},
 		{
-			Name:   "completed-list",
-			Usage:  "Shows all completed tasks (only premium user)",
-			Action: CompletedList,
+			Name:    "completed-list",
+			Aliases: []string{"c-l", "cl"},
+			Usage:   "Shows all completed tasks (only premium user)",
+			Action:  CompletedList,
 		},
 		{
 			Name:    "add",
