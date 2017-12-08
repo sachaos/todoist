@@ -172,6 +172,9 @@ func main() {
 			Aliases: []string{"c-l", "cl"},
 			Usage:   "Shows all completed tasks (only premium user)",
 			Action:  CompletedList,
+			Flags: []cli.Flag{
+				filterFlag,
+			},
 		},
 		{
 			Name:    "add",

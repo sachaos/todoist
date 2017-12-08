@@ -15,12 +15,18 @@ var (
 type BaseItem struct {
 	HaveID
 	HaveProjectID
-	Content string `json:"content"`
-	UserID  int    `json:"user_id"`
+	Content  string `json:"content"`
+	UserID   int    `json:"user_id"`
+	BaseDate string `json:"base_date"`
 }
 
 func (bitem BaseItem) GetContent() string {
 	return bitem.Content
+}
+
+func (item BaseItem) DateTime() time.Time {
+	t, _ := time.Parse(DateFormat, item.BaseDate)
+	return t
 }
 
 type CompletedItem struct {
@@ -30,7 +36,7 @@ type CompletedItem struct {
 	TaskID        int         `json:"task_id"`
 }
 
-func (item CompletedItem) CompletedDateTime() time.Time {
+func (item CompletedItem) DateTime() time.Time {
 	t, _ := time.Parse(DateFormat, item.CompletedDate)
 	return t
 }
@@ -69,7 +75,7 @@ func (a Items) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Items) At(i int) IDCarrier { return a[i] }
 
-func (item Item) DueDateTime() time.Time {
+func (item Item) DateTime() time.Time {
 	t, _ := time.Parse(DateFormat, item.DueDateUtc)
 	return t
 }

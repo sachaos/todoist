@@ -17,6 +17,7 @@ func CompletedList(c *cli.Context) error {
 		projectIds = append(projectIds, project.GetID())
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
+	ex := Filter(c.String("filter"))
 
 	var completed todoist.Completed
 
@@ -27,9 +28,16 @@ func CompletedList(c *cli.Context) error {
 	defer writer.Flush()
 
 	for _, item := range completed.Items {
+		r, err := ComplEval(ex, item)
+		if err != nil {
+			return err
+		}
+		if !r == true {
+			continue
+		}
 		writer.Write([]string{
 			IdFormat(item),
-			CompletedDateFormat(item.CompletedDateTime()),
+			CompletedDateFormat(item.DateTime()),
 			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
 			ContentFormat(item),
 		})
