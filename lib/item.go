@@ -15,18 +15,12 @@ var (
 type BaseItem struct {
 	HaveID
 	HaveProjectID
-	Content  string `json:"content"`
-	UserID   int    `json:"user_id"`
-	BaseDate string `json:"base_date"`
+	Content string `json:"content"`
+	UserID  int    `json:"user_id"`
 }
 
 func (bitem BaseItem) GetContent() string {
 	return bitem.Content
-}
-
-func (item BaseItem) DateTime() time.Time {
-	t, _ := time.Parse(DateFormat, item.BaseDate)
-	return t
 }
 
 type CompletedItem struct {
