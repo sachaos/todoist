@@ -80,6 +80,11 @@ func (item Item) DateTime() time.Time {
 	return t
 }
 
+// interface for Eval actions
+type AbstractItem interface {
+	DateTime() time.Time
+}
+
 func GetContentTitle(item ContentCarrier) string {
 	return linkRegex.ReplaceAllString(item.GetContent(), "$1")
 }

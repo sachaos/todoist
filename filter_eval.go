@@ -10,40 +10,7 @@ import (
 
 var priorityRegex = regexp.MustCompile("^p([1-4])$")
 
-// FIXME make eval more abstract for reusing
-func ComplEval(e Expression, item todoist.CompletedItem) (result bool, err error) {
-	result = false
-	switch e.(type) {
-	case BoolInfixOpExpr:
-		e := e.(BoolInfixOpExpr)
-		lr, err := ComplEval(e.left, item)
-		rr, err := ComplEval(e.right, item)
-		if err != nil {
-			return false, nil
-		}
-		switch e.operator {
-		case '&':
-			return lr && rr, nil
-		case '|':
-			return lr || rr, nil
-		}
-	case DateExpr:
-		e := e.(DateExpr)
-		return EvalDate(e, item.DateTime()), err
-	case NotOpExpr:
-		e := e.(NotOpExpr)
-		r, err := ComplEval(e.expr, item)
-		if err != nil {
-			return false, nil
-		}
-		return !r, nil
-	default:
-		return true, err
-	}
-	return
-}
-
-func Eval(e Expression, item todoist.Item) (result bool, err error) {
+func Eval(e Expression, item todoist.AbstractItem) (result bool, err error) {
 	result = false
 	switch e.(type) {
 	case BoolInfixOpExpr:
@@ -60,8 +27,14 @@ func Eval(e Expression, item todoist.Item) (result bool, err error) {
 			return lr || rr, nil
 		}
 	case StringExpr:
-		e := e.(StringExpr)
-		return EvalAsPriority(e, item), err
+		switch item.(type) {
+		case todoist.Item:
+			item := item.(todoist.Item)
+			e := e.(StringExpr)
+			return EvalAsPriority(e, item), err
+		default:
+			return false, nil
+		}
 	case DateExpr:
 		e := e.(DateExpr)
 		return EvalDate(e, item.DateTime()), err

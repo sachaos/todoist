@@ -28,7 +28,7 @@ func CompletedList(c *cli.Context) error {
 	defer writer.Flush()
 
 	for _, item := range completed.Items {
-		r, err := ComplEval(ex, item)
+		r, err := Eval(ex, item)
 		if err != nil {
 			return err
 		}
