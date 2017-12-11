@@ -50,7 +50,10 @@ func atoi(a string) (i int) {
 
 var now = time.Now
 var today = func() time.Time {
-  return time.Date(now().Year(), now().Month(), now().Day(), 0, 0, 0, 0, time.Local)
+  return time.Date(now().Year(), now().Month(), now().Day(), 0, 0, 0, 0, now().Location())
+}
+var timezone = func() *time.Location {
+  return now().Location()
 }
 
 %}
@@ -173,15 +176,15 @@ s_datetime
 s_date_year
     : NUMBER '/' NUMBER '/' NUMBER
     {
-        $$ = time.Date(atoi($5.literal), time.Month(atoi($1.literal)), atoi($3.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(atoi($5.literal), time.Month(atoi($1.literal)), atoi($3.literal), 0, 0, 0, 0, timezone())
     }
     | MONTH_IDENT NUMBER NUMBER
     {
-        $$ = time.Date(atoi($3.literal), MonthIdentHash[strings.ToLower($1.literal)], atoi($2.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(atoi($3.literal), MonthIdentHash[strings.ToLower($1.literal)], atoi($2.literal), 0, 0, 0, 0, timezone())
     }
     | NUMBER MONTH_IDENT NUMBER
     {
-        $$ = time.Date(atoi($3.literal), MonthIdentHash[strings.ToLower($2.literal)], atoi($1.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(atoi($3.literal), MonthIdentHash[strings.ToLower($2.literal)], atoi($1.literal), 0, 0, 0, 0, timezone())
     }
     | s_date
     {
@@ -208,15 +211,15 @@ s_date_year
 s_date
     : MONTH_IDENT NUMBER
     {
-        $$ = time.Date(today().Year(), MonthIdentHash[strings.ToLower($1.literal)], atoi($2.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(today().Year(), MonthIdentHash[strings.ToLower($1.literal)], atoi($2.literal), 0, 0, 0, 0, timezone())
     }
     | NUMBER MONTH_IDENT
     {
-        $$ = time.Date(today().Year(), MonthIdentHash[strings.ToLower($2.literal)], atoi($1.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(today().Year(), MonthIdentHash[strings.ToLower($2.literal)], atoi($1.literal), 0, 0, 0, 0, timezone())
     }
     | NUMBER '/' NUMBER
     {
-        $$ = time.Date(now().Year(), time.Month(atoi($3.literal)), atoi($1.literal), 0, 0, 0, 0, time.Local)
+        $$ = time.Date(now().Year(), time.Month(atoi($3.literal)), atoi($1.literal), 0, 0, 0, 0, timezone())
     }
 
 s_time
