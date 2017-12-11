@@ -31,26 +31,27 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.10.0
+   0.10.1
 
 COMMANDS:
-     list, l         Shows all tasks
-     show            Show task detail
-     completed-list  Shows all completed tasks (only premium user)
-     add, a          Add task
-     modify, m       Modify task
-     close, c        Close task
-     delete, d       Delete task
-     labels          Shows all labels
-     projects        Shows all projects
-     karma           Show karma
-     sync, s         Sync cache
-     quick, q        Quick add a task
-     help, h         Shows a list of commands or help for one command
+     list, l                  Shows all tasks
+     show                     Show task detail
+     completed-list, c-l, cl  Shows all completed tasks (only premium user)
+     add, a                   Add task
+     modify, m                Modify task
+     close, c                 Close task
+     delete, d                Delete task
+     labels                   Shows all labels
+     projects                 Shows all projects
+     karma                    Show karma
+     sync, s                  Sync cache
+     quick, q                 Quick add a task
+     help, h                  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --color              colorize output
    --csv                output in CSV format
+   --debug              output logs
    --namespace          display parent task like namespace
    --indent             display children task with indent
    --project-namespace  display parent project like namespace
