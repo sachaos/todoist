@@ -37,7 +37,7 @@ const (
     NO_DUE_DATE
 )
 
-type DueDateExpr struct {
+type DateExpr struct {
     operation int
     datetime time.Time
     allDay bool
@@ -109,21 +109,21 @@ expr
     }
     | s_overdue
     {
-        $$ = DueDateExpr{allDay: false, datetime: now(), operation: DUE_BEFORE}
+        $$ = DateExpr{allDay: false, datetime: now(), operation: DUE_BEFORE}
     }
     | s_nodate
     {
-        $$ = DueDateExpr{operation: NO_DUE_DATE}
+        $$ = DateExpr{operation: NO_DUE_DATE}
     }
     | DUE BEFORE ':' s_datetime
     {
-        e := $4.(DueDateExpr)
+        e := $4.(DateExpr)
         e.operation = DUE_BEFORE
         $$ = e
     }
     | DUE AFTER ':' s_datetime
     {
-        e := $4.(DueDateExpr)
+        e := $4.(DateExpr)
         e.operation = DUE_AFTER
         $$ = e
     }
@@ -154,11 +154,11 @@ s_datetime
     {
         date := $1.(time.Time)
         time := $2.(time.Duration)
-        $$ = DueDateExpr{allDay: false, datetime: date.Add(time)}
+        $$ = DateExpr{allDay: false, datetime: date.Add(time)}
     }
     | s_date_year
     {
-        $$ = DueDateExpr{allDay: true, datetime: $1.(time.Time)}
+        $$ = DateExpr{allDay: true, datetime: $1.(time.Time)}
     }
     | s_time
     {
@@ -167,7 +167,7 @@ s_datetime
         if (d <= nd) {
           d = d + time.Duration(int64(time.Hour) * 24)
         }
-        $$ = DueDateExpr{allDay: false, datetime: today().Add(d)}
+        $$ = DateExpr{allDay: false, datetime: today().Add(d)}
     }
 
 s_date_year

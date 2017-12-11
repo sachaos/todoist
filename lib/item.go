@@ -30,7 +30,7 @@ type CompletedItem struct {
 	TaskID        int         `json:"task_id"`
 }
 
-func (item CompletedItem) CompletedDateTime() time.Time {
+func (item CompletedItem) DateTime() time.Time {
 	t, _ := time.Parse(DateFormat, item.CompletedDate)
 	return t
 }
@@ -69,9 +69,14 @@ func (a Items) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Items) At(i int) IDCarrier { return a[i] }
 
-func (item Item) DueDateTime() time.Time {
+func (item Item) DateTime() time.Time {
 	t, _ := time.Parse(DateFormat, item.DueDateUtc)
 	return t
+}
+
+// interface for Eval actions
+type AbstractItem interface {
+	DateTime() time.Time
 }
 
 func GetContentTitle(item ContentCarrier) string {

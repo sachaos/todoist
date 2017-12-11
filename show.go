@@ -35,7 +35,7 @@ func Show(c *cli.Context) error {
 		[]string{"Project", ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c)},
 		[]string{"Labels", item.LabelsString(client.Store.Labels)},
 		[]string{"Priority", PriorityFormat(item.Priority)},
-		[]string{"DueDate", DueDateFormat(item.DueDateTime(), item.AllDay)},
+		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
 		[]string{"URL", todoist.GetContentURL(item)},
 	}
 	defer writer.Flush()

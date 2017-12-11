@@ -10,8 +10,7 @@ import (
 
 var priorityRegex = regexp.MustCompile("^p([1-4])$")
 
-// Eval ...
-func Eval(e Expression, item todoist.Item) (result bool, err error) {
+func Eval(e Expression, item todoist.AbstractItem) (result bool, err error) {
 	result = false
 	switch e.(type) {
 	case BoolInfixOpExpr:
@@ -28,11 +27,17 @@ func Eval(e Expression, item todoist.Item) (result bool, err error) {
 			return lr || rr, nil
 		}
 	case StringExpr:
-		e := e.(StringExpr)
-		return EvalAsPriority(e, item), err
-	case DueDateExpr:
-		e := e.(DueDateExpr)
-		return EvalDueDate(e, item), err
+		switch item.(type) {
+		case todoist.Item:
+			item := item.(todoist.Item)
+			e := e.(StringExpr)
+			return EvalAsPriority(e, item), err
+		default:
+			return false, nil
+		}
+	case DateExpr:
+		e := e.(DateExpr)
+		return EvalDate(e, item.DateTime()), err
 	case NotOpExpr:
 		e := e.(NotOpExpr)
 		r, err := Eval(e.expr, item)
@@ -46,9 +51,8 @@ func Eval(e Expression, item todoist.Item) (result bool, err error) {
 	return
 }
 
-func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
-	itemDueDate := item.DueDateTime()
-	if (itemDueDate == time.Time{}) {
+func EvalDate(e DateExpr, itemDate time.Time) (result bool) {
+	if (itemDate == time.Time{}) {
 		if e.operation == NO_DUE_DATE {
 			return true
 		}
@@ -62,13 +66,13 @@ func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
 		if allDay {
 			startDate = dueDate
 			endDate = dueDate.AddDate(0, 0, 1)
-			if itemDueDate.Equal(startDate) || (itemDueDate.After(startDate) && itemDueDate.Before(endDate)) {
+			if itemDate.Equal(startDate) || (itemDate.After(startDate) && itemDate.Before(endDate)) {
 				return true
 			}
 		}
 		return false
 	case DUE_BEFORE:
-		if itemDueDate.Before(dueDate) {
+		if itemDate.Before(dueDate) {
 			return true
 		}
 		return false
@@ -77,7 +81,7 @@ func EvalDueDate(e DueDateExpr, item todoist.Item) (result bool) {
 		if allDay {
 			endDateTime = dueDate.AddDate(0, 0, 1).Add(-time.Duration(time.Microsecond))
 		}
-		if itemDueDate.After(endDateTime) {
+		if itemDate.After(endDateTime) {
 			return true
 		}
 		return false

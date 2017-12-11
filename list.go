@@ -30,7 +30,7 @@ func List(c *cli.Context) error {
 		itemList = append(itemList, []string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
-			DueDateFormat(item.DueDateTime(), item.AllDay),
+			DueDateFormat(item.DateTime(), item.AllDay),
 			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
 			item.LabelsString(client.Store.Labels),
 			ContentPrefix(client.Store.Items, item, c) + ContentFormat(item),
