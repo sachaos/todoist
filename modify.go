@@ -18,7 +18,7 @@ func Modify(c *cli.Context) error {
 	}
 
 	var err error
-	item_id, err := strconv.Atoi(c.Args().First())
+	item_id, err := todoist.SearchByIDPrefix(client.Store.Items, c.Args().First())
 	if err != nil {
 		return err
 	}

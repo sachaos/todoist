@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"strconv"
 
+	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 )
 
@@ -12,7 +12,7 @@ func Delete(c *cli.Context) error {
 
 	item_ids := []int{}
 	for _, arg := range c.Args() {
-		item_id, err := strconv.Atoi(arg)
+		item_id, err := todoist.SearchByIDPrefix(client.Store.Items, arg)
 		if err != nil {
 			return err
 		}
