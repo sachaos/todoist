@@ -44,7 +44,11 @@ func Modify(c *cli.Context) error {
 
 	item.DateString = c.String("date")
 
-	next_project.ID = c.Int("project-id")
+	projectID := c.Int("project-id")
+	if projectID == 0 {
+		projectID = client.Store.Projects.GetIDByName(c.String("project-name"))
+	}
+	next_project.ID = projectID
 
 	if !c.Args().Present() {
 		return CommandFailed

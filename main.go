@@ -59,6 +59,10 @@ func main() {
 		Name:  "project-id, P",
 		Usage: "project id",
 	}
+	projectNameFlag := cli.StringFlag{
+		Name:  "project-name, N",
+		Usage: "project name",
+	}
 	dateFlag := cli.StringFlag{
 		Name:  "date, d",
 		Usage: "date string (today, 2016/10/02, 2016/09/02 18:00)",
@@ -185,6 +189,7 @@ func main() {
 				priorityFlag,
 				labelIDsFlag,
 				projectIDFlag,
+				projectNameFlag,
 				dateFlag,
 			},
 		},
@@ -198,6 +203,7 @@ func main() {
 				priorityFlag,
 				labelIDsFlag,
 				projectIDFlag,
+				projectNameFlag,
 				dateFlag,
 			},
 		},
