@@ -20,6 +20,9 @@ func Add(c *cli.Context) error {
 	item.Content = c.Args().First()
 	item.Priority = c.Int("priority")
 	item.ProjectID = c.Int("project-id")
+	if item.ProjectID == 0 {
+		item.ProjectID = client.Store.Projects.GetIDByName(c.String("project-name"))
+	}
 	item.LabelIDs = func(str string) []int {
 		stringIDs := strings.Split(str, ",")
 		ids := []int{}

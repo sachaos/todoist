@@ -24,3 +24,12 @@ func (a Projects) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a Projects) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Projects) At(i int) IDCarrier { return a[i] }
+
+func (a Projects) GetIDByName(name string) int {
+	for _, pjt := range a {
+		if pjt.Name == name {
+			return pjt.GetID()
+		}
+	}
+	return 0
+}
