@@ -3,8 +3,6 @@ package todoist
 import (
 	"errors"
 	"sort"
-	"strconv"
-	"strings"
 )
 
 type HaveID struct {
@@ -37,22 +35,6 @@ func SearchByID(repo Repository, id int) (data IDCarrier, err error) {
 	} else {
 		return nil, errors.New("Find Failed")
 	}
-}
-
-func SearchByIDPrefix(repo Repository, prefix string) (id int, err error) {
-	index := sort.Search(repo.Len(), func(i int) bool {
-		return strings.HasPrefix(strconv.Itoa(repo.At(i).GetID()), prefix)
-	})
-	if index < repo.Len() {
-		if index < repo.Len() - 1 {
-			if strings.HasPrefix(strconv.Itoa(repo.At(index + 1).GetID()), prefix) {
-				// Ambiguous prefix, return converted input instead
-				return strconv.Atoi(prefix)
-			}
-		}
-		return repo.At(index).GetID(), nil
-	}
-	return strconv.Atoi(prefix)
 }
 
 type HaveParentID struct {
