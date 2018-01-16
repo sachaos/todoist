@@ -2,9 +2,11 @@
 package main
 
 import (
-    "text/scanner"
-    "strings"
+    "fmt"
+    "os"
     "strconv"
+    "strings"
+    "text/scanner"
     "time"
 )
 
@@ -328,7 +330,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
 }
 
 func (l *Lexer) Error(e string) {
-    panic(e)
+    fmt.Fprintf(os.Stderr, "Filter error: %s \nFor proper filter syntax see https://support.todoist.com/hc/en-us/articles/205248842-Filters\n", e)
+    os.Exit(1)
 }
 
 func Filter(f string) (e Expression) {
