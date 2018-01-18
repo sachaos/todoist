@@ -37,6 +37,7 @@ func Add(c *cli.Context) error {
 	}(c.String("label-ids"))
 
 	item.DateString = c.String("date")
+	item.AutoReminder = c.Bool("reminder")
 
 	if err := client.AddItem(context.Background(), item); err != nil {
 		return err
