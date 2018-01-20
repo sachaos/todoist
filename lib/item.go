@@ -57,6 +57,7 @@ type Item struct {
 	ItemOrder      int         `json:"item_order"`
 	LabelIDs       []int       `json:"labels"`
 	Priority       int         `json:"priority"`
+	AutoReminder   bool        `json:"auto_reminder"`
 	ResponsibleUID interface{} `json:"responsible_uid"`
 	SyncID         interface{} `json:"sync_id"`
 }
@@ -111,6 +112,8 @@ func (item Item) AddParam() interface{} {
 	if item.ProjectID != 0 {
 		param["project_id"] = item.ProjectID
 	}
+	param["auto_reminder"] = item.AutoReminder
+
 	return param
 }
 

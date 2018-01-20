@@ -75,6 +75,10 @@ func main() {
 		Name:  "filter, f",
 		Usage: "filter expression",
 	}
+	reminderFlg := cli.BoolFlag{
+		Name: "reminder, r",
+		Usage:"set reminder (only premium user)",
+	}
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -191,6 +195,7 @@ func main() {
 				projectIDFlag,
 				projectNameFlag,
 				dateFlag,
+				reminderFlg,
 			},
 		},
 		{
