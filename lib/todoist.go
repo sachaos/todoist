@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -118,17 +117,20 @@ func (c *Client) Sync(ctx context.Context) error {
 }
 
 func (c *Client) CompleteItemIDByPrefix(prefix string) (id int, err error) {
-	index := sort.Search(c.Store.Items.Len(), func(i int) bool {
-		return strings.HasPrefix(strconv.Itoa(c.Store.Items.At(i).GetID()), prefix)
-	})
-	if index < c.Store.Items.Len() {
-		if index < c.Store.Items.Len() - 1 {
-			if strings.HasPrefix(strconv.Itoa(c.Store.Items.At(index + 1).GetID()), prefix) {
+	var matchid int = 0
+	for _, cmpid := range c.Store.Items {
+		if strings.HasPrefix(strconv.Itoa(cmpid.GetID()), prefix) {
+			if matchid != 0 {
 				// Ambiguous prefix, return converted input instead
 				return strconv.Atoi(prefix)
+			} else {
+				matchid = cmpid.GetID()
 			}
 		}
-		return c.Store.Items.At(index).GetID(), nil
 	}
-	return strconv.Atoi(prefix)
+	if matchid != 0 {
+		return matchid, nil
+	} else {
+		return strconv.Atoi(prefix)
+	}
 }
