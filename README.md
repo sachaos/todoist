@@ -86,6 +86,8 @@ $ brew install todoist
 You need version 1.7 or higher Golang, and [golang/dep: Go dependency management tool](https://github.com/golang/dep).
 
 ```
+$ mkdir -p $GOPATH/src/github.com/sachaos
+$ cd $GOPATH/src/github.com/sachaos
 $ git clone https://github.com/sachaos/todoist.git
 $ cd todoist
 $ make install
