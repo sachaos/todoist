@@ -98,6 +98,14 @@ $ make install
 When you run `todoist` first time, you will be asked your Todoist API token.
 Please input Todoist API token and register it.
 
+### Sync
+
+After register API token, you should sync with todoist.com by `sync` sub command, like below.
+
+```
+$ todoist sync
+```
+
 ### Use with peco
 
 **RECOMMENDED**
