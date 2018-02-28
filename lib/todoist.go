@@ -15,6 +15,7 @@ import (
 type Config struct {
 	AccessToken string
 	DebugMode   bool
+	Color       bool
 }
 
 type Client struct {
