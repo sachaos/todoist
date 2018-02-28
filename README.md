@@ -72,6 +72,20 @@ Supported filter is [here](https://github.com/sachaos/todoist/issues/15#issuecom
 todoist list --filter '(overdue | today) & !p1'
 ```
 
+## Config
+
+Config stored in `$HOME/.todoist.config.json`
+
+It has following parameters:
+
+```
+{
+  "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", # todoist api token, required
+  "color": "true"                                      # colorize all output, not required, default false
+}
+
+```
+
 ## Install
 
 ### Homebrew (Mac OS)
