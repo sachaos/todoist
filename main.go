@@ -76,8 +76,8 @@ func main() {
 		Usage: "filter expression",
 	}
 	reminderFlg := cli.BoolFlag{
-		Name: "reminder, r",
-		Usage:"set reminder (only premium user)",
+		Name:  "reminder, r",
+		Usage: "set reminder (only premium user)",
 	}
 
 	app.Flags = []cli.Flag{
@@ -135,7 +135,7 @@ func main() {
 			}
 		}
 
-		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug")}
+		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color")}
 
 		client := todoist.NewClient(config)
 		client.Store = &store
@@ -145,7 +145,7 @@ func main() {
 			"config": config,
 		}
 
-		if !c.Bool("color") {
+		if !c.Bool("color") && !config.Color {
 			color.NoColor = true
 		}
 
