@@ -69,6 +69,9 @@ func ContentFormat(item todoist.ContentCarrier) string {
 }
 
 func PriorityConvertFromApi(priority int) int {
+	//optimized
+	return priority*-1 + 5
+	//if priority could ever be something other than 1-4
 	switch priority {
 	case 4:
 		return 1
