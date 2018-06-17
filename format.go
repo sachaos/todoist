@@ -68,6 +68,19 @@ func ContentFormat(item todoist.ContentCarrier) string {
 	return todoist.GetContentTitle(item)
 }
 
+func PriorityConvertFromApi(priority int) int {
+	switch priority {
+	case 4:
+		return 1
+	case 3:
+		return 2
+	case 2:
+		return 3
+	default:
+		return 4
+	}
+}
+
 func PriorityFormat(priority int) string {
 	priorityColor := color.New(color.Bold)
 	switch priority {
@@ -80,7 +93,8 @@ func PriorityFormat(priority int) string {
 	default:
 		priorityColor.Add(color.FgBlue).Add(color.BgBlack)
 	}
-	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority))
+	userPriority := PriorityConvertFromApi(priority)
+	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority) + " (!!" + strconv.Itoa(userPriority) + ")")
 }
 
 func ProjectFormat(id int, projects todoist.Projects, projectColorHash map[int]color.Attribute, c *cli.Context) string {
