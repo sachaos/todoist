@@ -77,7 +77,7 @@ func main() {
 	}
 	reminderFlg := cli.BoolFlag{
 		Name:  "reminder, r",
-		Usage: "set reminder (only premium user)",
+		Usage: "set reminder (only premium users)",
 	}
 
 	app.Flags = []cli.Flag{
@@ -161,7 +161,7 @@ func main() {
 		{
 			Name:    "list",
 			Aliases: []string{"l"},
-			Usage:   "Shows all tasks",
+			Usage:   "Show all tasks",
 			Action:  List,
 			Flags: []cli.Flag{
 				filterFlag,
@@ -178,7 +178,7 @@ func main() {
 		{
 			Name:    "completed-list",
 			Aliases: []string{"c-l", "cl"},
-			Usage:   "Shows all completed tasks (only premium user)",
+			Usage:   "Show all completed tasks (only premium user)",
 			Action:  CompletedList,
 			Flags: []cli.Flag{
 				filterFlag,
@@ -226,12 +226,12 @@ func main() {
 		},
 		{
 			Name:   "labels",
-			Usage:  "Shows all labels",
+			Usage:  "Show all labels",
 			Action: Labels,
 		},
 		{
 			Name:   "projects",
-			Usage:  "Shows all projects",
+			Usage:  "Show all projects",
 			Action: Projects,
 		},
 		{
