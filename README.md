@@ -34,19 +34,19 @@ VERSION:
    0.10.1
 
 COMMANDS:
-     list, l                  Shows all tasks
+     list, l                  Show all tasks
      show                     Show task detail
-     completed-list, c-l, cl  Shows all completed tasks (only premium user)
+     completed-list, c-l, cl  Show all completed tasks (only premium users)
      add, a                   Add task
      modify, m                Modify task
      close, c                 Close task
      delete, d                Delete task
-     labels                   Shows all labels
-     projects                 Shows all projects
+     labels                   Show all labels
+     projects                 Show all projects
      karma                    Show karma
      sync, s                  Sync cache
      quick, q                 Quick add a task
-     help, h                  Shows a list of commands or help for one command
+     help, h                  Show a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --color              colorize output
@@ -61,7 +61,7 @@ GLOBAL OPTIONS:
 
 ### `list --filter`
 
-You can filter tasks by `--filter` option on `list` subcommand.  
+You can filter tasks by `--filter` option on `list` subcommand.
 The filter syntax is base on [todoist official filter syntax](https://support.todoist.com/hc/en-us/articles/205248842-Filters).
 
 Supported filter is [here](https://github.com/sachaos/todoist/issues/15#issuecomment-334140101).
