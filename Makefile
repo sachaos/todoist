@@ -2,6 +2,10 @@
 install: prepare
 	go install
 
+.PHONY: build
+build: prepare
+	go build
+
 .PHONY: test
 test: prepare
 	go test -v
