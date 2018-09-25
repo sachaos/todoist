@@ -11,7 +11,12 @@ import (
 var testTimeZone = time.FixedZone("JST", 9*60*60)
 
 func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
-	actual, _ := Eval(Filter(f), item)
+	actual, _ := Eval(Filter(f), item, todoist.Projects{})
+	assert.Equal(t, expect, actual, "they should be equal")
+}
+
+func testFilterEvalWithProject(t *testing.T, f string, item todoist.Item, projects todoist.Projects, expect bool) {
+	actual, _ := Eval(Filter(f), item, projects)
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
@@ -22,6 +27,31 @@ func TestEval(t *testing.T) {
 func TestPriorityEval(t *testing.T) {
 	testFilterEval(t, "p1", todoist.Item{Priority: 1}, true)
 	testFilterEval(t, "p2", todoist.Item{Priority: 1}, false)
+}
+
+func TestProjectEval(t *testing.T) {
+	projects := todoist.Projects{
+		todoist.Project{
+			HaveID: todoist.HaveID{ID: 1},
+			Name:   "private",
+		},
+		todoist.Project{
+			HaveID:       todoist.HaveID{ID: 2},
+			HaveParentID: todoist.HaveParentID{ParentID: 1},
+			Name:         "nested",
+		},
+	}
+
+	item1 := todoist.Item{}
+	item1.ProjectID = 1
+
+	item2 := todoist.Item{}
+	item2.ProjectID = 2
+
+	testFilterEvalWithProject(t, "#private", item1, projects, true)
+	testFilterEvalWithProject(t, "#hoge", item1, projects, false)
+	testFilterEvalWithProject(t, "#private", item2, projects, false)
+	testFilterEvalWithProject(t, "##private", item2, projects, true)
 }
 
 func TestBoolInfixOpExp(t *testing.T) {

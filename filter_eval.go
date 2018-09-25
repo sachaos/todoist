@@ -10,13 +10,13 @@ import (
 
 var priorityRegex = regexp.MustCompile("^p([1-4])$")
 
-func Eval(e Expression, item todoist.AbstractItem) (result bool, err error) {
+func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects) (result bool, err error) {
 	result = false
 	switch e.(type) {
 	case BoolInfixOpExpr:
 		e := e.(BoolInfixOpExpr)
-		lr, err := Eval(e.left, item)
-		rr, err := Eval(e.right, item)
+		lr, err := Eval(e.left, item, projects)
+		rr, err := Eval(e.right, item, projects)
 		if err != nil {
 			return false, nil
 		}
@@ -26,6 +26,9 @@ func Eval(e Expression, item todoist.AbstractItem) (result bool, err error) {
 		case '|':
 			return lr || rr, nil
 		}
+	case ProjectExpr:
+		e := e.(ProjectExpr)
+		return EvalProject(e, item.GetProjectID(), projects), err
 	case StringExpr:
 		switch item.(type) {
 		case todoist.Item:
@@ -40,7 +43,7 @@ func Eval(e Expression, item todoist.AbstractItem) (result bool, err error) {
 		return EvalDate(e, item.DateTime()), err
 	case NotOpExpr:
 		e := e.(NotOpExpr)
-		r, err := Eval(e.expr, item)
+		r, err := Eval(e.expr, item, projects)
 		if err != nil {
 			return false, nil
 		}
@@ -97,6 +100,15 @@ func EvalAsPriority(e StringExpr, item todoist.Item) (result bool) {
 	} else {
 		p, _ := strconv.Atoi(matched[1])
 		if p == item.Priority {
+			return true
+		}
+	}
+	return false
+}
+
+func EvalProject(e ProjectExpr, projectID int, projects todoist.Projects) bool {
+	for _, id := range projects.GetIDsByName(e.name, e.isAll) {
+		if id == projectID {
 			return true
 		}
 	}

@@ -1,6 +1,8 @@
 package todoist
 
-import ()
+import (
+	"strings"
+)
 
 type Project struct {
 	HaveID
@@ -32,4 +34,41 @@ func (a Projects) GetIDByName(name string) int {
 		}
 	}
 	return 0
+}
+
+func (a Projects) GetIDsByName(name string, isAll bool) []int {
+	ids := []int{}
+	name = strings.ToLower(name)
+	for _, pjt := range a {
+		if strings.Contains(strings.ToLower(pjt.Name), name) {
+			ids = append(ids, pjt.ID)
+			if isAll {
+				parentID := pjt.ID
+				// Find all children which has the project as parent
+				ids = append(ids, parentID)
+				for _, id := range childProjectIDs(parentID, a) {
+					ids = append(ids, id)
+				}
+			}
+		}
+	}
+	return ids
+}
+
+func childProjectIDs(parentId int, projects Projects) []int {
+	ids := []int{}
+	for _, pjt := range projects {
+		id, err := pjt.GetParentID()
+		if err != nil {
+			continue
+		}
+
+		if id == parentId {
+			ids = append(ids, pjt.ID)
+			for _, id := range childProjectIDs(pjt.ID, projects) {
+				ids = append(ids, id)
+			}
+		}
+	}
+	return ids
 }

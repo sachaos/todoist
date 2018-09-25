@@ -28,6 +28,11 @@ type BoolInfixOpExpr struct {
     right Expression
 }
 
+type ProjectExpr struct {
+    isAll bool
+    name string
+}
+
 type NotOpExpr struct {
     expr Expression
 }
@@ -70,12 +75,12 @@ var timezone = func() *time.Location {
 %type<expr> s_datetime
 %type<expr> s_date
 %type<expr> s_date_year
-%type<expr> s_overdue s_nodate
+%type<expr> s_overdue s_nodate s_project_key s_project_all_key
 %type<expr> s_time
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
 %token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
-%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE
+%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE '#'
 %left '&' '|'
 
 %%
@@ -103,6 +108,14 @@ expr
     | STRING
     {
         $$ = StringExpr{literal: $1.literal}
+    }
+    | s_project_key STRING
+    {
+        $$ = ProjectExpr{isAll: false, name: $2.literal}
+    }
+    | s_project_all_key STRING
+    {
+        $$ = ProjectExpr{isAll: true, name: $2.literal}
     }
     | '(' expr ')'
     {
@@ -133,6 +146,18 @@ expr
         $$ = e
     }
     | s_datetime
+
+s_project_all_key
+    : '#' '#'
+    {
+        $$ = $1
+    }
+
+s_project_key
+    : '#'
+    {
+        $$ = $1
+    }
 
 s_nodate
     : NO DATE
