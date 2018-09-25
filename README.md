@@ -95,6 +95,11 @@ $ brew tap sachaos/todoist
 $ brew install todoist
 ```
 
+### AUR
+
+* [todoist](https://aur.archlinux.org/packages/todoist/)
+* [todoist-git](https://aur.archlinux.org/packages/todoist-git/)
+
 ### Build it yourself
 
 You need version 1.7 or higher Golang, and [golang/dep: Go dependency management tool](https://github.com/golang/dep).
