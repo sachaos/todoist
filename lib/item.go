@@ -35,6 +35,10 @@ func (item CompletedItem) DateTime() time.Time {
 	return t
 }
 
+func (item CompletedItem) GetProjectID() int {
+	return item.ProjectID
+}
+
 type CompletedItems []CompletedItem
 
 type Item struct {
@@ -75,9 +79,14 @@ func (item Item) DateTime() time.Time {
 	return t
 }
 
+func (item Item) GetProjectID() int {
+	return item.ProjectID
+}
+
 // interface for Eval actions
 type AbstractItem interface {
 	DateTime() time.Time
+	GetProjectID() int
 }
 
 func GetContentTitle(item ContentCarrier) string {
