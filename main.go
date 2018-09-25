@@ -82,6 +82,10 @@ func main() {
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
+			Name:  "header",
+			Usage: "output with header",
+		},
+		cli.BoolFlag{
 			Name:  "color",
 			Usage: "colorize output",
 		},

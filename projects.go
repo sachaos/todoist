@@ -23,6 +23,10 @@ func Projects(c *cli.Context) error {
 
 	defer writer.Flush()
 
+	if c.GlobalBool("header") {
+		writer.Write([]string{"ID", "Name"})
+	}
+
 	for _, strings := range itemList {
 		writer.Write(strings)
 	}

@@ -39,6 +39,10 @@ func List(c *cli.Context) error {
 
 	defer writer.Flush()
 
+	if c.GlobalBool("header") {
+		writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content"})
+	}
+
 	for _, strings := range itemList {
 		writer.Write(strings)
 	}

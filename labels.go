@@ -15,6 +15,10 @@ func Labels(c *cli.Context) error {
 
 	defer writer.Flush()
 
+	if c.GlobalBool("header") {
+		writer.Write([]string{"ID", "Name"})
+	}
+
 	for _, label := range client.Store.Labels {
 		writer.Write([]string{IdFormat(label), "@" + label.Name})
 	}
