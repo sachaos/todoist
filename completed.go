@@ -27,6 +27,10 @@ func CompletedList(c *cli.Context) error {
 
 	defer writer.Flush()
 
+	if c.GlobalBool("header") {
+		writer.Write([]string{"ID", "CompletedDate", "Project", "Content"})
+	}
+
 	for _, item := range completed.Items {
 		r, err := Eval(ex, item)
 		if err != nil {
