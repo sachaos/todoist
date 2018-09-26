@@ -33,6 +33,10 @@ type ProjectExpr struct {
     name string
 }
 
+type LabelExpr struct {
+    name string
+}
+
 type NotOpExpr struct {
     expr Expression
 }
@@ -75,12 +79,12 @@ var timezone = func() *time.Location {
 %type<expr> s_datetime
 %type<expr> s_date
 %type<expr> s_date_year
-%type<expr> s_overdue s_nodate s_project_key s_project_all_key
+%type<expr> s_overdue s_nodate s_project_key s_project_all_key s_label_key s_no_labels
 %type<expr> s_time
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
 %token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
-%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE '#'
+%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE LABELS '#' '@'
 %left '&' '|'
 
 %%
@@ -116,6 +120,14 @@ expr
     | s_project_all_key STRING
     {
         $$ = ProjectExpr{isAll: true, name: $2.literal}
+    }
+    | s_label_key STRING
+    {
+        $$ = LabelExpr{name: $2.literal}
+    }
+    | s_no_labels
+    {
+        $$ = LabelExpr{name: ""}
     }
     | '(' expr ')'
     {
@@ -155,6 +167,18 @@ s_project_all_key
 
 s_project_key
     : '#'
+    {
+        $$ = $1
+    }
+
+s_label_key
+    : '@'
+    {
+        $$ = $1
+    }
+
+s_no_labels
+    : NO LABELS
     {
         $$ = $1
     }
@@ -344,6 +368,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
                 token = NO
             } else if lowerToken == "date" {
                 token = DATE
+            } else if lowerToken == "labels" {
+                token = LABELS
             } else {
                 token = STRING
             }

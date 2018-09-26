@@ -33,6 +33,19 @@ func TestProjectFilter(t *testing.T) {
 		Filter("##Work"), "they should be equal")
 }
 
+func TestLabelFilter(t *testing.T) {
+	assert.Equal(t,
+		LabelExpr{
+			name: "Test",
+		},
+		Filter("@Test"), "they should be equal")
+	assert.Equal(t,
+		LabelExpr{
+			name: "",
+		},
+		Filter("no labels"), "they should be equal")
+}
+
 func TestBoolInfixFilter(t *testing.T) {
 	assert.Equal(t,
 		BoolInfixOpExpr{
