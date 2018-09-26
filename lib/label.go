@@ -15,3 +15,12 @@ func (a Labels) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a Labels) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Labels) At(i int) IDCarrier { return a[i] }
+
+func (a Labels) GetIDByName(name string) int {
+	for _, label := range a {
+		if label.Name == name {
+			return label.ID
+		}
+	}
+	return 0
+}

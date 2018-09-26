@@ -11,12 +11,17 @@ import (
 var testTimeZone = time.FixedZone("JST", 9*60*60)
 
 func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
-	actual, _ := Eval(Filter(f), item, todoist.Projects{})
+	actual, _ := Eval(Filter(f), item, todoist.Projects{}, todoist.Labels{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
 func testFilterEvalWithProject(t *testing.T, f string, item todoist.Item, projects todoist.Projects, expect bool) {
-	actual, _ := Eval(Filter(f), item, projects)
+	actual, _ := Eval(Filter(f), item, projects, todoist.Labels{})
+	assert.Equal(t, expect, actual, "they should be equal")
+}
+
+func testFilterEvalWithLabel(t *testing.T, f string, item todoist.Item, labels todoist.Labels, expect bool) {
+	actual, _ := Eval(Filter(f), item, todoist.Projects{}, labels)
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
@@ -27,6 +32,29 @@ func TestEval(t *testing.T) {
 func TestPriorityEval(t *testing.T) {
 	testFilterEval(t, "p1", todoist.Item{Priority: 1}, true)
 	testFilterEval(t, "p2", todoist.Item{Priority: 1}, false)
+}
+
+func TestLabelEval(t *testing.T) {
+	labels := todoist.Labels{
+		todoist.Label{
+			HaveID: todoist.HaveID{ID: 1},
+			Name:   "must",
+		},
+		todoist.Label{
+			HaveID: todoist.HaveID{ID: 2},
+			Name:   "icebox",
+		}, todoist.Label{
+			HaveID: todoist.HaveID{ID: 3},
+			Name:   "another",
+		},
+	}
+
+	item1 := todoist.Item{}
+	item1.LabelIDs = []int{1, 2}
+
+	testFilterEvalWithLabel(t, "@must", item1, labels, true)
+	testFilterEvalWithLabel(t, "@icebox", item1, labels, true)
+	testFilterEvalWithLabel(t, "@another", item1, labels, false)
 }
 
 func TestProjectEval(t *testing.T) {

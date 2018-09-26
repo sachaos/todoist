@@ -39,6 +39,10 @@ func (item CompletedItem) GetProjectID() int {
 	return item.ProjectID
 }
 
+func (item CompletedItem) GetLabelIDs() []int {
+	return []int{}
+}
+
 type CompletedItems []CompletedItem
 
 type Item struct {
@@ -83,10 +87,15 @@ func (item Item) GetProjectID() int {
 	return item.ProjectID
 }
 
+func (item Item) GetLabelIDs() []int {
+	return item.LabelIDs
+}
+
 // interface for Eval actions
 type AbstractItem interface {
 	DateTime() time.Time
 	GetProjectID() int
+	GetLabelIDs() []int
 }
 
 func GetContentTitle(item ContentCarrier) string {
