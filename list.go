@@ -20,7 +20,7 @@ func List(c *cli.Context) error {
 	itemList := make([][]string, 0, len(client.Store.ItemOrders))
 	for _, itemOrder := range client.Store.ItemOrders {
 		item := itemOrder.Data.(todoist.Item)
-		r, err := Eval(ex, item, client.Store.Projects)
+		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
 		if err != nil {
 			return err
 		}
