@@ -31,7 +31,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.12.0
+   0.13.0
 
 COMMANDS:
      list, l                  Show all tasks
@@ -102,7 +102,7 @@ $ brew install todoist
 
 ### Build it yourself
 
-You need version 1.7 or higher Golang, and [golang/dep: Go dependency management tool](https://github.com/golang/dep).
+You need go 1.11.
 
 ```
 $ mkdir -p $GOPATH/src/github.com/sachaos

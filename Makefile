@@ -12,7 +12,6 @@ test: prepare
 
 .PHONY: prepare
 prepare: filter_parser.y
-	dep ensure
 	go get golang.org/x/tools/cmd/goyacc
 	goyacc -o filter_parser.go filter_parser.y
 
