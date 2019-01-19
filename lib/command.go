@@ -17,9 +17,11 @@ type Command struct {
 type Commands []Command
 
 func NewCommand(command_type string, command_args interface{}) Command {
+	id, _ := uuid.NewV4()
+	tempid, _ := uuid.NewV4()
 	return Command{
-		UUID:   uuid.NewV4().String(),
-		TempID: uuid.NewV4().String(),
+		UUID:   id.String(),
+		TempID: tempid.String(),
 		Type:   command_type,
 		Args:   command_args,
 	}
