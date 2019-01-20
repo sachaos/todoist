@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/satori/go.uuid"
+	"github.com/gofrs/uuid"
 )
 
 type Command struct {
