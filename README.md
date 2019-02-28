@@ -100,6 +100,19 @@ $ brew install todoist
 * [todoist](https://aur.archlinux.org/packages/todoist/)
 * [todoist-git](https://aur.archlinux.org/packages/todoist-git/)
 
+### Docker
+
+```
+$ git clone https://github.com/sachaos/todoist.git
+$ cd todoist
+$ make docker-build token=xxxxxxxxxxxxxxxxxxxx
+$ make docker-run
+```
+
+You will be running the next commands from inside the container.
+
+PS: We add a step that is run `sync` before any command, so you will be always up to date!
+
 ### Build it yourself
 
 You need go 1.11.
