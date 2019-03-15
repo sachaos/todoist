@@ -57,7 +57,7 @@ type Item struct {
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
-	DueDateUtc     string      `json:"due_date_utc"`
+	DueDateUtc     *string     `json:"due_date_utc"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	InHistory      int         `json:"in_history"`
 	IsArchived     int         `json:"is_archived"`
@@ -79,7 +79,15 @@ func (a Items) Less(i, j int) bool { return a[i].ID < a[j].ID }
 func (a Items) At(i int) IDCarrier { return a[i] }
 
 func (item Item) DateTime() time.Time {
-	t, _ := time.Parse(DateFormat, item.DueDateUtc)
+	var date string
+
+	if item.DueDateUtc == nil {
+		date = ""
+	} else {
+		date = *item.DueDateUtc
+	}
+
+	t, _ := time.Parse(DateFormat, date)
 	return t
 }
 
