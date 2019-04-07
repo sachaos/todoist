@@ -10,13 +10,16 @@ confinement: devmode # use 'strict' once you have the right plugs and slots
 #architectures:
 #- build-on: amd64
 #run-on: amd64
-license: mit
+license: MIT
 
 parts:
   todoist-cli:
     plugin: go
     source: .
     go-importpath: github.com/sachaos/todoist
+    build-packages:
+      - git
+      - build-essential
 
 apps:
   todoist-cli:
