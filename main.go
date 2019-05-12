@@ -11,14 +11,13 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
-	"github.com/mitchellh/go-homedir"
 	"github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
 var (
-	configPath, _      = homedir.Dir()
+	configPath, _      = os.UserHomeDir()
 	default_cache_path = filepath.Join(configPath, ".todoist.cache.json")
 	CommandFailed      = errors.New("command failed")
 	IdNotFound         = errors.New("specified id not found")
