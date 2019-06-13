@@ -163,6 +163,14 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
+			Name:    "today",
+			Aliases: []string{"t"},
+			Usage:   "Show today's tasks",
+			Action:  TodayList,
+			Flags: []cli.Flag{
+			},
+		},
+		{
 			Name:    "list",
 			Aliases: []string{"l"},
 			Usage:   "Show all tasks",
