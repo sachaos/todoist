@@ -27,6 +27,11 @@ func List(c *cli.Context) error {
 		if !r || item.Checked == 1 {
 			continue
 		}
+
+		projectID := c.Int("project-id")
+		if projectID != 0 && item.ProjectID != projectID {
+			continue
+		}
 		itemList = append(itemList, []string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),

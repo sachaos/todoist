@@ -177,6 +177,7 @@ func main() {
 			Action:  List,
 			Flags: []cli.Flag{
 				filterFlag,
+				projectIDFlag,
 			},
 		},
 		{
