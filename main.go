@@ -157,9 +157,9 @@ func main() {
 		if c.Bool("csv") {
 			writer = csv.NewWriter(os.Stdout)
 		} else if runtime.GOOS == "windows" && !color.NoColor {
-				writer = NewTSVWriter(color.Output)
+			writer = NewTSVWriter(color.Output)
 		} else {
-				writer = NewTSVWriter(os.Stdout)
+			writer = NewTSVWriter(os.Stdout)
 		}
 		return nil
 	}
