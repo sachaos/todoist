@@ -12,7 +12,7 @@ var (
 )
 
 const (
-	Server     = "https://todoist.com/API/v7/"
+	Server     = "https://todoist.com/API/v8/"
 	DateFormat = "Mon 2 Jan 2006 15:04:05 +0000"
 )
 
