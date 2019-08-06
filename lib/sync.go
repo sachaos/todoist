@@ -25,8 +25,8 @@ type Store struct {
 	Labels            Labels `json:"labels"`
 	LiveNotifications []struct {
 		CompletedTasks   int     `json:"completed_tasks"`
-		Created          int     `json:"created"`
-		DateReached      int     `json:"date_reached"`
+		Created          string  `json:"created"`
+		DateReached      string  `json:"date_reached"`
 		ID               int     `json:"id"`
 		IsDeleted        int     `json:"is_deleted"`
 		KarmaLevel       int     `json:"karma_level"`

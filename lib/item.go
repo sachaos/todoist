@@ -12,6 +12,19 @@ var (
 	linkRegex = regexp.MustCompile(`\[(.*)\]\((.*)\)`)
 )
 
+const (
+	RFC3339Date = "2006-01-02"
+	RFC3339DateTime = "2006-01-02T15:04:05"
+)
+
+type Due struct {
+	Date        string `json:"date"`
+	TimeZone    string `json:"timezone"`
+	IsRecurring bool   `json:"is_recurring"`
+	String      string `json:"string"`
+	Lang        string `json:"en"`
+}
+
 type BaseItem struct {
 	HaveID
 	HaveProjectID
@@ -57,7 +70,7 @@ type Item struct {
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
-	DueDateUtc     *string     `json:"due_date_utc"`
+	Due            *Due        `json:"due"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	InHistory      int         `json:"in_history"`
 	IsArchived     int         `json:"is_archived"`
@@ -81,13 +94,16 @@ func (a Items) At(i int) IDCarrier { return a[i] }
 func (item Item) DateTime() time.Time {
 	var date string
 
-	if item.DueDateUtc == nil {
+	if item.Due == nil {
 		date = ""
 	} else {
-		date = *item.DueDateUtc
+		date = item.Due.Date
 	}
 
-	t, _ := time.Parse(DateFormat, date)
+	t, err := time.ParseInLocation(RFC3339DateTime, date, time.Local)
+	if err != nil {
+		t, _ = time.ParseInLocation(RFC3339Date, date, time.Local)
+	}
 	return t
 }
 
