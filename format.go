@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -70,17 +71,22 @@ func ContentFormat(item todoist.ContentCarrier) string {
 
 func PriorityFormat(priority int) string {
 	priorityColor := color.New(color.Bold)
+	var p int
 	switch priority {
-	case 4:
-		priorityColor.Add(color.FgWhite).Add(color.BgRed)
-	case 3:
-		priorityColor.Add(color.FgHiRed).Add(color.BgBlack)
-	case 2:
-		priorityColor.Add(color.FgHiYellow).Add(color.BgBlack)
-	default:
+	case 1:
+		p = 4
 		priorityColor.Add(color.FgBlue).Add(color.BgBlack)
+	case 2:
+		p = 3
+		priorityColor.Add(color.FgHiYellow).Add(color.BgBlack)
+	case 3:
+		p = 2
+		priorityColor.Add(color.FgHiRed).Add(color.BgBlack)
+	case 4:
+		p = 1
+		priorityColor.Add(color.FgWhite).Add(color.BgRed)
 	}
-	return priorityColor.SprintFunc()("p" + strconv.Itoa(priority))
+	return priorityColor.SprintFunc()(fmt.Sprintf("p%d", p))
 }
 
 func ProjectFormat(id int, projects todoist.Projects, projectColorHash map[int]color.Attribute, c *cli.Context) string {
