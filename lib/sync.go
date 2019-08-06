@@ -54,7 +54,7 @@ type Store struct {
 	Projects     Projects      `json:"projects"`
 	Reminders    []struct {
 		DateLang     string `json:"date_lang"`
-		DueDateUtc   string `json:"due_date_utc"`
+		Due          *Due   `json:"due"`
 		ID           int    `json:"id"`
 		IsDeleted    int    `json:"is_deleted"`
 		ItemID       int    `json:"item_id"`
