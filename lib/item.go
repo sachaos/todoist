@@ -38,13 +38,13 @@ func (bitem BaseItem) GetContent() string {
 
 type CompletedItem struct {
 	BaseItem
-	CompletedDate string      `json:"completed_date"`
+	CompletedData string      `json:"completed_date"`
 	MetaData      interface{} `json:"meta_data"`
 	TaskID        int         `json:"task_id"`
 }
 
 func (item CompletedItem) DateTime() time.Time {
-	t, _ := time.Parse(DateFormat, item.CompletedDate)
+	t, _ := time.Parse(time.RFC3339, item.CompletedData)
 	return t
 }
 
