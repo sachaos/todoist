@@ -9,6 +9,13 @@ import (
 	"github.com/urfave/cli"
 )
 
+var priorityMapping = map[int]int{
+	1: 4,
+	2: 3,
+	3: 2,
+	4: 1,
+}
+
 func Add(c *cli.Context) error {
 	client := GetClient(c)
 
@@ -18,7 +25,7 @@ func Add(c *cli.Context) error {
 	}
 
 	item.Content = c.Args().First()
-	item.Priority = c.Int("priority")
+	item.Priority = priorityMapping[c.Int("priority")]
 	item.ProjectID = c.Int("project-id")
 	if item.ProjectID == 0 {
 		item.ProjectID = client.Store.Projects.GetIDByName(c.String("project-name"))
