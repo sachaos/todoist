@@ -13,7 +13,6 @@ var (
 
 const (
 	Server     = "https://todoist.com/API/v8/"
-	DateFormat = "Mon 2 Jan 2006 15:04:05 +0000"
 )
 
 func ParseAPIError(prefix string, resp *http.Response) error {
