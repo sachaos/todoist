@@ -229,8 +229,10 @@ func (c *Client) CloseItem(ctx context.Context, ids []int) error {
 }
 
 func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
-	commands := Commands{
-		NewCommand("item_delete", map[string]interface{}{"ids": ids}),
+	var commands Commands
+	for _, id := range ids {
+		command := NewCommand("item_delete", map[string]interface{}{"id": id})
+		commands = append(commands, command)
 	}
 	return c.ExecCommands(ctx, commands)
 }
