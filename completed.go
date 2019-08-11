@@ -42,7 +42,7 @@ func CompletedList(c *cli.Context) error {
 		writer.Write([]string{
 			IdFormat(item),
 			CompletedDateFormat(item.DateTime()),
-			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
+			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
 			ContentFormat(item),
 		})
 	}

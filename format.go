@@ -46,17 +46,14 @@ func IdFormat(carrier todoist.IDCarrier) string {
 	return color.BlueString(strconv.Itoa(carrier.GetID()))
 }
 
-func ContentPrefix(items todoist.Items, item todoist.Item, c *cli.Context) (prefix string) {
+func ContentPrefix(store *todoist.Store, item *todoist.Item, depth int, c *cli.Context) (prefix string) {
 	if c.GlobalBool("indent") {
-		prefix = prefix + strings.Repeat("    ", item.GetIndent())
+		prefix = prefix + strings.Repeat("    ", depth)
 	}
 	if c.GlobalBool("namespace") {
-		parents, err := todoist.SearchParents(items, item)
-		if err != nil {
-			panic(err)
-		}
+		parents := todoist.SearchItemParents(store, item)
 		for _, parent := range parents {
-			prefix = prefix + parent.(todoist.ContentCarrier).GetContent() + ":"
+			prefix = prefix + parent.Content + ":"
 		}
 	}
 	return
@@ -89,23 +86,20 @@ func PriorityFormat(priority int) string {
 	return priorityColor.SprintFunc()(fmt.Sprintf("p%d", p))
 }
 
-func ProjectFormat(id int, projects todoist.Projects, projectColorHash map[int]color.Attribute, c *cli.Context) string {
+func ProjectFormat(id int, store *todoist.Store, projectColorHash map[int]color.Attribute, c *cli.Context) string {
 	var prefix string
 	var namePrefix string
-	project, err := todoist.SearchByID(projects, id)
-	if err != nil {
+	project := store.FindProject(id)
+	if project == nil {
 		// Accept unknown project ID
 		return color.New(color.FgCyan).SprintFunc()("Unknown")
 	}
 
-	projectName := project.(todoist.Project).Name
+	projectName := project.Name
 	if c.GlobalBool("project-namespace") {
-		parentProjects, err := todoist.SearchParents(projects, project.(todoist.Project))
-		if err != nil {
-			panic(err)
-		}
+		parentProjects := todoist.SearchProjectParents(store, project)
 		for _, project := range parentProjects {
-			namePrefix = namePrefix + project.(todoist.Project).Name + ":"
+			namePrefix = namePrefix + project.Name + ":"
 		}
 	}
 	return prefix + color.New(projectColorHash[project.GetID()]).SprintFunc()("#"+namePrefix+projectName)

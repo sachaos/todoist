@@ -62,6 +62,8 @@ type Item struct {
 	BaseItem
 	HaveParentID
 	HaveIndent
+	ChildItem      *Item       `json:"-"`
+	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`
 	AssignedByUID  int         `json:"assigned_by_uid"`
 	Checked        int         `json:"checked"`
@@ -193,16 +195,16 @@ func (item Item) MoveParam(to_project Project) interface{} {
 	return param
 }
 
-func (item Item) LabelsString(labels Labels) string {
-	label_names := make([]string, 0)
-	for _, label_id := range item.LabelIDs {
-		label, err := SearchByID(labels, label_id)
-		if err != nil {
-			return "Error"
+func (item Item) LabelsString(store *Store) string {
+	var b strings.Builder
+	for i, labelId := range item.LabelIDs {
+		label := store.FindLabel(labelId)
+		b.WriteString("@"+label.Name)
+		if i < len(item.LabelIDs) - 1 {
+			b.WriteString(",")
 		}
-		label_names = append(label_names, "@"+label.(Label).Name)
 	}
-	return strings.Join(label_names, ",")
+	return b.String()
 }
 
 func (c *Client) AddItem(ctx context.Context, item Item) error {

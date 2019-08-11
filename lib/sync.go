@@ -1,17 +1,10 @@
 package todoist
 
-import (
-	"sort"
-)
-
 type Store struct {
 	CollaboratorStates []interface{} `json:"collaborator_states"`
 	Collaborators      []interface{} `json:"collaborators"`
 	DayOrders          interface{}   `json:"day_orders"`
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
-	ItemOrders         ItemOrders    `json:"-"`
-	ProjectOrders      Orders        `json:"-"`
-	LabelOrders        Orders        `json:"-"`
 	Filters            []struct {
 		Color     int    `json:"color"`
 		ID        int    `json:"id"`
@@ -63,42 +56,126 @@ type Store struct {
 		Service      string `json:"service"`
 		Type         string `json:"type"`
 	} `json:"reminders"`
-	SyncToken     string   `json:"sync_token"`
-	TempIDMapping struct{} `json:"temp_id_mapping"`
-	User          User     `json:"user"`
+	SyncToken     string           `json:"sync_token"`
+	TempIDMapping struct{}         `json:"temp_id_mapping"`
+	User          User             `json:"user"`
+	RootItem      *Item            `json:"-"`
+	RootProject   *Project         `json:"-"`
+	ItemMap       map[int]*Item    `json:"-"`
+	ProjectMap    map[int]*Project `json:"-"`
+	LabelMap      map[int]*Label   `json:"-"`
 }
 
-func (s *Store) ConstructItemOrder() {
-	sort.Sort(s.Projects)
-	sort.Sort(s.Items)
-	sort.Sort(s.Labels)
+func (s *Store) FindItem(id int) *Item {
+	return s.ItemMap[id]
+}
 
-	s.ProjectOrders = make(Orders, len(s.Projects))
-	for i := 0; i < len(s.Projects); i++ {
-		project := s.Projects[i]
-		s.ProjectOrders[i] = Order{Num: project.ItemOrder, ID: project.ID, Data: project}
-	}
-	sort.Sort(s.ProjectOrders)
+func (s *Store) FindProject(id int) *Project {
+	return s.ProjectMap[id]
+}
 
-	s.LabelOrders = make(Orders, len(s.Labels))
-	for i := 0; i < len(s.Labels); i++ {
-		label := s.Labels[i]
-		s.LabelOrders[i] = Order{Num: label.ItemOrder, ID: label.ID, Data: label}
-	}
-	sort.Sort(s.LabelOrders)
+func (s *Store) FindLabel(id int) *Label {
+	return s.LabelMap[id]
+}
 
-	s.ItemOrders = make(ItemOrders, len(s.Items))
-	for i := 0; i < len(s.Items); i++ {
-		item := s.Items[i]
-		project, err := SearchByID(s.Projects, item.ProjectID)
-		var pjtOrder int
-		if err != nil {
-			// Set unknown project order to 0
-			pjtOrder = 0
-		} else {
-			pjtOrder = project.(Project).ItemOrder
+func addToBrotherItem(item *Item, b *Item) {
+	i := item
+	for {
+		if i.BrotherItem == nil {
+			i.BrotherItem = b
+			return
 		}
-		s.ItemOrders[i] = ItemOrder{Order: Order{Num: item.ItemOrder, ID: item.ID, Data: item}, ProjectOrder: pjtOrder}
+		i = i.BrotherItem
 	}
-	sort.Sort(s.ItemOrders)
+}
+
+func addToChildItem(item *Item, b *Item) {
+	if item.ChildItem == nil {
+		item.ChildItem = b
+		return
+	}
+	addToBrotherItem(item.ChildItem, b)
+}
+
+func addToBrotherProject(project *Project, b *Project) {
+	i := project
+	for {
+		if i.BrotherProject == nil {
+			i.BrotherProject = b
+			return
+		}
+		i = i.BrotherProject
+	}
+}
+
+func addToChildProject(project *Project, b *Project) {
+	if project.ChildProject == nil {
+		project.ChildProject = b
+		return
+	}
+	addToBrotherProject(project.ChildProject, b)
+}
+
+func (s *Store) ConstructItemTree() {
+	s.LabelMap = map[int]*Label{}
+	s.ProjectMap = map[int]*Project{}
+	s.ItemMap = map[int]*Item{}
+
+	for i, label := range s.Labels {
+		s.LabelMap[label.ID] = &s.Labels[i]
+	}
+
+	for i, item := range s.Items {
+		s.ItemMap[item.ID] = &s.Items[i]
+		s.Items[i].ChildItem = nil
+		s.Items[i].BrotherItem = nil
+	}
+
+	for i, project := range s.Projects {
+		s.ProjectMap[project.ID] = &s.Projects[i]
+		s.Projects[i].ChildProject = nil
+		s.Projects[i].BrotherProject = nil
+	}
+
+	for _, item := range s.Items {
+		if item.ParentID == nil {
+			s.RootItem = &item
+			break
+		}
+	}
+
+	for _, project := range s.Projects {
+		if project.ParentID == nil {
+			s.RootProject = &project
+			break
+		}
+	}
+
+	for i := range s.Items {
+		if s.Items[i].ID == s.RootItem.ID {
+			continue
+		}
+
+		if s.Items[i].ParentID == nil {
+			addToBrotherItem(s.RootItem, &s.Items[i])
+			continue
+		}
+		id, _ := s.Items[i].GetParentID()
+		parent := s.FindItem(id)
+		addToChildItem(parent, &s.Items[i])
+	}
+
+	for i := range s.Projects {
+		if s.Projects[i].ID == s.RootProject.ID {
+			continue
+		}
+
+		if s.Projects[i].ParentID == nil {
+			addToBrotherProject(s.RootProject, &s.Projects[i])
+			continue
+		}
+		id, _ := s.Projects[i].GetParentID()
+		parent := s.FindProject(id)
+		addToChildProject(parent, &s.Projects[i])
+	}
 }

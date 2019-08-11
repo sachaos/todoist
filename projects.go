@@ -5,6 +5,18 @@ import (
 	"github.com/urfave/cli"
 )
 
+func traverseProjects(pjt *todoist.Project, f func(pjt *todoist.Project, depth int), depth int) {
+	f(pjt, depth)
+
+	if pjt.ChildProject != nil {
+		traverseProjects(pjt.ChildProject, f, depth + 1)
+	}
+
+	if pjt.BrotherProject != nil {
+		traverseProjects(pjt.BrotherProject, f, depth)
+	}
+}
+
 func Projects(c *cli.Context) error {
 	client := GetClient(c)
 
@@ -16,10 +28,11 @@ func Projects(c *cli.Context) error {
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
 	itemList := [][]string{}
-	for _, itemOrder := range client.Store.ProjectOrders {
-		project := itemOrder.Data.(todoist.Project)
-		itemList = append(itemList, []string{IdFormat(project), ProjectFormat(project.ID, client.Store.Projects, projectColorHash, c)})
-	}
+	project := client.Store.RootProject
+
+	traverseProjects(project, func(pjt *todoist.Project, depth int) {
+		itemList = append(itemList, []string{IdFormat(pjt), ProjectFormat(pjt.ID, client.Store, projectColorHash, c)})
+	}, 0)
 
 	defer writer.Flush()
 

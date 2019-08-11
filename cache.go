@@ -28,7 +28,7 @@ func ReadCache(filename string, s *todoist.Store) error {
 	if err != nil {
 		return CommandFailed
 	}
-	s.ConstructItemOrder()
+	s.ConstructItemTree()
 	return nil
 }
 
