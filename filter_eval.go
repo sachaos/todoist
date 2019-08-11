@@ -102,7 +102,7 @@ func EvalAsPriority(e StringExpr, item todoist.Item) (result bool) {
 		return false
 	} else {
 		p, _ := strconv.Atoi(matched[1])
-		if p == item.Priority {
+		if p == priorityMapping[item.Priority] {
 			return true
 		}
 	}

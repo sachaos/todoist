@@ -42,8 +42,8 @@ func TestEval(t *testing.T) {
 }
 
 func TestPriorityEval(t *testing.T) {
-	testFilterEval(t, "p1", todoist.Item{Priority: 1}, true)
-	testFilterEval(t, "p2", todoist.Item{Priority: 1}, false)
+	testFilterEval(t, "p4", todoist.Item{Priority: 1}, true)
+	testFilterEval(t, "p3", todoist.Item{Priority: 1}, false)
 }
 
 func TestLabelEval(t *testing.T) {
@@ -95,19 +95,19 @@ func TestProjectEval(t *testing.T) {
 }
 
 func TestBoolInfixOpExp(t *testing.T) {
-	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 1}, true)
-	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 2}, true)
-	testFilterEval(t, "p1 | p2", todoist.Item{Priority: 3}, false)
+	testFilterEval(t, "p3 | p4", todoist.Item{Priority: 1}, true)
+	testFilterEval(t, "p3 | p4", todoist.Item{Priority: 2}, true)
+	testFilterEval(t, "p3 | p4", todoist.Item{Priority: 3}, false)
 
-	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 1}, false)
-	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 2}, false)
-	testFilterEval(t, "p1 & p2", todoist.Item{Priority: 3}, false)
+	testFilterEval(t, "p3 & p4", todoist.Item{Priority: 1}, false)
+	testFilterEval(t, "p3 & p4", todoist.Item{Priority: 2}, false)
+	testFilterEval(t, "p3 & p4", todoist.Item{Priority: 3}, false)
 }
 
 func TestNotOpEval(t *testing.T) {
-	testFilterEval(t, "!p1", todoist.Item{Priority: 1}, false)
-	testFilterEval(t, "!(p1 | p2)", todoist.Item{Priority: 2}, false)
-	testFilterEval(t, "!(p1 | p2)", todoist.Item{Priority: 3}, true)
+	testFilterEval(t, "!p4", todoist.Item{Priority: 1}, false)
+	testFilterEval(t, "!(p3 | p4)", todoist.Item{Priority: 2}, false)
+	testFilterEval(t, "!(p3 | p4)", todoist.Item{Priority: 3}, true)
 }
 
 func TestDueOnEval(t *testing.T) {
