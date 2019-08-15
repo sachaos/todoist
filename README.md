@@ -31,7 +31,7 @@ USAGE:
    todoist [global options] command [command options] [arguments...]
 
 VERSION:
-   0.13.1
+   0.14.0
 
 COMMANDS:
      list, l                  Show all tasks
@@ -162,11 +162,6 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 <C-x> t d: select date
 <C-x> t o: select task, and open it with browser when has url
 ```
-
-## TODO
-
-* Refactoring
-* Restrict view option
 
 ## Author
 
