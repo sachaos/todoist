@@ -23,17 +23,17 @@ func due(s string) *todoist.Due {
 }
 
 func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
-	actual, _ := Eval(Filter(f), item, todoist.Projects{}, todoist.Labels{})
+	actual, _ := Eval(Filter(f), &item, todoist.Projects{}, todoist.Labels{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
 func testFilterEvalWithProject(t *testing.T, f string, item todoist.Item, projects todoist.Projects, expect bool) {
-	actual, _ := Eval(Filter(f), item, projects, todoist.Labels{})
+	actual, _ := Eval(Filter(f), &item, projects, todoist.Labels{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
 func testFilterEvalWithLabel(t *testing.T, f string, item todoist.Item, labels todoist.Labels, expect bool) {
-	actual, _ := Eval(Filter(f), item, todoist.Projects{}, labels)
+	actual, _ := Eval(Filter(f), &item, todoist.Projects{}, labels)
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
@@ -77,7 +77,7 @@ func TestProjectEval(t *testing.T) {
 		},
 		todoist.Project{
 			HaveID:       todoist.HaveID{ID: 2},
-			HaveParentID: todoist.HaveParentID{ParentID: 1},
+			HaveParentID: todoist.HaveParentID{ParentID: &[]int{1}[0]},
 			Name:         "nested",
 		},
 	}
