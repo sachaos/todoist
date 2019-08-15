@@ -41,7 +41,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
-	app.Version = "0.13.1"
+	app.Version = "0.14.0"
 
 	contentFlag := cli.StringFlag{
 		Name:  "content, c",
