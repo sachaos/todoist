@@ -34,8 +34,8 @@ func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, la
 		return EvalLabel(e, item.GetLabelIDs(), labels), err
 	case StringExpr:
 		switch item.(type) {
-		case todoist.Item:
-			item := item.(todoist.Item)
+		case *todoist.Item:
+			item := item.(*todoist.Item)
 			e := e.(StringExpr)
 			return EvalAsPriority(e, item), err
 		default:
@@ -96,13 +96,13 @@ func EvalDate(e DateExpr, itemDate time.Time) (result bool) {
 	}
 }
 
-func EvalAsPriority(e StringExpr, item todoist.Item) (result bool) {
+func EvalAsPriority(e StringExpr, item *todoist.Item) (result bool) {
 	matched := priorityRegex.FindStringSubmatch(e.literal)
 	if len(matched) == 0 {
 		return false
 	} else {
 		p, _ := strconv.Atoi(matched[1])
-		if p == item.Priority {
+		if p == priorityMapping[item.Priority] {
 			return true
 		}
 	}

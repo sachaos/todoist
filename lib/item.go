@@ -3,7 +3,6 @@ package todoist
 import (
 	"context"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -11,6 +10,19 @@ import (
 var (
 	linkRegex = regexp.MustCompile(`\[(.*)\]\((.*)\)`)
 )
+
+const (
+	RFC3339Date = "2006-01-02"
+	RFC3339DateTime = "2006-01-02T15:04:05"
+)
+
+type Due struct {
+	Date        string `json:"date"`
+	TimeZone    string `json:"timezone"`
+	IsRecurring bool   `json:"is_recurring"`
+	String      string `json:"string"`
+	Lang        string `json:"en"`
+}
 
 type BaseItem struct {
 	HaveID
@@ -25,13 +37,13 @@ func (bitem BaseItem) GetContent() string {
 
 type CompletedItem struct {
 	BaseItem
-	CompletedDate string      `json:"completed_date"`
+	CompletedData string      `json:"completed_date"`
 	MetaData      interface{} `json:"meta_data"`
 	TaskID        int         `json:"task_id"`
 }
 
 func (item CompletedItem) DateTime() time.Time {
-	t, _ := time.Parse(DateFormat, item.CompletedDate)
+	t, _ := time.Parse(time.RFC3339, item.CompletedData)
 	return t
 }
 
@@ -49,6 +61,8 @@ type Item struct {
 	BaseItem
 	HaveParentID
 	HaveIndent
+	ChildItem      *Item       `json:"-"`
+	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`
 	AssignedByUID  int         `json:"assigned_by_uid"`
 	Checked        int         `json:"checked"`
@@ -57,7 +71,7 @@ type Item struct {
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
-	DueDateUtc     *string     `json:"due_date_utc"`
+	Due            *Due        `json:"due"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	InHistory      int         `json:"in_history"`
 	IsArchived     int         `json:"is_archived"`
@@ -81,13 +95,16 @@ func (a Items) At(i int) IDCarrier { return a[i] }
 func (item Item) DateTime() time.Time {
 	var date string
 
-	if item.DueDateUtc == nil {
+	if item.Due == nil {
 		date = ""
 	} else {
-		date = *item.DueDateUtc
+		date = item.Due.Date
 	}
 
-	t, _ := time.Parse(DateFormat, date)
+	t, err := time.ParseInLocation(RFC3339DateTime, date, time.Local)
+	if err != nil {
+		t, _ = time.ParseInLocation(RFC3339Date, date, time.Local)
+	}
 	return t
 }
 
@@ -167,26 +184,24 @@ func (item Item) UpdateParam() interface{} {
 	return param
 }
 
-func (item Item) MoveParam(to_project Project) interface{} {
+func (item *Item) MoveParam(projectId int) interface{} {
 	param := map[string]interface{}{
-		"project_items": map[string][]int{
-			strconv.Itoa(item.ProjectID): []int{item.ID},
-		},
-		"to_project": to_project.ID,
+		"id": item.ID,
+		"project_id": projectId,
 	}
 	return param
 }
 
-func (item Item) LabelsString(labels Labels) string {
-	label_names := make([]string, 0)
-	for _, label_id := range item.LabelIDs {
-		label, err := SearchByID(labels, label_id)
-		if err != nil {
-			return "Error"
+func (item Item) LabelsString(store *Store) string {
+	var b strings.Builder
+	for i, labelId := range item.LabelIDs {
+		label := store.FindLabel(labelId)
+		b.WriteString("@"+label.Name)
+		if i < len(item.LabelIDs) - 1 {
+			b.WriteString(",")
 		}
-		label_names = append(label_names, "@"+label.(Label).Name)
 	}
-	return strings.Join(label_names, ",")
+	return b.String()
 }
 
 func (c *Client) AddItem(ctx context.Context, item Item) error {
@@ -213,15 +228,17 @@ func (c *Client) CloseItem(ctx context.Context, ids []int) error {
 }
 
 func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
-	commands := Commands{
-		NewCommand("item_delete", map[string]interface{}{"ids": ids}),
+	var commands Commands
+	for _, id := range ids {
+		command := NewCommand("item_delete", map[string]interface{}{"id": id})
+		commands = append(commands, command)
 	}
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) MoveItem(ctx context.Context, item Item, to_project Project) error {
+func (c *Client) MoveItem(ctx context.Context, item *Item, projectId int) error {
 	commands := Commands{
-		NewCommand("item_move", item.MoveParam(to_project)),
+		NewCommand("item_move", item.MoveParam(projectId)),
 	}
 	return c.ExecCommands(ctx, commands)
 }

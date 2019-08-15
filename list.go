@@ -5,6 +5,18 @@ import (
 	"github.com/urfave/cli"
 )
 
+func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), depth int) {
+	f(item, depth)
+
+	if item.ChildItem != nil {
+		traverseItems(item.ChildItem, f, depth + 1)
+	}
+
+	if item.BrotherItem != nil {
+		traverseItems(item.BrotherItem, f, depth)
+	}
+}
+
 func List(c *cli.Context) error {
 	client := GetClient(c)
 
@@ -17,25 +29,26 @@ func List(c *cli.Context) error {
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 	ex := Filter(c.String("filter"))
 
-	itemList := make([][]string, 0, len(client.Store.ItemOrders))
-	for _, itemOrder := range client.Store.ItemOrders {
-		item := itemOrder.Data.(todoist.Item)
+	itemList := [][]string{}
+	rootItem := client.Store.RootItem
+
+	traverseItems(rootItem, func(item *todoist.Item, depth int) {
 		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
 		if err != nil {
-			return err
+			return
 		}
 		if !r || item.Checked == 1 {
-			continue
+			return
 		}
 		itemList = append(itemList, []string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DateTime(), item.AllDay),
-			ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c),
-			item.LabelsString(client.Store.Labels),
-			ContentPrefix(client.Store.Items, item, c) + ContentFormat(item),
+			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
+			item.LabelsString(client.Store),
+			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
 		})
-	}
+	}, 0)
 
 	defer writer.Flush()
 

@@ -16,11 +16,10 @@ func Show(c *cli.Context) error {
 		return CommandFailed
 	}
 
-	idCarrier, err := todoist.SearchByID(client.Store.Items, item_id)
-	if err != nil {
+	item := client.Store.FindItem(item_id)
+	if item == nil {
 		return IdNotFound
 	}
-	item := idCarrier.(todoist.Item)
 
 	colorList := ColorList()
 	var projectIds []int
@@ -32,8 +31,8 @@ func Show(c *cli.Context) error {
 	records := [][]string{
 		[]string{"ID", IdFormat(item)},
 		[]string{"Content", ContentFormat(item)},
-		[]string{"Project", ProjectFormat(item.ProjectID, client.Store.Projects, projectColorHash, c)},
-		[]string{"Labels", item.LabelsString(client.Store.Labels)},
+		[]string{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
+		[]string{"Labels", item.LabelsString(client.Store)},
 		[]string{"Priority", PriorityFormat(item.Priority)},
 		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
 		[]string{"URL", todoist.GetContentURL(item)},

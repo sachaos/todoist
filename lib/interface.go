@@ -2,7 +2,6 @@ package todoist
 
 import (
 	"errors"
-	"sort"
 )
 
 type HaveID struct {
@@ -26,19 +25,8 @@ type Repository interface {
 	At(int) IDCarrier
 }
 
-func SearchByID(repo Repository, id int) (data IDCarrier, err error) {
-	index := sort.Search(repo.Len(), func(i int) bool {
-		return repo.At(i).GetID() >= id
-	})
-	if index < repo.Len() && repo.At(index).GetID() == id {
-		return repo.At(index), nil
-	} else {
-		return nil, errors.New("Find Failed")
-	}
-}
-
 type HaveParentID struct {
-	ParentID interface{} `json:"parent_id"`
+	ParentID *int `json:"parent_id"`
 }
 
 type ParentIDCarrier interface {
@@ -46,30 +34,28 @@ type ParentIDCarrier interface {
 }
 
 func (carrier HaveParentID) GetParentID() (int, error) {
-	switch yi := carrier.ParentID.(type) {
-	case int:
-		return yi, nil
-	case float64:
-		return int(yi), nil
-	default:
+	if carrier.ParentID == nil {
 		return 0, errors.New("Parent ID is null")
 	}
+	return *carrier.ParentID, nil
 }
 
-func SearchParents(repo Repository, child ParentIDCarrier) (data []ParentIDCarrier, err error) {
-	parentId, err := child.GetParentID()
-	if err != nil {
-		return []ParentIDCarrier{}, nil
+func SearchProjectParents(store *Store, project *Project) []*Project {
+	if project.ParentID == nil {
+		return []*Project{}
 	}
-	childParent, err := SearchByID(repo, parentId)
-	if err != nil {
-		return []ParentIDCarrier{}, err
+
+	parentProject := store.FindProject(*project.ParentID)
+	return append(SearchProjectParents(store, parentProject), parentProject)
+}
+
+func SearchItemParents(store *Store, item *Item) []*Item {
+	if item.ParentID == nil {
+		return []*Item{}
 	}
-	childParents, err := SearchParents(repo, childParent.(ParentIDCarrier))
-	if err != nil {
-		return []ParentIDCarrier{}, err
-	}
-	return append(childParents, childParent.(ParentIDCarrier)), nil
+
+	parentItem := store.FindItem(*item.ParentID)
+	return append(SearchItemParents(store, parentItem), parentItem)
 }
 
 type ContentCarrier interface {
@@ -78,7 +64,6 @@ type ContentCarrier interface {
 
 type ProjectIDCarrier interface {
 	GetProjectID() int
-	GetProjectName(Projects) string
 }
 
 func (carrier HaveID) GetID() int {
@@ -91,12 +76,4 @@ func (carrier HaveIndent) GetIndent() int {
 
 func (carrier HaveProjectID) GetProjectID() int {
 	return carrier.ProjectID
-}
-
-func (carrier HaveProjectID) GetProjectName(projects Projects) string {
-	project, err := SearchByID(projects, carrier.GetProjectID())
-	if err != nil {
-		return ""
-	}
-	return project.(Project).Name
 }

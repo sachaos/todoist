@@ -5,14 +5,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 )
 
 func Modify(c *cli.Context) error {
 	client := GetClient(c)
 
-	next_project := todoist.Project{}
 	if !c.Args().Present() {
 		return CommandFailed
 	}
@@ -22,13 +20,12 @@ func Modify(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	idCarrier, err := todoist.SearchByID(client.Store.Items, item_id)
-	if err != nil {
+	item := client.Store.FindItem(item_id)
+	if item == nil {
 		return IdNotFound
 	}
-	item := idCarrier.(todoist.Item)
 	item.Content = c.String("content")
-	item.Priority = c.Int("priority")
+	item.Priority = priorityMapping[c.Int("priority")]
 	item.LabelIDs = func(str string) []int {
 		stringIDs := strings.Split(str, ",")
 		ids := []int{}
@@ -48,17 +45,16 @@ func Modify(c *cli.Context) error {
 	if projectID == 0 {
 		projectID = client.Store.Projects.GetIDByName(c.String("project-name"))
 	}
-	next_project.ID = projectID
 
 	if !c.Args().Present() {
 		return CommandFailed
 	}
 
-	if err := client.UpdateItem(context.Background(), item); err != nil {
+	if err := client.UpdateItem(context.Background(), *item); err != nil {
 		return err
 	}
 
-	if err := client.MoveItem(context.Background(), item, next_project); err != nil {
+	if err := client.MoveItem(context.Background(), item, projectID); err != nil {
 		return err
 	}
 
