@@ -3,7 +3,6 @@ package todoist
 import (
 	"context"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -185,12 +184,10 @@ func (item Item) UpdateParam() interface{} {
 	return param
 }
 
-func (item Item) MoveParam(to_project Project) interface{} {
+func (item *Item) MoveParam(projectId int) interface{} {
 	param := map[string]interface{}{
-		"project_items": map[string][]int{
-			strconv.Itoa(item.ProjectID): []int{item.ID},
-		},
-		"to_project": to_project.ID,
+		"id": item.ID,
+		"project_id": projectId,
 	}
 	return param
 }
@@ -239,9 +236,9 @@ func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) MoveItem(ctx context.Context, item Item, to_project Project) error {
+func (c *Client) MoveItem(ctx context.Context, item *Item, projectId int) error {
 	commands := Commands{
-		NewCommand("item_move", item.MoveParam(to_project)),
+		NewCommand("item_move", item.MoveParam(projectId)),
 	}
 	return c.ExecCommands(ctx, commands)
 }
