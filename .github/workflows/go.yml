@@ -3,7 +3,7 @@ on: [push]
 jobs:
 
   build:
-    name: Build
+    name: Test
     runs-on: ubuntu-latest
     steps:
 
@@ -17,4 +17,4 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Test
-      run: make test
+      run: TZ=Asia/Tokyo make test
