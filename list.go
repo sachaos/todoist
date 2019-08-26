@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
+	"os"
 )
 
 func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), depth int) {
@@ -31,6 +33,11 @@ func List(c *cli.Context) error {
 
 	itemList := [][]string{}
 	rootItem := client.Store.RootItem
+
+	if rootItem == nil {
+		fmt.Fprintln(os.Stderr, "There is no task. You can fetch latest tasks by `todoist sync`.")
+		return nil
+	}
 
 	traverseItems(rootItem, func(item *todoist.Item, depth int) {
 		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
