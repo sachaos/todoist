@@ -21,7 +21,7 @@ type Due struct {
 	TimeZone    string `json:"timezone"`
 	IsRecurring bool   `json:"is_recurring"`
 	String      string `json:"string"`
-	Lang        string `json:"en"`
+	Lang        string `json:"lang"`
 }
 
 type BaseItem struct {
