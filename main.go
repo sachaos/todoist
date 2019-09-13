@@ -49,7 +49,7 @@ func main() {
 	}
 	priorityFlag := cli.IntFlag{
 		Name:  "priority, p",
-		Value: 1,
+		Value: 4,
 		Usage: "priority (1-4)",
 	}
 	labelIDsFlag := cli.StringFlag{
