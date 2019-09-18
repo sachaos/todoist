@@ -43,7 +43,8 @@ func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, la
 		}
 	case DateExpr:
 		e := e.(DateExpr)
-		return EvalDate(e, item.DateTime()), err
+		dateTime, allDay := item.DateTime()
+		return EvalDate(e, dateTime, allDay), err
 	case NotOpExpr:
 		e := e.(NotOpExpr)
 		r, err := Eval(e.expr, item, projects, labels)
@@ -57,14 +58,13 @@ func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, la
 	return
 }
 
-func EvalDate(e DateExpr, itemDate time.Time) (result bool) {
+func EvalDate(e DateExpr, itemDate time.Time, allDay bool) (result bool) {
 	if (itemDate == time.Time{}) {
 		if e.operation == NO_DUE_DATE {
 			return true
 		}
 		return false
 	}
-	allDay := e.allDay
 	dueDate := e.datetime
 	switch e.operation {
 	case DUE_ON:

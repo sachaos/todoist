@@ -39,9 +39,10 @@ func CompletedList(c *cli.Context) error {
 		if !r == true {
 			continue
 		}
+		date, _ := item.DateTime()
 		writer.Write([]string{
 			IdFormat(item),
-			CompletedDateFormat(item.DateTime()),
+			CompletedDateFormat(date),
 			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
 			ContentFormat(item),
 		})

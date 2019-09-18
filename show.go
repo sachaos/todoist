@@ -28,13 +28,15 @@ func Show(c *cli.Context) error {
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
+	dateTime, allDay := item.DateTime()
+
 	records := [][]string{
 		[]string{"ID", IdFormat(item)},
 		[]string{"Content", ContentFormat(item)},
 		[]string{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
 		[]string{"Labels", item.LabelsString(client.Store)},
 		[]string{"Priority", PriorityFormat(item.Priority)},
-		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
+		[]string{"DueDate", DueDateFormat(dateTime, allDay)},
 		[]string{"URL", todoist.GetContentURL(item)},
 	}
 	defer writer.Flush()
