@@ -1,9 +1,11 @@
 FROM golang:alpine
 
 RUN apk add --update git bash openssl
-RUN go get github.com/sachaos/todoist
+RUN mkdir -p $GOPATH/src/github.com/sachaos/todoist
 
 WORKDIR $GOPATH/src/github.com/sachaos/todoist
+
+RUN git clone https://github.com/sachaos/todoist.git .
 
 RUN go install
 ARG TODOIST_API_TOKEN
