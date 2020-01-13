@@ -42,9 +42,9 @@ type CompletedItem struct {
 	TaskID        int         `json:"task_id"`
 }
 
-func (item CompletedItem) DateTime() time.Time {
+func (item CompletedItem) DateTime() (time.Time, bool) {
 	t, _ := time.Parse(time.RFC3339, item.CompletedData)
-	return t
+	return t, true
 }
 
 func (item CompletedItem) GetProjectID() int {
@@ -63,7 +63,6 @@ type Item struct {
 	HaveIndent
 	ChildItem      *Item       `json:"-"`
 	BrotherItem    *Item       `json:"-"`
-	AllDay         bool        `json:"all_day"`
 	AssignedByUID  int         `json:"assigned_by_uid"`
 	Checked        int         `json:"checked"`
 	Collapsed      int         `json:"collapsed"`
@@ -92,8 +91,9 @@ func (a Items) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Items) At(i int) IDCarrier { return a[i] }
 
-func (item Item) DateTime() time.Time {
+func (item Item) DateTime() (time.Time, bool) {
 	var date string
+	var allDay bool
 
 	if item.Due == nil {
 		date = ""
@@ -102,10 +102,13 @@ func (item Item) DateTime() time.Time {
 	}
 
 	t, err := time.ParseInLocation(RFC3339DateTime, date, time.Local)
+	allDay = false
+
 	if err != nil {
 		t, _ = time.ParseInLocation(RFC3339Date, date, time.Local)
+		allDay = true
 	}
-	return t
+	return t, allDay
 }
 
 func (item Item) GetProjectID() int {
@@ -118,7 +121,7 @@ func (item Item) GetLabelIDs() []int {
 
 // interface for Eval actions
 type AbstractItem interface {
-	DateTime() time.Time
+	DateTime() (time.Time, bool)
 	GetProjectID() int
 	GetLabelIDs() []int
 }

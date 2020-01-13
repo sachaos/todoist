@@ -47,10 +47,11 @@ func List(c *cli.Context) error {
 		if !r || item.Checked == 1 {
 			return
 		}
+		dateTime, allDay := item.DateTime()
 		itemList = append(itemList, []string{
 			IdFormat(item),
 			PriorityFormat(item.Priority),
-			DueDateFormat(item.DateTime(), item.AllDay),
+			DueDateFormat(dateTime, allDay),
 			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
 			item.LabelsString(client.Store),
 			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
