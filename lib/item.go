@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	linkRegex = regexp.MustCompile(`\[(.*)\]\((.*)\)`)
+	linkRegex = regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
 )
 
 const (
@@ -127,11 +127,18 @@ func GetContentTitle(item ContentCarrier) string {
 	return linkRegex.ReplaceAllString(item.GetContent(), "$1")
 }
 
-func GetContentURL(item ContentCarrier) string {
+func GetContentURL(item ContentCarrier) []string {
 	if HasURL(item) {
-		return linkRegex.ReplaceAllString(item.GetContent(), "$2")
+		matches := linkRegex.FindAllStringSubmatch(item.GetContent(), -1)
+		if matches != nil {
+			urls := make([]string, len(matches))
+			for i, match := range matches {
+				urls[i] = match[2]
+			}
+			return urls
+		}
 	}
-	return ""
+	return []string{}
 }
 
 func HasURL(item ContentCarrier) bool {
