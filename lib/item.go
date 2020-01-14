@@ -12,8 +12,9 @@ var (
 )
 
 const (
-	RFC3339Date = "2006-01-02"
-	RFC3339DateTime = "2006-01-02T15:04:05"
+	RFC3339Date                 = "2006-01-02"
+	RFC3339DateTime             = "2006-01-02T15:04:05"
+	RFC3339DateTimeWithTimeZone = "2006-01-02T15:04:05Z07:00"
 )
 
 type Due struct {
@@ -100,8 +101,12 @@ func (item Item) DateTime() time.Time {
 	} else {
 		date = item.Due.Date
 	}
-
-	t, err := time.ParseInLocation(RFC3339DateTime, date, time.Local)
+	//2020-03-03T14:00:00
+	//2020-01-17T23:00:00Z
+	t, err := time.ParseInLocation(RFC3339DateTimeWithTimeZone, date, time.Local)
+	if err != nil {
+		t, err = time.ParseInLocation(RFC3339DateTime, date, time.Local)
+	}
 	if err != nil {
 		t, _ = time.ParseInLocation(RFC3339Date, date, time.Local)
 	}
@@ -186,7 +191,7 @@ func (item Item) UpdateParam() interface{} {
 
 func (item *Item) MoveParam(projectId int) interface{} {
 	param := map[string]interface{}{
-		"id": item.ID,
+		"id":         item.ID,
 		"project_id": projectId,
 	}
 	return param
@@ -196,8 +201,8 @@ func (item Item) LabelsString(store *Store) string {
 	var b strings.Builder
 	for i, labelId := range item.LabelIDs {
 		label := store.FindLabel(labelId)
-		b.WriteString("@"+label.Name)
-		if i < len(item.LabelIDs) - 1 {
+		b.WriteString("@" + label.Name)
+		if i < len(item.LabelIDs)-1 {
 			b.WriteString(",")
 		}
 	}
