@@ -148,3 +148,5 @@ alias tp='t-prt-proj'
 #alias for todoist_functions.sh widget which completes a task
 #temporary until I can get selection working through project and today selection
 alias tfin='xdotool key "control+x" "t" "c"'
+#prints this file to quickly see aliases add your path here
+alias tprt='cat '
