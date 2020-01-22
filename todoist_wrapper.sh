@@ -120,9 +120,9 @@ function t-rm-today() {
 alias tsk='t-prt-tasks $(eval t-get-tasks)'
 #gets task list from global task list and prompts to delete them
 alias tdelg='t-del-tasks $(eval t-get-tasks)'
-##gets task list from global task list
+##gets task list from global task list and moves them to new desired project
 alias tmvg='t-mv-tasks $(eval t-get-tasks)'
-##gets task list from individual project list 
+##gets task list from individual project list and moves them to new desired project
 alias tmv='t-mv-tasks $(eval t-get-tasks-from-proj)'
 #gets task list from individual project list and prompts to delete them
 alias tdel='t-del-tasks $(eval t-get-tasks-from-proj)'
