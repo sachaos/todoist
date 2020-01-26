@@ -26,9 +26,5 @@ func Delete(c *cli.Context) error {
 		return CommandFailed
 	}
 
-	if err := Sync(c); err != nil {
-		return CommandFailed
-	}
-
-	return nil
+	return Sync(c)
 }

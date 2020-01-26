@@ -13,10 +13,5 @@ func Sync(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	err = WriteCache(default_cache_path, client.Store)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return WriteCache(default_cache_path, client.Store)
 }
