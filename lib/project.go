@@ -48,9 +48,7 @@ func (a Projects) GetIDsByName(name string, isAll bool) []int {
 				parentID := pjt.ID
 				// Find all children which has the project as parent
 				ids = append(ids, parentID)
-				for _, id := range childProjectIDs(parentID, a) {
-					ids = append(ids, id)
-				}
+				ids = append(ids, childProjectIDs(parentID, a)...)
 			}
 		}
 	}
@@ -67,9 +65,7 @@ func childProjectIDs(parentId int, projects Projects) []int {
 
 		if id == parentId {
 			ids = append(ids, pjt.ID)
-			for _, id := range childProjectIDs(pjt.ID, projects) {
-				ids = append(ids, id)
-			}
+			ids = append(ids, childProjectIDs(pjt.ID, projects)...)
 		}
 	}
 	return ids
