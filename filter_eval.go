@@ -59,10 +59,7 @@ func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, la
 
 func EvalDate(e DateExpr, itemDate time.Time) (result bool) {
 	if (itemDate == time.Time{}) {
-		if e.operation == NO_DUE_DATE {
-			return true
-		}
-		return false
+		return e.operation == NO_DUE_DATE
 	}
 	allDay := e.allDay
 	dueDate := e.datetime
@@ -78,19 +75,13 @@ func EvalDate(e DateExpr, itemDate time.Time) (result bool) {
 		}
 		return false
 	case DUE_BEFORE:
-		if itemDate.Before(dueDate) {
-			return true
-		}
-		return false
+		return itemDate.Before(dueDate)
 	case DUE_AFTER:
 		endDateTime := dueDate
 		if allDay {
 			endDateTime = dueDate.AddDate(0, 0, 1).Add(-time.Duration(time.Microsecond))
 		}
-		if itemDate.After(endDateTime) {
-			return true
-		}
-		return false
+		return itemDate.After(endDateTime)
 	default:
 		return false
 	}
@@ -120,11 +111,7 @@ func EvalProject(e ProjectExpr, projectID int, projects todoist.Projects) bool {
 
 func EvalLabel(e LabelExpr, labelIDs []int, labels todoist.Labels) bool {
 	if e.name == "" {
-		if len(labelIDs) == 0 {
-			return true
-		} else {
-			return false
-		}
+		return len(labelIDs) == 0
 	}
 
 	labelID := labels.GetIDByName(e.name)
