@@ -24,7 +24,7 @@ func List(c *cli.Context) error {
 
 	colorList := ColorList()
 	projectsCount := len(client.Store.Projects)
-	projectIds := make([]int, projectsCount, projectsCount)
+	projectIds := make([]int, projectsCount)
 	for i, project := range client.Store.Projects {
 		projectIds[i] = project.GetID()
 	}
