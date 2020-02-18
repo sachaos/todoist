@@ -32,11 +32,11 @@ func CompletedList(c *cli.Context) error {
 	}
 
 	for _, item := range completed.Items {
-		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
+		result, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
 		if err != nil {
 			return err
 		}
-		if !r == true {
+		if !result {
 			continue
 		}
 		writer.Write([]string{

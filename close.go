@@ -27,9 +27,5 @@ func Close(c *cli.Context) error {
 		return err
 	}
 
-	if err := Sync(c); err != nil {
-		return err
-	}
-
-	return nil
+	return Sync(c)
 }
