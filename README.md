@@ -128,7 +128,8 @@ $ make install
 ### Register API token
 
 When you run `todoist` first time, you will be asked your Todoist API token.
-Please input Todoist API token and register it.
+Please input Todoist API token and register it. In order to get your API token 
+go to [https://todoist.com/prefs/integrations](https://todoist.com/prefs/integrations)
 
 ### Sync
 
