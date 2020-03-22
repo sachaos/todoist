@@ -218,6 +218,15 @@ func main() {
 			},
 		},
 		{
+			Name:    "quick-add",
+			Aliases: []string{"q"},
+			Usage:   "Add task using quick add syntax",
+			Action:  QuickAdd,
+			Flags: []cli.Flag{
+				reminderFlg,
+			},
+		},
+		{
 			Name:    "modify",
 			Aliases: []string{"m"},
 			Usage:   "Modify task",
