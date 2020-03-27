@@ -19,7 +19,7 @@ import (
 
 var (
 	configPath, _      = os.UserHomeDir()
-	default_cache_path = filepath.Join(configPath, ".cache/todoist/cache.json")
+	default_cache_path string
 	cacheFile          = "todoist/cache.json"
 	CommandFailed      = errors.New("command failed")
 	IdNotFound         = errors.New("specified id not found")

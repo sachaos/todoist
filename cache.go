@@ -48,14 +48,14 @@ func WriteCache(filename string, s *todoist.Store) error {
 	if err != nil {
 		return CommandFailed
 	}
-	_, err2 := os.Stat(filename)
-	if os.IsNotExist(err2) {
+	_, fileErr := os.Stat(filename)
+	if os.IsNotExist(fileErr) {
 		err = createCache(filename)
 		if err != nil {
 			return err
 		}
 	}
-	err2 = ioutil.WriteFile(filename, buf, os.ModePerm)
+	err2 := ioutil.WriteFile(filename, buf, os.ModePerm)
 	if err2 != nil {
 		return errors.New("Couldn't write to the cache file")
 	}
