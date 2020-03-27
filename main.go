@@ -19,7 +19,8 @@ import (
 
 var (
 	configPath, _      = os.UserHomeDir()
-	default_cache_path = filepath.Join(configPath, ".todoist.cache.json")
+	default_cache_path = filepath.Join(configPath, ".cache/todoist/cache.json")
+	cacheFile          = "todoist/cache.json"
 	CommandFailed      = errors.New("command failed")
 	IdNotFound         = errors.New("specified id not found")
 	writer             Writer
@@ -110,6 +111,13 @@ func main() {
 			Name:  "project-namespace",
 			Usage: "display parent project like namespace",
 		},
+	}
+
+	cachePath := os.Getenv("XDG_CACHE_HOME")
+	if cachePath != "" {
+		default_cache_path = filepath.Join(cachePath, cacheFile)
+	} else {
+		default_cache_path = filepath.Join(configPath, ".cache", cacheFile)
 	}
 
 	app.Before = func(c *cli.Context) error {
