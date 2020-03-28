@@ -66,7 +66,7 @@ func main() {
 	}
 	dateFlag := cli.StringFlag{
 		Name:  "date, d",
-		Usage: "date string (today, 2016/10/02, 2016/09/02 18:00)",
+		Usage: "date string (today, 2020/04/02, 2020/03/21 18:00)",
 	}
 	browseFlag := cli.BoolFlag{
 		Name:  "browse, o",
