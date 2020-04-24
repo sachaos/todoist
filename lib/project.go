@@ -1,6 +1,7 @@
 package todoist
 
 import (
+	"context"
 	"strings"
 )
 
@@ -69,4 +70,27 @@ func childProjectIDs(parentId int, projects Projects) []int {
 		}
 	}
 	return ids
+}
+
+func (project Project) AddParam() interface{} {
+	param := map[string]interface{}{}
+	if project.Name != "" {
+		param["name"] = project.Name
+	}
+	if project.Color != 0 {
+		param["color"] = project.Color
+	}
+	//TODO: ParentID
+	if project.ItemOrder != 0 {
+		param["child_order"] = project.ItemOrder
+	}
+	//TODO: IsFavorite
+	return param
+}
+
+func (c *Client) AddProject(ctx context.Context, project Project) error {
+	commands := Commands{
+		NewCommand("project_add", project.AddParam()),
+	}
+	return c.ExecCommands(ctx, commands)
 }

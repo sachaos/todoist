@@ -254,6 +254,22 @@ func main() {
 			Action: Projects,
 		},
 		{
+			Name:	"add-project",
+			Aliases:[]string{"ap"},
+			Usage:	"Add new project",
+			Action:	AddProject,
+			Flags: []cli.Flag{
+				cli.IntFlag{
+					Name: "color",
+					Usage: "In range 30-49",
+				},
+				cli.IntFlag{
+					Name: "item-order",
+					Usage: "Order index",
+				},
+			},
+		},
+		{
 			Name:   "karma",
 			Usage:  "Show karma",
 			Action: Karma,
