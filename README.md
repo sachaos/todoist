@@ -69,7 +69,7 @@ Supported filter is [here](https://github.com/sachaos/todoist/issues/15#issuecom
 #### e.g. List tasks which over due date and have high priority
 
 ```
-todoist list --filter '(overdue | today) & !p1'
+todoist list --filter '(overdue | today) & p1'
 ```
 
 ## Config
