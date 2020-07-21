@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
-	todoist "github.com/sachaos/todoist/lib"
+	"github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
@@ -255,17 +255,17 @@ func main() {
 			Action: Projects,
 		},
 		{
-			Name:    "add-project",
-			Aliases: []string{"ap"},
-			Usage:   "Add new project",
-			Action:  AddProject,
+			Name:	"add-project",
+			Aliases:[]string{"ap"},
+			Usage:	"Add new project",
+			Action:	AddProject,
 			Flags: []cli.Flag{
 				cli.IntFlag{
-					Name:  "color",
+					Name: "color",
 					Usage: "In range 30-49",
 				},
 				cli.IntFlag{
-					Name:  "item-order",
+					Name: "item-order",
 					Usage: "Order index",
 				},
 			},

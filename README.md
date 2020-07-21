@@ -1,4 +1,5 @@
-# Todoist CLI client
+Todoist CLI client
+===
 
 [Todoist](https://todoist.com/) CLI Client, written in Golang.
 
@@ -96,8 +97,8 @@ $ brew install todoist
 
 ### AUR
 
-- [todoist](https://aur.archlinux.org/packages/todoist/)
-- [todoist-git](https://aur.archlinux.org/packages/todoist-git/)
+* [todoist](https://aur.archlinux.org/packages/todoist/)
+* [todoist-git](https://aur.archlinux.org/packages/todoist-git/)
 
 ### Docker
 
@@ -127,7 +128,7 @@ $ make install
 ### Register API token
 
 When you run `todoist` first time, you will be asked your Todoist API token.
-Please input Todoist API token and register it. In order to get your API token
+Please input Todoist API token and register it. In order to get your API token 
 go to [https://todoist.com/prefs/integrations](https://todoist.com/prefs/integrations)
 
 ### Sync
@@ -157,13 +158,11 @@ $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 If installed via homebrew and using zsh (usually this is added to your `.zshrc` without the `$`, usually before loading your ZSH plugin manager):
 
 For **peco**:
-
 ```
 $ source $(brew --prefix)/share/zsh/site-functions/_todoist_peco
 ```
 
 For **fzf**:
-
 ```
 $ source $(brew --prefix)/share/zsh/site-functions/_todoist_fzf
 ```
@@ -188,7 +187,6 @@ You can also enable shell completion by adding the following lines to your `.bas
 ```
 # Bash
 PROG=todoist source "$GOPATH/src/github.com/urfave/cli/autocomplete/bash_autocomplete"
-
 # Zsh
 PROG=todoist source "$GOPATH/src/github.com/urfave/cli/autocomplete/zsh_autocomplete"
 ```
