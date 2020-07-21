@@ -333,6 +333,11 @@ var TodayIdentHash = map[string]bool {
     "tod": true,
 }
 
+var TomorrowIdentHash = map[string]bool {
+    "tomorrow": true,
+    "tom": true,
+}
+
 var OverDueHash = map[string]bool {
     "overdue": true,
     "od": true,
@@ -350,7 +355,7 @@ func (l *Lexer) Lex(lval *yySymType) int {
                 token = TWELVE_CLOCK_IDENT
             } else if _, ok := TodayIdentHash[lowerToken]; ok {
                 token = TODAY_IDENT
-            } else if lowerToken == "tomorrow" {
+            } else if _, ok := TomorrowIdentHash[lowerToken]; ok {
                 token = TOMORROW_IDENT
             } else if lowerToken == "yesterday" {
                 token = YESTERDAY_IDENT

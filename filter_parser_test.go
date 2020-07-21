@@ -149,6 +149,10 @@ func TestSpecialDateTimeFilter(t *testing.T) {
 		Filter("tomorrow"), "they should be equal")
 
 	assert.Equal(t,
+		DateExpr{operation: DUE_ON, datetime: time.Date(2017, time.January, 2, 0, 0, 0, 0, testTimeZone), allDay: true},
+		Filter("tom"), "they should be equal")
+
+	assert.Equal(t,
 		DateExpr{operation: DUE_ON, datetime: time.Date(2016, time.December, 31, 0, 0, 0, 0, testTimeZone), allDay: true},
 		Filter("yesterday"), "they should be equal")
 }
