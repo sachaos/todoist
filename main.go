@@ -42,6 +42,7 @@ func main() {
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
 	app.Version = "0.15.0"
+	app.EnableBashCompletion = true
 
 	contentFlag := cli.StringFlag{
 		Name:  "content, c",

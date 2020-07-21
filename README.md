@@ -180,6 +180,17 @@ $ source $(brew --prefix)/share/zsh/site-functions/_todoist_fzf
 <C-x> t o: select task, and open it with browser when has url
 ```
 
+### Enable shell completion
+
+You can also enable shell completion by adding the following lines to your `.bashrc`/`.zshrc` files.
+
+```
+# Bash
+PROG=todoist source "$GOPATH/src/github.com/urfave/cli/autocomplete/bash_autocomplete"
+# Zsh
+PROG=todoist source "$GOPATH/src/github.com/urfave/cli/autocomplete/zsh_autocomplete"
+```
+
 ## Author
 
 [sachaos](https://github.com/sachaos)
