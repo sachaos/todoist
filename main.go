@@ -18,15 +18,17 @@ import (
 )
 
 var (
-	configPath, _      = os.UserHomeDir()
-	default_cache_path = filepath.Join(configPath, ".todoist.cache.json")
+	homePath, _        = os.UserHomeDir()
+	configPath         string
+	default_cache_path string
+	cacheFile          = "todoist/cache.json"
 	CommandFailed      = errors.New("command failed")
 	IdNotFound         = errors.New("specified id not found")
 	writer             Writer
 )
 
 const (
-	configName = ".todoist.config"
+	configName = "todoist/config"
 	configType = "json"
 
 	ShortDateTimeFormat = "06/01/02(Mon) 15:04"
@@ -113,6 +115,18 @@ func main() {
 		},
 	}
 
+	cachePath := os.Getenv("XDG_CACHE_HOME")
+	if cachePath != "" {
+		default_cache_path = filepath.Join(cachePath, cacheFile)
+	} else {
+		default_cache_path = filepath.Join(homePath, ".cache", cacheFile)
+	}
+
+	configPath := os.Getenv("XDG_CONFIG_HOME")
+	if configPath == "" {
+		configPath = filepath.Join(homePath, ".config")
+	}
+
 	app.Before = func(c *cli.Context) error {
 		var store todoist.Store
 
@@ -128,6 +142,9 @@ func main() {
 		var token string
 
 		configFile := filepath.Join(configPath, configName+"."+configType)
+		if err := AssureExists(configFile); err != nil {
+			return err
+		}
 
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Printf("Input API Token: ")
