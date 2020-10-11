@@ -203,6 +203,7 @@ func main() {
 			Flags: []cli.Flag{
 				filterFlag,
 			},
+			ArgsUsage: " ",
 		},
 		{
 			Name:   "show",
@@ -211,6 +212,7 @@ func main() {
 			Flags: []cli.Flag{
 				browseFlag,
 			},
+			ArgsUsage: "<Item ID>",
 		},
 		{
 			Name:    "completed-list",
@@ -220,6 +222,7 @@ func main() {
 			Flags: []cli.Flag{
 				filterFlag,
 			},
+			ArgsUsage: " ",
 		},
 		{
 			Name:    "add",
@@ -234,6 +237,7 @@ func main() {
 				dateFlag,
 				reminderFlg,
 			},
+			ArgsUsage: "<Item content>",
 		},
 		{
 			Name:    "modify",
@@ -248,28 +252,33 @@ func main() {
 				projectNameFlag,
 				dateFlag,
 			},
+			ArgsUsage: "<Item ID>",
 		},
 		{
 			Name:    "close",
 			Aliases: []string{"c"},
 			Usage:   "Close task",
 			Action:  Close,
+			ArgsUsage: "<Item ID>",
 		},
 		{
 			Name:    "delete",
 			Aliases: []string{"d"},
 			Usage:   "Delete task",
 			Action:  Delete,
+			ArgsUsage: "<Item ID>",
 		},
 		{
 			Name:   "labels",
 			Usage:  "Show all labels",
 			Action: Labels,
+			ArgsUsage: " ",
 		},
 		{
 			Name:   "projects",
 			Usage:  "Show all projects",
 			Action: Projects,
+			ArgsUsage: " ",
 		},
 		{
 			Name:	"add-project",
@@ -286,23 +295,27 @@ func main() {
 					Usage: "Order index",
 				},
 			},
+			ArgsUsage: "<Project name>",
 		},
 		{
 			Name:   "karma",
 			Usage:  "Show karma",
 			Action: Karma,
+			ArgsUsage: " ",
 		},
 		{
 			Name:    "sync",
 			Aliases: []string{"s"},
 			Usage:   "Sync cache",
 			Action:  Sync,
+			ArgsUsage: " ",
 		},
 		{
 			Name:    "quick",
 			Aliases: []string{"q"},
 			Usage:   "Quick add a task",
 			Action:  Quick,
+			ArgsUsage: "<Item content>",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
