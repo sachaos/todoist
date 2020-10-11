@@ -74,7 +74,7 @@ todoist list --filter '(overdue | today) & p1'
 
 ## Config
 
-Config stored in `$HOME/.todoist.config.json`
+Config by default stored in `$HOME/.config/todoist/config.json`
 
 It has following parameters:
 
@@ -99,6 +99,12 @@ $ brew install todoist
 
 * [todoist](https://aur.archlinux.org/packages/todoist/)
 * [todoist-git](https://aur.archlinux.org/packages/todoist-git/)
+
+### Nix/NixOS
+
+```
+nix-env -iA nixos.todoist
+```
 
 ### Docker
 
@@ -128,7 +134,7 @@ $ make install
 ### Register API token
 
 When you run `todoist` first time, you will be asked your Todoist API token.
-Please input Todoist API token and register it. In order to get your API token 
+Please input Todoist API token and register it. In order to get your API token
 go to [https://todoist.com/prefs/integrations](https://todoist.com/prefs/integrations)
 
 ### Sync
