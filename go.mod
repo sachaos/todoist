@@ -8,6 +8,7 @@ require (
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rkoesters/xdg v0.0.0-20181125232953-edd15b846f9b
 	github.com/spf13/viper v1.2.1
 	github.com/stretchr/testify v1.2.2
 	github.com/urfave/cli v1.20.0
