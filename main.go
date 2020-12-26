@@ -196,6 +196,14 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
+			Name:      "today",
+			Aliases:   []string{"t"},
+			Usage:     "Show tasks for Today",
+			Action:    Today,
+			Flags:     nil,
+			ArgsUsage: " ",
+		},
+		{
 			Name:    "list",
 			Aliases: []string{"l"},
 			Usage:   "Show all tasks",
