@@ -12,7 +12,7 @@ import (
 func LoadCache(filename string, s *todoist.Store) error {
 	err := ReadCache(filename, s)
 	if err != nil {
-		err = WriteCache(default_cache_path, s)
+		err = WriteCache(cachePath, s)
 		if err != nil {
 			return err
 		}
