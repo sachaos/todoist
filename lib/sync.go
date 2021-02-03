@@ -45,6 +45,7 @@ type Store struct {
 	} `json:"notes"`
 	ProjectNotes []interface{} `json:"project_notes"`
 	Projects     Projects      `json:"projects"`
+	Sections     Sections      `json:"sections"`
 	Reminders    []struct {
 		DateLang     string `json:"date_lang"`
 		Due          *Due   `json:"due"`
@@ -64,6 +65,7 @@ type Store struct {
 	ItemMap       map[int]*Item    `json:"-"`
 	ProjectMap    map[int]*Project `json:"-"`
 	LabelMap      map[int]*Label   `json:"-"`
+	SectionMap    map[int]*Section `json:"-"`
 }
 
 func (s *Store) FindItem(id int) *Item {
@@ -72,6 +74,10 @@ func (s *Store) FindItem(id int) *Item {
 
 func (s *Store) FindProject(id int) *Project {
 	return s.ProjectMap[id]
+}
+
+func (s *Store) FindSection(id int) *Section {
+	return s.SectionMap[id]
 }
 
 func (s *Store) FindLabel(id int) *Label {
@@ -120,6 +126,7 @@ func (s *Store) ConstructItemTree() {
 	s.LabelMap = map[int]*Label{}
 	s.ProjectMap = map[int]*Project{}
 	s.ItemMap = map[int]*Item{}
+	s.SectionMap = map[int]*Section{}
 
 	for i, label := range s.Labels {
 		s.LabelMap[label.ID] = &s.Labels[i]
@@ -135,6 +142,10 @@ func (s *Store) ConstructItemTree() {
 		s.ProjectMap[project.ID] = &s.Projects[i]
 		s.Projects[i].ChildProject = nil
 		s.Projects[i].BrotherProject = nil
+	}
+
+	for i, section := range s.Sections {
+		s.SectionMap[section.ID] = &s.Sections[i]
 	}
 
 	for _, item := range s.Items {

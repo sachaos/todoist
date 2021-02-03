@@ -13,6 +13,10 @@ type HaveProjectID struct {
 	ProjectID int `json:"project_id"`
 }
 
+type HaveSectionID struct {
+	SectionID int `json:"section_id"`
+}
+
 type HaveIndent struct {
 	Indent int `json:"indent"`
 }
