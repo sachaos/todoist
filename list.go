@@ -11,7 +11,7 @@ func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), de
 	f(item, depth)
 
 	if item.ChildItem != nil {
-		traverseItems(item.ChildItem, f, depth + 1)
+		traverseItems(item.ChildItem, f, depth+1)
 	}
 
 	if item.BrotherItem != nil {
@@ -51,7 +51,8 @@ func List(c *cli.Context) error {
 			IdFormat(item),
 			PriorityFormat(item.Priority),
 			DueDateFormat(item.DateTime(), item.AllDay),
-			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
+			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
+				SectionFormat(item.SectionID, client.Store, c),
 			item.LabelsString(client.Store),
 			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
 		})

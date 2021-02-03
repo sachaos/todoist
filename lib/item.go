@@ -62,6 +62,7 @@ type Item struct {
 	BaseItem
 	HaveParentID
 	HaveIndent
+	HaveSectionID
 	ChildItem      *Item       `json:"-"`
 	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`

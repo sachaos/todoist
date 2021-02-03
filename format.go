@@ -105,6 +105,17 @@ func ProjectFormat(id int, store *todoist.Store, projectColorHash map[int]color.
 	return prefix + color.New(projectColorHash[project.GetID()]).SprintFunc()("#"+namePrefix+projectName)
 }
 
+func SectionFormat(id int, store *todoist.Store, c *cli.Context) string {
+	prefix := ""
+	sectionName := ""
+	section := store.FindSection(id)
+	if section != nil {
+		prefix = "/"
+		sectionName = section.Name
+	}
+	return prefix + sectionName
+}
+
 func dueDateString(dueDate time.Time, allDay bool) string {
 	if (dueDate == time.Time{}) {
 		return ""
