@@ -1,7 +1,10 @@
 module github.com/sachaos/todoist
 
+go 1.15
+
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
+	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
 	github.com/fatih/color v1.7.0
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/mattn/go-colorable v0.0.9 // indirect

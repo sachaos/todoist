@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/acarl005/stripansi"
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 	"os"
@@ -16,6 +17,20 @@ func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), de
 
 	if item.BrotherItem != nil {
 		traverseItems(item.BrotherItem, f, depth)
+	}
+}
+
+func sortItems(itemListPtr *[][]string, byIndex int) {
+	itemList := *itemListPtr
+	length := len(itemList)
+	for i := 0; i < length-1; i++ {
+		for j := 0; j < length-1-i; j++ {
+			if stripansi.Strip(itemList[j][byIndex]) > stripansi.Strip(itemList[j+1][byIndex]) {
+				tmp := itemList[j]
+				itemList[j] = itemList[j+1]
+				itemList[j+1] = tmp
+			}
+		}
 	}
 }
 
@@ -57,6 +72,14 @@ func List(c *cli.Context) error {
 			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
 		})
 	}, 0)
+
+	if c.Bool("priority") == true {
+		// sort output by priority
+		sortItems(&itemList, 1)
+	} else {
+		// sort output by task id, no need to call as items returned by API are already sorted by task id
+		// sortItems(&itemList, 0)
+	}
 
 	defer writer.Flush()
 
