@@ -83,7 +83,6 @@ It has following parameters:
   "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", # todoist api token, required
   "color": "true"                                      # colorize all output, not required, default false
 }
-
 ```
 
 ## Install
