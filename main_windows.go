@@ -1,4 +1,4 @@
-// +build !windows
+// +build windows
 
 package main
 
@@ -156,12 +156,9 @@ func main() {
 
 		// Ensure that the config file has permission 0600, because it contains
 		// the API token and should only be read by the user.
-		fi, err := os.Lstat(configFile)
+		_, err := os.Lstat(configFile)
 		if err != nil {
 			panic(fmt.Errorf("Fatal error config file: %s \n", err))
-		}
-		if fi.Mode().Perm() != 0600 {
-			panic(fmt.Errorf("Config file has wrong permissions. Make sure to give permissions 600 to file %s \n", configFile))
 		}
 
 		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color")}
