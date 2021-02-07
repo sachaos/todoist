@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"os"
+
+	"github.com/acarl005/stripansi"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli"
 )
 
 func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), depth int) {
@@ -16,6 +18,20 @@ func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), de
 
 	if item.BrotherItem != nil {
 		traverseItems(item.BrotherItem, f, depth)
+	}
+}
+
+func sortItems(itemListPtr *[][]string, byIndex int) {
+	itemList := *itemListPtr
+	length := len(itemList)
+	for i := 0; i < length-1; i++ {
+		for j := 0; j < length-1-i; j++ {
+			if stripansi.Strip(itemList[j][byIndex]) > stripansi.Strip(itemList[j+1][byIndex]) {
+				tmp := itemList[j]
+				itemList[j] = itemList[j+1]
+				itemList[j+1] = tmp
+			}
+		}
 	}
 }
 
@@ -57,6 +73,12 @@ func List(c *cli.Context) error {
 			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
 		})
 	}, 0)
+
+	if c.Bool("priority") == true {
+		// sort output by priority
+		// and no need to use "else block" as items returned by API are already sorted by task id
+		sortItems(&itemList, 1)
+	}
 
 	defer writer.Flush()
 
