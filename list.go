@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/acarl005/stripansi"
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
 	"os"
+
+	"github.com/acarl005/stripansi"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli"
 )
 
 func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), depth int) {
@@ -75,10 +76,8 @@ func List(c *cli.Context) error {
 
 	if c.Bool("priority") == true {
 		// sort output by priority
+		// and no need to use "else block" as items returned by API are already sorted by task id
 		sortItems(&itemList, 1)
-	} else {
-		// sort output by task id, no need to call as items returned by API are already sorted by task id
-		// sortItems(&itemList, 0)
 	}
 
 	defer writer.Flush()
