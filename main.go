@@ -158,7 +158,7 @@ func main() {
 		if err != nil {
 			panic(fmt.Errorf("Fatal error config file: %s \n", err))
 		}
-		if fi.Mode().Perm() != 0600 {
+		if runtime.GOOS != "windows" && fi.Mode().Perm() != 0600 {
 			panic(fmt.Errorf("Config file has wrong permissions. Make sure to give permissions 600 to file %s \n", configFile))
 		}
 
