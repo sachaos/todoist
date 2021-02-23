@@ -130,6 +130,8 @@ func main() {
 		viper.SetConfigName(configName)
 		viper.AddConfigPath(configPath)
 		viper.AddConfigPath(".")
+		viper.SetEnvPrefix("todoist") // uppercased automatically by viper
+		viper.AutomaticEnv()
 
 		var token string
 
@@ -139,29 +141,39 @@ func main() {
 		}
 
 		if err := viper.ReadInConfig(); err != nil {
-			fmt.Printf("Input API Token: ")
-			fmt.Scan(&token)
-			viper.Set("token", token)
-			buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
-			if err != nil {
-				panic(fmt.Errorf("Fatal error config file: %s \n", err))
-			}
-			err = ioutil.WriteFile(configFile, buf, 0600)
-			if err != nil {
-				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			if _, isConfigNotFoundError := err.(viper.ConfigFileNotFoundError); !isConfigNotFoundError {
+				// config file was found but could not be read => not recoverable
+				return err
+			} else if !viper.IsSet("token") {
+				// config file not found and token missing (not provided via another source,
+				// such as environment variables) => ask interactively for token and store it in config file.
+				fmt.Printf("Input API Token: ")
+				fmt.Scan(&token)
+				viper.Set("token", token)
+				buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
+				if err != nil {
+					panic(fmt.Errorf("Fatal error config file: %s \n", err))
+				}
+				err = ioutil.WriteFile(configFile, buf, 0600)
+				if err != nil {
+					panic(fmt.Errorf("Fatal error config file: %s \n", err))
+				}
 			}
 		}
 
-		// Ensure that the config file has permission 0600, because it contains
-		// the API token and should only be read by the user.
-		fi, err := os.Lstat(configFile)
-		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s \n", err))
+		if exists, _ := Exists(configFile); exists {
+			// Ensure that the config file has permission 0600, because it contains
+			// the API token and should only be read by the user.
+			// This is only necessary iff the config file exists, which may not be the case
+			// when config is loaded from environment variables.
+			fi, err := os.Lstat(configFile)
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			}
+			if runtime.GOOS != "windows" && fi.Mode().Perm() != 0600 {
+				panic(fmt.Errorf("Config file has wrong permissions. Make sure to give permissions 600 to file %s \n", configFile))
+			}
 		}
-		if runtime.GOOS != "windows" && fi.Mode().Perm() != 0600 {
-			panic(fmt.Errorf("Config file has wrong permissions. Make sure to give permissions 600 to file %s \n", configFile))
-		}
-
 		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color")}
 
 		client := todoist.NewClient(config)
