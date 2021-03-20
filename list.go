@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/acarl005/stripansi"
 	todoist "github.com/sachaos/todoist/lib"
@@ -21,18 +23,13 @@ func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), de
 	}
 }
 
-func sortItems(itemListPtr *[][]string, byIndex int) {
-	itemList := *itemListPtr
-	length := len(itemList)
-	for i := 0; i < length-1; i++ {
-		for j := 0; j < length-1-i; j++ {
-			if stripansi.Strip(itemList[j][byIndex]) > stripansi.Strip(itemList[j+1][byIndex]) {
-				tmp := itemList[j]
-				itemList[j] = itemList[j+1]
-				itemList[j+1] = tmp
-			}
-		}
-	}
+type TaskJSON struct {
+	ID       string `json:"id"`
+	Priority string `json:"priority"`
+	DueDate  string `json:"due_date"`
+	Project  string `json:"project"`
+	Labels   string `json:"labels"`
+	Content  string `json:"content"`
 }
 
 func List(c *cli.Context) error {
@@ -47,7 +44,6 @@ func List(c *cli.Context) error {
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 	ex := Filter(c.String("filter"))
 
-	itemList := [][]string{}
 	rootItem := client.Store.RootItem
 
 	if rootItem == nil {
@@ -55,6 +51,9 @@ func List(c *cli.Context) error {
 		return nil
 	}
 
+	isJson := c.GlobalBool("json")
+
+	var jsonObjects []TaskJSON
 	traverseItems(rootItem, func(item *todoist.Item, depth int) {
 		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
 		if err != nil {
@@ -63,31 +62,42 @@ func List(c *cli.Context) error {
 		if !r || item.Checked == 1 {
 			return
 		}
-		itemList = append(itemList, []string{
-			IdFormat(item),
-			PriorityFormat(item.Priority),
-			DueDateFormat(item.DateTime(), item.AllDay),
-			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
+		obj := TaskJSON{
+			ID:       IdFormat(item),
+			Priority: PriorityFormat(item.Priority),
+			DueDate:  DueDateFormat(item.DateTime(), item.AllDay),
+			Project: ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
 				SectionFormat(item.SectionID, client.Store, c),
-			item.LabelsString(client.Store),
-			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
-		})
+			Labels:  item.LabelsString(client.Store),
+			Content: ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
+		}
+		jsonObjects = append(jsonObjects, obj)
 	}, 0)
 
-	if c.Bool("priority") == true {
+	if c.Bool("priority") {
 		// sort output by priority
 		// and no need to use "else block" as items returned by API are already sorted by task id
-		sortItems(&itemList, 1)
+		sort.Slice(jsonObjects, func(i, j int) bool {
+			return stripansi.Strip(jsonObjects[i].Priority) < stripansi.Strip(jsonObjects[j].Priority)
+		})
 	}
 
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
-		writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content"})
-	}
+	if isJson {
+		jsonData, err := json.Marshal(jsonObjects)
+		if err != nil {
+			return CommandFailed
+		}
+		writer.Write([]string{string(jsonData)})
+	} else {
+		if c.GlobalBool("header") {
+			writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content"})
+		}
 
-	for _, strings := range itemList {
-		writer.Write(strings)
+		for _, obj := range jsonObjects {
+			writer.Write([]string{obj.ID, obj.Priority, obj.DueDate, obj.Project, obj.Labels, obj.Content})
+		}
 	}
 
 	return nil

@@ -70,7 +70,7 @@ _todoist() {
     __todoist_debug "${FUNCNAME[0]}(): cmd=$cmd"
 
     # Global options present in all commands
-    opts='--header --color --csv --debug --namespace --indent'\
+    opts='--header --color --csv --debug --namespace --indent --json -j'\
 ' --project-namespace --help -h --version -v '
 
     case "$cmd" in

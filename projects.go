@@ -1,15 +1,22 @@
 package main
 
 import (
-	"github.com/sachaos/todoist/lib"
+	"encoding/json"
+
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 )
+
+type ProjectJSON struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
 
 func traverseProjects(pjt *todoist.Project, f func(pjt *todoist.Project, depth int), depth int) {
 	f(pjt, depth)
 
 	if pjt.ChildProject != nil {
-		traverseProjects(pjt.ChildProject, f, depth + 1)
+		traverseProjects(pjt.ChildProject, f, depth+1)
 	}
 
 	if pjt.BrotherProject != nil {
@@ -27,21 +34,32 @@ func Projects(c *cli.Context) error {
 	}
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
-	itemList := [][]string{}
 	project := client.Store.RootProject
 
+	var jsonObjects []ProjectJSON
 	traverseProjects(project, func(pjt *todoist.Project, depth int) {
-		itemList = append(itemList, []string{IdFormat(pjt), ProjectFormat(pjt.ID, client.Store, projectColorHash, c)})
+		jsonObjects = append(jsonObjects, ProjectJSON{
+			ID:   IdFormat(pjt),
+			Name: ProjectFormat(pjt.ID, client.Store, projectColorHash, c),
+		})
 	}, 0)
 
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
-		writer.Write([]string{"ID", "Name"})
-	}
+	if c.GlobalBool("json") {
+		jsonData, err := json.Marshal(jsonObjects)
+		if err != nil {
+			return CommandFailed
+		}
+		writer.Write([]string{string(jsonData)})
+	} else {
+		if c.GlobalBool("header") {
+			writer.Write([]string{"ID", "Name"})
+		}
 
-	for _, strings := range itemList {
-		writer.Write(strings)
+		for _, obj := range jsonObjects {
+			writer.Write([]string{obj.ID, obj.Name})
+		}
 	}
 
 	return nil
