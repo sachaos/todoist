@@ -54,7 +54,7 @@ func AssureExists(filePath string) error {
 	if !exists {
 		err = os.MkdirAll(path, os.ModePerm)
 		if err != nil {
-			return fmt.Errorf("Couldn't create file: %s", filePath)
+			return fmt.Errorf("Couldn't create path: %s", path)
 		}
 	}
 	return nil
