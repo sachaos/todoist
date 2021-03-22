@@ -1,0 +1,10 @@
+TODO="todoist"
+
+alias tls="$TODO list"
+alias tadd="$TODO add"
+alias trm="$TODO rm"
+alias tdone="$TODO close"
+alias tpri="$TODO pri"
+alias tdel="$TODO delete"
+alias tsync="$TODO sync"
+alias tq="$TODO quick"
