@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli"
 )
 
@@ -105,15 +105,21 @@ func ProjectFormat(id int, store *todoist.Store, projectColorHash map[int]color.
 	return prefix + color.New(projectColorHash[project.GetID()]).SprintFunc()("#"+namePrefix+projectName)
 }
 
-func SectionFormat(id int, store *todoist.Store, c *cli.Context) string {
-	prefix := ""
-	sectionName := ""
-	section := store.FindSection(id)
-	if section != nil {
-		prefix = "/"
-		sectionName = section.Name
+func SectionFormat(id interface{}, store *todoist.Store, c *cli.Context) string {
+	if id == nil {
+		return ""
+	} else {
+		prefix := ""
+		sectionName := ""
+		// section id is an empty interface, it will be unmarshalled as float64 instead of int
+		// refer to https://golang.org/pkg/encoding/json/#Unmarshal for details
+		section := store.FindSection(int(id.(float64)))
+		if section != nil {
+			prefix = "/"
+			sectionName = section.Name
+		}
+		return prefix + sectionName
 	}
-	return prefix + sectionName
 }
 
 func dueDateString(dueDate time.Time, allDay bool) string {
