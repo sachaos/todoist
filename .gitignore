@@ -2,3 +2,5 @@ y.output
 
 _vendor-*
 vendor
+
+.vscode/
