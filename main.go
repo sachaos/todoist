@@ -81,7 +81,11 @@ func main() {
 	}
 	sortPriorityFlag := cli.BoolFlag{
 		Name:  "priority, p",
-		Usage: "sort the output by priority",
+		Usage: "(Deprecated, prefer --sort)",
+	}
+	sortFlag := cli.StringFlag{
+		Name:  "sort",
+    Usage: "sort the output by the desired parameter `(date|priority)`",
 	}
 	reminderFlg := cli.BoolFlag{
 		Name:  "reminder, r",
@@ -207,6 +211,7 @@ func main() {
 			Flags: []cli.Flag{
 				filterFlag,
 				sortPriorityFlag,
+				sortFlag,
 			},
 			ArgsUsage: " ",
 		},
