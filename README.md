@@ -105,6 +105,8 @@ $ brew install todoist
 nix-env -iA nixos.todoist
 ```
 
+It's important to notice that if you're using NixOS, the cache and config file will be present at your home directory: `~/.todoist.cache.json` and `~/.todoist.config.json`.
+
 ### Docker
 
 ```
