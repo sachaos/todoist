@@ -13,8 +13,9 @@ type HaveProjectID struct {
 	ProjectID int `json:"project_id"`
 }
 
+// HaveSectionID defines the ID of the section that item belongs to, it can be emtpy(nul)
 type HaveSectionID struct {
-	SectionID int `json:"section_id"`
+	SectionID interface{} `json:"section_id"`
 }
 
 type HaveIndent struct {
