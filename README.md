@@ -156,6 +156,8 @@ fish version is here. [ka2n/fish-peco_todoist](https://github.com/ka2n/fish-peco
 
 If you would prefer to use [fzf](https://github.com/junegunn/fzf) instead load `todoist_functions_fzf.sh` like below.
 
+fish version is here. [mordax7/fish-fzf-todoist](https://github.com/mordax7/fish-fzf-todoist)
+
 ```
 $ source "$GOPATH/src/github.com/sachaos/todoist/todoist_functions.sh"
 ```
