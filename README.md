@@ -23,12 +23,12 @@ This program will let you use the Todoist in CLI.
 ## Usage
 
 ```
-$ todoist --help
+$ todoist-cli --help
 NAME:
    todoist - Todoist CLI Client
 
 USAGE:
-   todoist [global options] command [command options] [arguments...]
+   todoist-cli [global options] command [command options] [arguments...]
 
 VERSION:
    0.15.0
@@ -69,7 +69,7 @@ Supported filter is [here](https://github.com/sachaos/todoist/issues/15#issuecom
 #### e.g. List tasks which over due date and have high priority
 
 ```
-todoist list --filter '(overdue | today) & p1'
+todoist-cli list --filter '(overdue | today) & p1'
 ```
 
 ## Config
@@ -143,7 +143,7 @@ go to [https://todoist.com/prefs/integrations](https://todoist.com/prefs/integra
 After register API token, you should sync with todoist.com by `sync` sub command, like below.
 
 ```
-$ todoist sync
+$ todoist-cli sync
 ```
 
 ### Use with peco/fzf
@@ -193,9 +193,9 @@ You can also enable shell completion by adding the following lines to your `.bas
 
 ```
 # Bash
-PROG=todoist source "$GOPATH/src/github.com/urfave/cli/autocomplete/bash_autocomplete"
+PROG=todoist-cli source "$GOPATH/src/github.com/urfave/cli/autocomplete/bash_autocomplete"
 # Zsh
-PROG=todoist source "$GOPATH/src/github.com/urfave/cli/autocomplete/zsh_autocomplete"
+PROG=todoist-cli source "$GOPATH/src/github.com/urfave/cli/autocomplete/zsh_autocomplete"
 ```
 
 ## Author
