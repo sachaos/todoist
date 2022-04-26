@@ -13,9 +13,11 @@ import (
 )
 
 type Config struct {
-	AccessToken string
-	DebugMode   bool
-	Color       bool
+	AccessToken    string
+	DebugMode      bool
+	Color          bool
+	DateFormat     string
+	DateTimeFormat string
 }
 
 type Client struct {

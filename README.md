@@ -81,7 +81,9 @@ It has following parameters:
 ```
 {
   "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", # todoist api token, required
-  "color": "true"                                      # colorize all output, not required, default false
+  "color": "true",                                     # colorize all output, not required, default false
+  "shortdatetimeformat": "06/01/02(Mon) 15:04",        # golang datetime format, not required
+  "shortdateformat": "06/01/02(Mon)"                   # golang date format, not required
 }
 ```
 
