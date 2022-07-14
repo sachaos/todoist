@@ -87,6 +87,10 @@ func main() {
 		Name:  "reminder, r",
 		Usage: "set reminder (only premium users)",
 	}
+	rawFlag := cli.BoolFlag{
+		Name:  "raw",
+		Usage: "Show raw content, as you would see it when you edit.",
+	}
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
@@ -226,6 +230,7 @@ func main() {
 			Action:  CompletedList,
 			Flags: []cli.Flag{
 				filterFlag,
+				rawFlag,
 			},
 			ArgsUsage: " ",
 		},
