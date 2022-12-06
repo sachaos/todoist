@@ -29,7 +29,7 @@ type BaseItem struct {
 	HaveID
 	HaveProjectID
 	Content string `json:"content"`
-	UserID  int    `json:"user_id"`
+	UserID  string `json:"user_id"`
 }
 
 func (bitem BaseItem) GetContent() string {
@@ -48,12 +48,12 @@ func (item CompletedItem) DateTime() time.Time {
 	return t
 }
 
-func (item CompletedItem) GetProjectID() int {
+func (item CompletedItem) GetProjectID() string {
 	return item.ProjectID
 }
 
-func (item CompletedItem) GetLabelIDs() []int {
-	return []int{}
+func (item CompletedItem) GetLabelIDs() []string {
+	return []string{}
 }
 
 type CompletedItems []CompletedItem
@@ -66,7 +66,7 @@ type Item struct {
 	ChildItem      *Item       `json:"-"`
 	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`
-	AssignedByUID  int         `json:"assigned_by_uid"`
+	AssignedByUID  string      `json:"assigned_by_uid"`
 	Checked        int         `json:"checked"`
 	Collapsed      int         `json:"collapsed"`
 	DateAdded      string      `json:"date_added"`
@@ -79,7 +79,7 @@ type Item struct {
 	IsArchived     int         `json:"is_archived"`
 	IsDeleted      int         `json:"is_deleted"`
 	ItemOrder      int         `json:"item_order"`
-	LabelIDs       []int       `json:"labels"`
+	LabelIDs       []string    `json:"labels"`
 	Priority       int         `json:"priority"`
 	AutoReminder   bool        `json:"auto_reminder"`
 	ResponsibleUID interface{} `json:"responsible_uid"`
@@ -114,19 +114,19 @@ func (item Item) DateTime() time.Time {
 	return t
 }
 
-func (item Item) GetProjectID() int {
+func (item Item) GetProjectID() string {
 	return item.ProjectID
 }
 
-func (item Item) GetLabelIDs() []int {
+func (item Item) GetLabelIDs() []string {
 	return item.LabelIDs
 }
 
 // interface for Eval actions
 type AbstractItem interface {
 	DateTime() time.Time
-	GetProjectID() int
-	GetLabelIDs() []int
+	GetProjectID() string
+	GetLabelIDs() []string
 }
 
 func GetContentTitle(item ContentCarrier) string {
@@ -165,7 +165,7 @@ func (item Item) AddParam() interface{} {
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
 	}
-	if item.ProjectID != 0 {
+	if item.ProjectID != "" {
 		param["project_id"] = item.ProjectID
 	}
 	param["auto_reminder"] = item.AutoReminder
@@ -175,7 +175,7 @@ func (item Item) AddParam() interface{} {
 
 func (item Item) UpdateParam() interface{} {
 	param := map[string]interface{}{}
-	if item.ID != 0 {
+	if item.ID != "" {
 		param["id"] = item.ID
 	}
 	if item.Content != "" {
@@ -197,7 +197,7 @@ func (item Item) UpdateParam() interface{} {
 	return param
 }
 
-func (item *Item) MoveParam(projectId int) interface{} {
+func (item *Item) MoveParam(projectId string) interface{} {
 	param := map[string]interface{}{
 		"id":         item.ID,
 		"project_id": projectId,
@@ -231,7 +231,7 @@ func (c *Client) UpdateItem(ctx context.Context, item Item) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) CloseItem(ctx context.Context, ids []int) error {
+func (c *Client) CloseItem(ctx context.Context, ids []string) error {
 	var commands Commands
 	for _, id := range ids {
 		command := NewCommand("item_close", map[string]interface{}{"id": id})
@@ -240,7 +240,7 @@ func (c *Client) CloseItem(ctx context.Context, ids []int) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
+func (c *Client) DeleteItem(ctx context.Context, ids []string) error {
 	var commands Commands
 	for _, id := range ids {
 		command := NewCommand("item_delete", map[string]interface{}{"id": id})
@@ -249,7 +249,7 @@ func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) MoveItem(ctx context.Context, item *Item, projectId int) error {
+func (c *Client) MoveItem(ctx context.Context, item *Item, projectId string) error {
 	commands := Commands{
 		NewCommand("item_move", item.MoveParam(projectId)),
 	}

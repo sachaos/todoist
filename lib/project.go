@@ -30,17 +30,17 @@ func (a Projects) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Projects) At(i int) IDCarrier { return a[i] }
 
-func (a Projects) GetIDByName(name string) int {
+func (a Projects) GetIDByName(name string) string {
 	for _, pjt := range a {
 		if pjt.Name == name {
 			return pjt.GetID()
 		}
 	}
-	return 0
+	return ""
 }
 
-func (a Projects) GetIDsByName(name string, isAll bool) []int {
-	ids := []int{}
+func (a Projects) GetIDsByName(name string, isAll bool) []string {
+	ids := []string{}
 	name = strings.ToLower(name)
 	for _, pjt := range a {
 		if strings.Contains(strings.ToLower(pjt.Name), name) {
@@ -56,8 +56,8 @@ func (a Projects) GetIDsByName(name string, isAll bool) []int {
 	return ids
 }
 
-func childProjectIDs(parentId int, projects Projects) []int {
-	ids := []int{}
+func childProjectIDs(parentId string, projects Projects) []string {
+	ids := []string{}
 	for _, pjt := range projects {
 		id, err := pjt.GetParentID()
 		if err != nil {

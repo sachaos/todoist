@@ -16,11 +16,11 @@ func (a Labels) Less(i, j int) bool { return a[i].ID < a[j].ID }
 
 func (a Labels) At(i int) IDCarrier { return a[i] }
 
-func (a Labels) GetIDByName(name string) int {
+func (a Labels) GetIDByName(name string) string {
 	for _, label := range a {
 		if label.Name == name {
 			return label.ID
 		}
 	}
-	return 0
+	return ""
 }

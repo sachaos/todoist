@@ -7,7 +7,7 @@ type Store struct {
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
 	Filters            []struct {
 		Color     int    `json:"color"`
-		ID        int    `json:"id"`
+		ID        string `json:"id"`
 		IsDeleted int    `json:"is_deleted"`
 		ItemOrder int    `json:"item_order"`
 		Name      string `json:"name"`
@@ -20,7 +20,7 @@ type Store struct {
 		CompletedTasks   int     `json:"completed_tasks"`
 		Created          string  `json:"created"`
 		DateReached      string  `json:"date_reached"`
-		ID               int     `json:"id"`
+		ID               string  `json:"id"`
 		IsDeleted        int     `json:"is_deleted"`
 		KarmaLevel       int     `json:"karma_level"`
 		NotificationKey  string  `json:"notification_key"`
@@ -29,18 +29,18 @@ type Store struct {
 		SeqNo            int64   `json:"seq_no"`
 		TopProcent       float32 `json:"top_procent"`
 	} `json:"live_notifications"`
-	LiveNotificationsLastReadID int           `json:"live_notifications_last_read_id"`
+	LiveNotificationsLastReadID string        `json:"live_notifications_last_read_id"`
 	Locations                   []interface{} `json:"locations"`
 	Notes                       []struct {
 		Content        string      `json:"content"`
 		FileAttachment interface{} `json:"file_attachment"`
-		ID             int         `json:"id"`
+		ID             string      `json:"id"`
 		IsArchived     int         `json:"is_archived"`
 		IsDeleted      int         `json:"is_deleted"`
-		ItemID         int         `json:"item_id"`
+		ItemID         string      `json:"item_id"`
 		Posted         string      `json:"posted"`
-		PostedUID      int         `json:"posted_uid"`
-		ProjectID      int         `json:"project_id"`
+		PostedUID      string      `json:"posted_uid"`
+		ProjectID      string      `json:"project_id"`
 		UidsToNotify   interface{} `json:"uids_to_notify"`
 	} `json:"notes"`
 	ProjectNotes []interface{} `json:"project_notes"`
@@ -49,38 +49,38 @@ type Store struct {
 	Reminders    []struct {
 		DateLang     string `json:"date_lang"`
 		Due          *Due   `json:"due"`
-		ID           int    `json:"id"`
+		ID           string `json:"id"`
 		IsDeleted    int    `json:"is_deleted"`
-		ItemID       int    `json:"item_id"`
+		ItemID       string `json:"item_id"`
 		MinuteOffset int    `json:"minute_offset"`
-		NotifyUID    int    `json:"notify_uid"`
+		NotifyUID    string `json:"notify_uid"`
 		Service      string `json:"service"`
 		Type         string `json:"type"`
 	} `json:"reminders"`
-	SyncToken     string           `json:"sync_token"`
-	TempIDMapping struct{}         `json:"temp_id_mapping"`
-	User          User             `json:"user"`
-	RootItem      *Item            `json:"-"`
-	RootProject   *Project         `json:"-"`
-	ItemMap       map[int]*Item    `json:"-"`
-	ProjectMap    map[int]*Project `json:"-"`
-	LabelMap      map[int]*Label   `json:"-"`
-	SectionMap    map[int]*Section `json:"-"`
+	SyncToken     string              `json:"sync_token"`
+	TempIDMapping struct{}            `json:"temp_id_mapping"`
+	User          User                `json:"user"`
+	RootItem      *Item               `json:"-"`
+	RootProject   *Project            `json:"-"`
+	ItemMap       map[string]*Item    `json:"-"`
+	ProjectMap    map[string]*Project `json:"-"`
+	LabelMap      map[string]*Label   `json:"-"`
+	SectionMap    map[string]*Section `json:"-"`
 }
 
-func (s *Store) FindItem(id int) *Item {
+func (s *Store) FindItem(id string) *Item {
 	return s.ItemMap[id]
 }
 
-func (s *Store) FindProject(id int) *Project {
+func (s *Store) FindProject(id string) *Project {
 	return s.ProjectMap[id]
 }
 
-func (s *Store) FindSection(id int) *Section {
+func (s *Store) FindSection(id string) *Section {
 	return s.SectionMap[id]
 }
 
-func (s *Store) FindLabel(id int) *Label {
+func (s *Store) FindLabel(id string) *Label {
 	return s.LabelMap[id]
 }
 
@@ -123,10 +123,10 @@ func addToChildProject(project *Project, b *Project) {
 }
 
 func (s *Store) ConstructItemTree() {
-	s.LabelMap = map[int]*Label{}
-	s.ProjectMap = map[int]*Project{}
-	s.ItemMap = map[int]*Item{}
-	s.SectionMap = map[int]*Section{}
+	s.LabelMap = map[string]*Label{}
+	s.ProjectMap = map[string]*Project{}
+	s.ItemMap = map[string]*Item{}
+	s.SectionMap = map[string]*Section{}
 
 	for i, label := range s.Labels {
 		s.LabelMap[label.ID] = &s.Labels[i]

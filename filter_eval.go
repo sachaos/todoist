@@ -100,7 +100,7 @@ func EvalAsPriority(e StringExpr, item *todoist.Item) (result bool) {
 	return false
 }
 
-func EvalProject(e ProjectExpr, projectID int, projects todoist.Projects) bool {
+func EvalProject(e ProjectExpr, projectID string, projects todoist.Projects) bool {
 	for _, id := range projects.GetIDsByName(e.name, e.isAll) {
 		if id == projectID {
 			return true
@@ -109,13 +109,13 @@ func EvalProject(e ProjectExpr, projectID int, projects todoist.Projects) bool {
 	return false
 }
 
-func EvalLabel(e LabelExpr, labelIDs []int, labels todoist.Labels) bool {
+func EvalLabel(e LabelExpr, labelIDs []string, labels todoist.Labels) bool {
 	if e.name == "" {
 		return len(labelIDs) == 0
 	}
 
 	labelID := labels.GetIDByName(e.name)
-	if labelID == 0 {
+	if labelID == "" {
 		return false
 	}
 

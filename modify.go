@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -26,23 +25,19 @@ func Modify(c *cli.Context) error {
 	}
 	item.Content = c.String("content")
 	item.Priority = priorityMapping[c.Int("priority")]
-	item.LabelIDs = func(str string) []int {
+	item.LabelIDs = func(str string) []string {
 		stringIDs := strings.Split(str, ",")
-		ids := []int{}
+		ids := []string{}
 		for _, stringID := range stringIDs {
-			id, err := strconv.Atoi(stringID)
-			if err != nil {
-				continue
-			}
-			ids = append(ids, id)
+			ids = append(ids, stringID)
 		}
 		return ids
 	}(c.String("label-ids"))
 
 	item.DateString = c.String("date")
 
-	projectID := c.Int("project-id")
-	if projectID == 0 {
+	projectID := c.String("project-id")
+	if projectID == "" {
 		projectID = client.Store.Projects.GetIDByName(c.String("project-name"))
 	}
 
