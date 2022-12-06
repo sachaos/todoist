@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"github.com/sachaos/todoist/lib"

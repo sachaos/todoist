@@ -60,7 +60,7 @@ func List(c *cli.Context) error {
 		if err != nil {
 			return
 		}
-		if !r || item.Checked == 1 {
+		if !r || item.Checked {
 			return
 		}
 		itemList = append(itemList, []string{

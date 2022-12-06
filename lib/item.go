@@ -67,8 +67,8 @@ type Item struct {
 	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`
 	AssignedByUID  string      `json:"assigned_by_uid"`
-	Checked        int         `json:"checked"`
-	Collapsed      int         `json:"collapsed"`
+	Checked        bool        `json:"checked"`
+	Collapsed      bool        `json:"collapsed"`
 	DateAdded      string      `json:"date_added"`
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
@@ -77,7 +77,7 @@ type Item struct {
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	InHistory      int         `json:"in_history"`
 	IsArchived     int         `json:"is_archived"`
-	IsDeleted      int         `json:"is_deleted"`
+	IsDeleted      bool        `json:"is_deleted"`
 	ItemOrder      int         `json:"item_order"`
 	LabelIDs       []string    `json:"labels"`
 	Priority       int         `json:"priority"`

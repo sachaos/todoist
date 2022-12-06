@@ -21,7 +21,7 @@ type Store struct {
 		Created          string  `json:"created"`
 		DateReached      string  `json:"date_reached"`
 		ID               string  `json:"id"`
-		IsDeleted        int     `json:"is_deleted"`
+		IsDeleted        bool    `json:"is_deleted"`
 		KarmaLevel       int     `json:"karma_level"`
 		NotificationKey  string  `json:"notification_key"`
 		NotificationType string  `json:"notification_type"`
@@ -36,7 +36,7 @@ type Store struct {
 		FileAttachment interface{} `json:"file_attachment"`
 		ID             string      `json:"id"`
 		IsArchived     int         `json:"is_archived"`
-		IsDeleted      int         `json:"is_deleted"`
+		IsDeleted      bool        `json:"is_deleted"`
 		ItemID         string      `json:"item_id"`
 		Posted         string      `json:"posted"`
 		PostedUID      string      `json:"posted_uid"`
