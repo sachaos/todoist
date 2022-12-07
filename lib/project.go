@@ -10,10 +10,10 @@ type Project struct {
 	HaveParentID
 	HaveIndent
 	Collapsed      bool     `json:"collapsed"`
-	Color          string      `json:"color"`
+	Color          string   `json:"color"`
 	HasMoreNotes   bool     `json:"has_more_notes"`
 	InboxProject   bool     `json:"inbox_project"`
-	IsArchived     int      `json:"is_archived"`
+	IsArchived     bool     `json:"is_archived"`
 	IsDeleted      bool     `json:"is_deleted"`
 	ItemOrder      int      `json:"item_order"`
 	Name           string   `json:"name"`

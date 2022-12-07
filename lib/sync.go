@@ -6,9 +6,9 @@ type Store struct {
 	DayOrders          interface{}   `json:"day_orders"`
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
 	Filters            []struct {
-		Color     string    `json:"color"`
+		Color     string `json:"color"`
 		ID        string `json:"id"`
-		IsDeleted int    `json:"is_deleted"`
+		IsDeleted bool   `json:"is_deleted"`
 		ItemOrder int    `json:"item_order"`
 		Name      string `json:"name"`
 		Query     string `json:"query"`
