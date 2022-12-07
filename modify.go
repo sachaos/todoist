@@ -25,14 +25,14 @@ func Modify(c *cli.Context) error {
 	}
 	item.Content = c.String("content")
 	item.Priority = priorityMapping[c.Int("priority")]
-	item.LabelIDs = func(str string) []string {
-		stringIDs := strings.Split(str, ",")
-		ids := []string{}
-		for _, stringID := range stringIDs {
-			ids = append(ids, stringID)
+	item.LabelNames = func(str string) []string {
+		stringNames := strings.Split(str, ",")
+		names := []string{}
+		for _, stringName := range stringNames {
+			names = append(names, stringName)
 		}
-		return ids
-	}(c.String("label-ids"))
+		return names
+	}(c.String("label-names"))
 
 	item.DateString = c.String("date")
 

@@ -52,7 +52,7 @@ func (item CompletedItem) GetProjectID() string {
 	return item.ProjectID
 }
 
-func (item CompletedItem) GetLabelIDs() []string {
+func (item CompletedItem) GetLabelNames() []string {
 	return []string{}
 }
 
@@ -79,7 +79,7 @@ type Item struct {
 	IsArchived     int         `json:"is_archived"`
 	IsDeleted      bool        `json:"is_deleted"`
 	ItemOrder      int         `json:"item_order"`
-	LabelIDs       []string    `json:"labels"`
+	LabelNames     []string    `json:"labels"`
 	Priority       int         `json:"priority"`
 	AutoReminder   bool        `json:"auto_reminder"`
 	ResponsibleUID interface{} `json:"responsible_uid"`
@@ -118,15 +118,15 @@ func (item Item) GetProjectID() string {
 	return item.ProjectID
 }
 
-func (item Item) GetLabelIDs() []string {
-	return item.LabelIDs
+func (item Item) GetLabelNames() []string {
+	return item.LabelNames
 }
 
 // interface for Eval actions
 type AbstractItem interface {
 	DateTime() time.Time
 	GetProjectID() string
-	GetLabelIDs() []string
+	GetLabelNames() []string
 }
 
 func GetContentTitle(item ContentCarrier) string {
@@ -159,8 +159,8 @@ func (item Item) AddParam() interface{} {
 	if item.DateString != "" {
 		param["date_string"] = item.DateString
 	}
-	if len(item.LabelIDs) != 0 {
-		param["labels"] = item.LabelIDs
+	if len(item.LabelNames) != 0 {
+		param["labels"] = item.LabelNames
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
@@ -188,8 +188,8 @@ func (item Item) UpdateParam() interface{} {
 	if item.DateString == "null" {
 		param["date_string"] = ""
 	}
-	if len(item.LabelIDs) != 0 {
-		param["labels"] = item.LabelIDs
+	if len(item.LabelNames) != 0 {
+		param["labels"] = item.LabelNames
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
@@ -207,10 +207,14 @@ func (item *Item) MoveParam(projectId string) interface{} {
 
 func (item Item) LabelsString(store *Store) string {
 	var b strings.Builder
-	for i, labelId := range item.LabelIDs {
+	labelIDs := []string{}
+	for _, labelName := range item.LabelNames {
+		labelIDs = append(labelIDs, store.Labels.GetIDByName(labelName))
+	}
+	for i, labelId := range labelIDs {
 		label := store.FindLabel(labelId)
 		b.WriteString("@" + label.Name)
-		if i < len(item.LabelIDs)-1 {
+		if i < len(labelIDs)-1 {
 			b.WriteString(",")
 		}
 	}
