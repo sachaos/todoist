@@ -47,15 +47,15 @@ type Store struct {
 	Projects     Projects      `json:"projects"`
 	Sections     Sections      `json:"sections"`
 	Reminders    []struct {
-		DateLang     string `json:"date_lang"`
-		Due          *Due   `json:"due"`
-		ID           string `json:"id"`
-		IsDeleted    int    `json:"is_deleted"`
-		ItemID       string `json:"item_id"`
-		MinuteOffset int    `json:"minute_offset"`
-		NotifyUID    string `json:"notify_uid"`
-		Service      string `json:"service"`
-		Type         string `json:"type"`
+		DateLang     string      `json:"date_lang"`
+		Due          *Due        `json:"due"`
+		ID           string      `json:"id"`
+		IsDeleted    int         `json:"is_deleted"`
+		ItemID       string      `json:"item_id"`
+		MinuteOffset int         `json:"minute_offset"`
+		NotifyUID    string      `json:"notify_uid"`
+		Service      interface{} `json:"service"`
+		Type         string      `json:"type"`
 	} `json:"reminders"`
 	SyncToken     string              `json:"sync_token"`
 	TempIDMapping struct{}            `json:"temp_id_mapping"`
