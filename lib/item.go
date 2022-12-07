@@ -40,7 +40,7 @@ type CompletedItem struct {
 	BaseItem
 	CompletedData string      `json:"completed_at"`
 	MetaData      interface{} `json:"meta_data"`
-	TaskID        int         `json:"task_id"`
+	TaskID        string      `json:"task_id"`
 }
 
 func (item CompletedItem) DateTime() time.Time {
