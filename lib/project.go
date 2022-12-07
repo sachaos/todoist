@@ -20,6 +20,7 @@ type Project struct {
 	Shared         bool     `json:"shared"`
 	ChildProject   *Project `json:"-"`
 	BrotherProject *Project `json:"-"`
+	ViewStyle      string   `json:"view_style"`
 }
 
 type Projects []Project
