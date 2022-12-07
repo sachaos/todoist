@@ -20,7 +20,7 @@ type User struct {
 		Restriction      int  `json:"restriction"`
 	} `json:"features"`
 	FullName       string      `json:"full_name"`
-	ID             int         `json:"id"`
+	ID             string      `json:"id"`
 	ImageID        string      `json:"image_id"`
 	InboxProjectID string      `json:"inbox_project_id"`
 	IsBizAdmin     bool        `json:"is_biz_admin"`
@@ -35,7 +35,7 @@ type User struct {
 	SortOrder      int         `json:"sort_order"`
 	StartDay       int         `json:"start_day"`
 	StartPage      string      `json:"start_page"`
-	ThemeID        int         `json:"theme_id"`
+	ThemeID        string      `json:"theme_id"`
 	TimeFormat     int         `json:"time_format"`
 	Token          string      `json:"token"`
 	TzInfo         struct {
