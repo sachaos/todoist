@@ -75,7 +75,6 @@ type Item struct {
 	DayOrder       int         `json:"day_order"`
 	Due            *Due        `json:"due"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
-	InHistory      int         `json:"in_history"`
 	IsArchived     int         `json:"is_archived"`
 	IsDeleted      bool        `json:"is_deleted"`
 	ItemOrder      int         `json:"item_order"`
