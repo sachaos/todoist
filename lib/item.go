@@ -38,7 +38,7 @@ func (bitem BaseItem) GetContent() string {
 
 type CompletedItem struct {
 	BaseItem
-	CompletedData string      `json:"completed_date"`
+	CompletedData string      `json:"completed_at"`
 	MetaData      interface{} `json:"meta_data"`
 	TaskID        int         `json:"task_id"`
 }
@@ -69,7 +69,7 @@ type Item struct {
 	AssignedByUID  string      `json:"assigned_by_uid"`
 	Checked        bool        `json:"checked"`
 	Collapsed      bool        `json:"collapsed"`
-	DateAdded      string      `json:"date_added"`
+	DateAdded      string      `json:"added_at"`
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`

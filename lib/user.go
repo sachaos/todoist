@@ -25,7 +25,7 @@ type User struct {
 	InboxProjectID string      `json:"inbox_project_id"`
 	IsBizAdmin     bool        `json:"is_biz_admin"`
 	IsPremium      bool        `json:"is_premium"`
-	JoinDate       string      `json:"join_date"`
+	JoinDate       string      `json:"joined_at"`
 	Karma          float32     `json:"karma"`
 	KarmaTrend     string      `json:"karma_trend"`
 	MobileHost     interface{} `json:"mobile_host"`

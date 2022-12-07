@@ -18,7 +18,7 @@ type Store struct {
 	Labels            Labels `json:"labels"`
 	LiveNotifications []struct {
 		CompletedTasks   int     `json:"completed_tasks"`
-		Created          string  `json:"created"`
+		Created          string  `json:"created_at"`
 		DateReached      string  `json:"date_reached"`
 		ID               string  `json:"id"`
 		IsDeleted        bool    `json:"is_deleted"`
@@ -38,7 +38,7 @@ type Store struct {
 		IsArchived     int         `json:"is_archived"`
 		IsDeleted      bool        `json:"is_deleted"`
 		ItemID         string      `json:"item_id"`
-		Posted         string      `json:"posted"`
+		Posted         string      `json:"posted_at"`
 		PostedUID      string      `json:"posted_uid"`
 		ProjectID      string      `json:"project_id"`
 		UidsToNotify   interface{} `json:"uids_to_notify"`
