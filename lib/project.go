@@ -10,7 +10,7 @@ type Project struct {
 	HaveParentID
 	HaveIndent
 	Collapsed      bool     `json:"collapsed"`
-	Color          int      `json:"color"`
+	Color          string      `json:"color"`
 	HasMoreNotes   bool     `json:"has_more_notes"`
 	InboxProject   bool     `json:"inbox_project"`
 	IsArchived     int      `json:"is_archived"`
@@ -77,7 +77,7 @@ func (project Project) AddParam() interface{} {
 	if project.Name != "" {
 		param["name"] = project.Name
 	}
-	if project.Color != 0 {
+	if project.Color != "" {
 		param["color"] = project.Color
 	}
 	//TODO: ParentID

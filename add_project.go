@@ -16,7 +16,7 @@ func AddProject(c *cli.Context) error {
 	}
 
 	project.Name = c.Args().First()
-	project.Color = c.Int("color")
+	project.Color = c.String("color")
 	project.ItemOrder = c.Int("item-order")
 
 	if err := client.AddProject(context.Background(), project); err != nil {
