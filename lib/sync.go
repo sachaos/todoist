@@ -40,7 +40,7 @@ type Store struct {
 		ItemID         string      `json:"item_id"`
 		Posted         string      `json:"posted_at"`
 		PostedUID      string      `json:"posted_uid"`
-		ProjectID      string      `json:"project_id"`
+		ProjectID      *string     `json:"project_id"`
 		UidsToNotify   interface{} `json:"uids_to_notify"`
 	} `json:"notes"`
 	ProjectNotes []interface{} `json:"project_notes"`
