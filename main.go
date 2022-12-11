@@ -55,9 +55,9 @@ func main() {
 		Value: 4,
 		Usage: "priority (1-4)",
 	}
-	labelIDsFlag := cli.StringFlag{
-		Name:  "label-ids, L",
-		Usage: "label ids (separated by ,)",
+	labelNamesFlag := cli.StringFlag{
+		Name:  "label-names, L",
+		Usage: "label names (separated by ,)",
 	}
 	projectIDFlag := cli.IntFlag{
 		Name:  "project-id, P",
@@ -236,7 +236,7 @@ func main() {
 			Action:  Add,
 			Flags: []cli.Flag{
 				priorityFlag,
-				labelIDsFlag,
+				labelNamesFlag,
 				projectIDFlag,
 				projectNameFlag,
 				dateFlag,
@@ -252,7 +252,7 @@ func main() {
 			Flags: []cli.Flag{
 				contentFlag,
 				priorityFlag,
-				labelIDsFlag,
+				labelNamesFlag,
 				projectIDFlag,
 				projectNameFlag,
 				dateFlag,

@@ -12,7 +12,7 @@ var (
 )
 
 const (
-	Server     = "https://todoist.com/API/v8/"
+	Server = "https://todoist.com/API/v9/"
 )
 
 func ParseAPIError(prefix string, resp *http.Response) error {
