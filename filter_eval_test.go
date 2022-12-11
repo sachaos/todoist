@@ -55,14 +55,15 @@ func TestLabelEval(t *testing.T) {
 		todoist.Label{
 			HaveID: todoist.HaveID{ID: "2"},
 			Name:   "icebox",
-		}, todoist.Label{
+		},
+		todoist.Label{
 			HaveID: todoist.HaveID{ID: "3"},
 			Name:   "another",
 		},
 	}
 
 	item1 := todoist.Item{}
-	item1.LabelIDs = []string{"1", "2"}
+	item1.LabelNames = []string{"must", "icebox"}
 
 	testFilterEvalWithLabel(t, "@must", item1, labels, true)
 	testFilterEvalWithLabel(t, "@icebox", item1, labels, true)
