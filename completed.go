@@ -12,7 +12,7 @@ func CompletedList(c *cli.Context) error {
 	client := GetClient(c)
 
 	colorList := ColorList()
-	var projectIds []int
+	var projectIds []string
 	for _, project := range client.Store.Projects {
 		projectIds = append(projectIds, project.GetID())
 	}

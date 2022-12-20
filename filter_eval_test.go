@@ -49,20 +49,20 @@ func TestPriorityEval(t *testing.T) {
 func TestLabelEval(t *testing.T) {
 	labels := todoist.Labels{
 		todoist.Label{
-			HaveID: todoist.HaveID{ID: 1},
+			HaveID: todoist.HaveID{ID: "1"},
 			Name:   "must",
 		},
 		todoist.Label{
-			HaveID: todoist.HaveID{ID: 2},
+			HaveID: todoist.HaveID{ID: "2"},
 			Name:   "icebox",
 		}, todoist.Label{
-			HaveID: todoist.HaveID{ID: 3},
+			HaveID: todoist.HaveID{ID: "3"},
 			Name:   "another",
 		},
 	}
 
 	item1 := todoist.Item{}
-	item1.LabelIDs = []int{1, 2}
+	item1.LabelIDs = []string{"1", "2"}
 
 	testFilterEvalWithLabel(t, "@must", item1, labels, true)
 	testFilterEvalWithLabel(t, "@icebox", item1, labels, true)
@@ -72,21 +72,21 @@ func TestLabelEval(t *testing.T) {
 func TestProjectEval(t *testing.T) {
 	projects := todoist.Projects{
 		todoist.Project{
-			HaveID: todoist.HaveID{ID: 1},
+			HaveID: todoist.HaveID{ID: "1"},
 			Name:   "private",
 		},
 		todoist.Project{
-			HaveID:       todoist.HaveID{ID: 2},
-			HaveParentID: todoist.HaveParentID{ParentID: &[]int{1}[0]},
+			HaveID:       todoist.HaveID{ID: "2"},
+			HaveParentID: todoist.HaveParentID{ParentID: &[]string{"1"}[0]},
 			Name:         "nested",
 		},
 	}
 
 	item1 := todoist.Item{}
-	item1.ProjectID = 1
+	item1.ProjectID = "1"
 
 	item2 := todoist.Item{}
-	item2.ProjectID = 2
+	item2.ProjectID = "2"
 
 	testFilterEvalWithProject(t, "#private", item1, projects, true)
 	testFilterEvalWithProject(t, "#hoge", item1, projects, false)

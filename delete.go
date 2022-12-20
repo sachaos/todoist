@@ -9,7 +9,7 @@ import (
 func Delete(c *cli.Context) error {
 	client := GetClient(c)
 
-	item_ids := []int{}
+	item_ids := []string{}
 	for _, arg := range c.Args() {
 		item_id, err := client.CompleteItemIDByPrefix(arg)
 		if err != nil {

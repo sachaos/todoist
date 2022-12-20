@@ -29,7 +29,7 @@ type BaseItem struct {
 	HaveID
 	HaveProjectID
 	Content string `json:"content"`
-	UserID  int    `json:"user_id"`
+	UserID  string `json:"user_id"`
 }
 
 func (bitem BaseItem) GetContent() string {
@@ -38,9 +38,9 @@ func (bitem BaseItem) GetContent() string {
 
 type CompletedItem struct {
 	BaseItem
-	CompletedData string      `json:"completed_date"`
+	CompletedData string      `json:"completed_at"`
 	MetaData      interface{} `json:"meta_data"`
-	TaskID        int         `json:"task_id"`
+	TaskID        string      `json:"task_id"`
 }
 
 func (item CompletedItem) DateTime() time.Time {
@@ -48,12 +48,12 @@ func (item CompletedItem) DateTime() time.Time {
 	return t
 }
 
-func (item CompletedItem) GetProjectID() int {
+func (item CompletedItem) GetProjectID() string {
 	return item.ProjectID
 }
 
-func (item CompletedItem) GetLabelIDs() []int {
-	return []int{}
+func (item CompletedItem) GetLabelNames() []string {
+	return []string{}
 }
 
 type CompletedItems []CompletedItem
@@ -66,20 +66,19 @@ type Item struct {
 	ChildItem      *Item       `json:"-"`
 	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`
-	AssignedByUID  int         `json:"assigned_by_uid"`
-	Checked        int         `json:"checked"`
-	Collapsed      int         `json:"collapsed"`
-	DateAdded      string      `json:"date_added"`
+	AssignedByUID  string      `json:"assigned_by_uid"`
+	Checked        bool        `json:"checked"`
+	Collapsed      bool        `json:"collapsed"`
+	DateAdded      string      `json:"added_at"`
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
 	Due            *Due        `json:"due"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
-	InHistory      int         `json:"in_history"`
 	IsArchived     int         `json:"is_archived"`
-	IsDeleted      int         `json:"is_deleted"`
+	IsDeleted      bool        `json:"is_deleted"`
 	ItemOrder      int         `json:"item_order"`
-	LabelIDs       []int       `json:"labels"`
+	LabelNames     []string    `json:"labels"`
 	Priority       int         `json:"priority"`
 	AutoReminder   bool        `json:"auto_reminder"`
 	ResponsibleUID interface{} `json:"responsible_uid"`
@@ -114,19 +113,19 @@ func (item Item) DateTime() time.Time {
 	return t
 }
 
-func (item Item) GetProjectID() int {
+func (item Item) GetProjectID() string {
 	return item.ProjectID
 }
 
-func (item Item) GetLabelIDs() []int {
-	return item.LabelIDs
+func (item Item) GetLabelNames() []string {
+	return item.LabelNames
 }
 
 // interface for Eval actions
 type AbstractItem interface {
 	DateTime() time.Time
-	GetProjectID() int
-	GetLabelIDs() []int
+	GetProjectID() string
+	GetLabelNames() []string
 }
 
 func GetContentTitle(item ContentCarrier) string {
@@ -159,13 +158,13 @@ func (item Item) AddParam() interface{} {
 	if item.DateString != "" {
 		param["date_string"] = item.DateString
 	}
-	if len(item.LabelIDs) != 0 {
-		param["labels"] = item.LabelIDs
+	if len(item.LabelNames) != 0 {
+		param["labels"] = item.LabelNames
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
 	}
-	if item.ProjectID != 0 {
+	if item.ProjectID != "" {
 		param["project_id"] = item.ProjectID
 	}
 	param["auto_reminder"] = item.AutoReminder
@@ -175,7 +174,7 @@ func (item Item) AddParam() interface{} {
 
 func (item Item) UpdateParam() interface{} {
 	param := map[string]interface{}{}
-	if item.ID != 0 {
+	if item.ID != "" {
 		param["id"] = item.ID
 	}
 	if item.Content != "" {
@@ -188,8 +187,8 @@ func (item Item) UpdateParam() interface{} {
 	if item.DateString == "null" {
 		param["date_string"] = ""
 	}
-	if len(item.LabelIDs) != 0 {
-		param["labels"] = item.LabelIDs
+	if len(item.LabelNames) != 0 {
+		param["labels"] = item.LabelNames
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
@@ -197,7 +196,7 @@ func (item Item) UpdateParam() interface{} {
 	return param
 }
 
-func (item *Item) MoveParam(projectId int) interface{} {
+func (item *Item) MoveParam(projectId string) interface{} {
 	param := map[string]interface{}{
 		"id":         item.ID,
 		"project_id": projectId,
@@ -207,10 +206,14 @@ func (item *Item) MoveParam(projectId int) interface{} {
 
 func (item Item) LabelsString(store *Store) string {
 	var b strings.Builder
-	for i, labelId := range item.LabelIDs {
+	labelIDs := []string{}
+	for _, labelName := range item.LabelNames {
+		labelIDs = append(labelIDs, store.Labels.GetIDByName(labelName))
+	}
+	for i, labelId := range labelIDs {
 		label := store.FindLabel(labelId)
 		b.WriteString("@" + label.Name)
-		if i < len(item.LabelIDs)-1 {
+		if i < len(labelIDs)-1 {
 			b.WriteString(",")
 		}
 	}
@@ -231,7 +234,7 @@ func (c *Client) UpdateItem(ctx context.Context, item Item) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) CloseItem(ctx context.Context, ids []int) error {
+func (c *Client) CloseItem(ctx context.Context, ids []string) error {
 	var commands Commands
 	for _, id := range ids {
 		command := NewCommand("item_close", map[string]interface{}{"id": id})
@@ -240,7 +243,7 @@ func (c *Client) CloseItem(ctx context.Context, ids []int) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
+func (c *Client) DeleteItem(ctx context.Context, ids []string) error {
 	var commands Commands
 	for _, id := range ids {
 		command := NewCommand("item_delete", map[string]interface{}{"id": id})
@@ -249,7 +252,7 @@ func (c *Client) DeleteItem(ctx context.Context, ids []int) error {
 	return c.ExecCommands(ctx, commands)
 }
 
-func (c *Client) MoveItem(ctx context.Context, item *Item, projectId int) error {
+func (c *Client) MoveItem(ctx context.Context, item *Item, projectId string) error {
 	commands := Commands{
 		NewCommand("item_move", item.MoveParam(projectId)),
 	}
