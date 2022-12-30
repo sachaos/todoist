@@ -44,8 +44,6 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	}
 	u.Path = path.Join(u.Path, uri)
 
-	params.Add("token", c.config.AccessToken)
-
 	c.Log("config: %#v", c.config)
 
 	var body io.Reader
@@ -61,6 +59,7 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", "Bearer "+c.config.AccessToken)
 	req = req.WithContext(ctx)
 
 	c.Log("request: %#v", req)
