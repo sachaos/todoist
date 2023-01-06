@@ -186,6 +186,8 @@ func main() {
 
 		if !c.Bool("color") && !config.Color {
 			color.NoColor = true
+		} else {
+			color.NoColor = false
 		}
 
 		if c.Bool("csv") {
