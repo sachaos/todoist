@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	todoist "github.com/sachaos/todoist/lib"
 	"strings"
 
 	"github.com/urfave/cli"
@@ -34,7 +35,9 @@ func Modify(c *cli.Context) error {
 		return names
 	}(c.String("label-names"))
 
-	item.DateString = c.String("date")
+	if date := c.String("date"); date != "" {
+		item.Due = &todoist.Due{Date: date}
+	}
 
 	projectID := c.String("project-id")
 	if projectID == "" {

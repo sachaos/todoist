@@ -169,6 +169,9 @@ func (item Item) AddParam() interface{} {
 	}
 	param["auto_reminder"] = item.AutoReminder
 
+	if item.Due != nil {
+		param["due"] = item.Due.Param()
+	}
 	return param
 }
 
@@ -192,6 +195,9 @@ func (item Item) UpdateParam() interface{} {
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
+	}
+	if item.Due != nil {
+		param["due"] = item.Due.Param()
 	}
 	return param
 }
@@ -257,4 +263,22 @@ func (c *Client) MoveItem(ctx context.Context, item *Item, projectId string) err
 		NewCommand("item_move", item.MoveParam(projectId)),
 	}
 	return c.ExecCommands(ctx, commands)
+}
+
+func (d *Due) Param() map[string]interface{} {
+	if d != nil {
+		due := map[string]interface{}{}
+		if d.Date != "" {
+			due["date"] = d.Date
+		}
+		if d.IsRecurring {
+			due["is_recurring"] = d.IsRecurring
+		}
+		if d.String != "" {
+			due["string"] = d.String
+			due["lang"] = d.Lang
+		}
+		return due
+	}
+	return nil
 }
