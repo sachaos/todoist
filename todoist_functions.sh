@@ -44,13 +44,13 @@ function peco-todoist-date () {
     date -v 1d &>/dev/null
     if [ $? -eq 0 ]; then
         # BSD date option
-        OPTION="-v+#d"
+        OPTION="-v+=d"
     else
         # GNU date option
-        OPTION="-d # day"
+        OPTION="-d = day"
     fi
 
-    local SELECTED_DATE="$(seq 0 30 | xargs -I# date $OPTION '+%d/%m/%Y %a' | peco | cut -d ' ' -f 1)"
+    local SELECTED_DATE="$(seq 0 30 | xargs -I= date $OPTION '+%d/%m/%Y %a' | peco | cut -d ' ' -f 1)"
     insert-in-buffer "'${SELECTED_DATE}'" "-d"
 }
 zle -N peco-todoist-date
