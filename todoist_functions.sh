@@ -33,7 +33,7 @@ bindkey "^xtp" peco-todoist-project
 
 # todoist find labels
 function peco-todoist-labels () {
-    local SELECTED_LABELS="$(todoist labels | peco | cut -d ' ' -f 1 | tr '\n' ',' | sed -e 's/,$//')"
+    local SELECTED_LABELS="$(todoist labels | peco | cut -d ' ' -f 2 | sed -e 's/^@//' | tr '\n' ',' | sed -e 's/,$//')"
     insert-in-buffer "${SELECTED_LABELS}" "-L"
 }
 zle -N peco-todoist-labels
