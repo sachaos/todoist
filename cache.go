@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
-	"errors"
 
 	"github.com/sachaos/todoist/lib"
 )

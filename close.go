@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/urfave/cli"
 )
@@ -10,13 +9,9 @@ import (
 func Close(c *cli.Context) error {
 	client := GetClient(c)
 
-	item_ids := []int{}
+	item_ids := []string{}
 	for _, arg := range c.Args() {
-		item_id, err := strconv.Atoi(arg)
-		if err != nil {
-			return err
-		}
-		item_ids = append(item_ids, item_id)
+		item_ids = append(item_ids, arg)
 	}
 
 	if len(item_ids) == 0 {

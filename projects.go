@@ -9,7 +9,7 @@ func traverseProjects(pjt *todoist.Project, f func(pjt *todoist.Project, depth i
 	f(pjt, depth)
 
 	if pjt.ChildProject != nil {
-		traverseProjects(pjt.ChildProject, f, depth + 1)
+		traverseProjects(pjt.ChildProject, f, depth+1)
 	}
 
 	if pjt.BrotherProject != nil {
@@ -21,7 +21,7 @@ func Projects(c *cli.Context) error {
 	client := GetClient(c)
 
 	colorList := ColorList()
-	var projectIds []int
+	var projectIds []string
 	for _, project := range client.Store.Projects {
 		projectIds = append(projectIds, project.GetID())
 	}
