@@ -62,7 +62,7 @@ func TestLabelEval(t *testing.T) {
 	}
 
 	item1 := todoist.Item{}
-	item1.LabelIDs = []string{"1", "2"}
+	item1.LabelNames = []string{"1", "2"}
 
 	testFilterEvalWithLabel(t, "@must", item1, labels, true)
 	testFilterEvalWithLabel(t, "@icebox", item1, labels, true)
