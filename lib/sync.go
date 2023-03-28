@@ -50,7 +50,7 @@ type Store struct {
 		DateLang     string      `json:"date_lang"`
 		Due          *Due        `json:"due"`
 		ID           string      `json:"id"`
-		IsDeleted    int         `json:"is_deleted"`
+		IsDeleted    bool        `json:"is_deleted"`
 		ItemID       string      `json:"item_id"`
 		MinuteOffset int         `json:"minute_offset"`
 		NotifyUID    string      `json:"notify_uid"`
