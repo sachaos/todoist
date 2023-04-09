@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/pkg/browser"
@@ -12,10 +11,7 @@ import (
 func Show(c *cli.Context) error {
 	client := GetClient(c)
 
-	item_id, err := strconv.Atoi(c.Args().First())
-	if err != nil {
-		return CommandFailed
-	}
+	item_id := c.Args().First()
 
 	item := client.Store.FindItem(item_id)
 	if item == nil {
@@ -23,7 +19,7 @@ func Show(c *cli.Context) error {
 	}
 
 	colorList := ColorList()
-	var projectIds []int
+	var projectIds []string
 	for _, project := range client.Store.Projects {
 		projectIds = append(projectIds, project.GetID())
 	}

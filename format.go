@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -22,8 +21,8 @@ func ColorList() []color.Attribute {
 	}
 }
 
-func GenerateColorHash(ids []int, colorList []color.Attribute) map[int]color.Attribute {
-	colorHash := map[int]color.Attribute{}
+func GenerateColorHash(ids []string, colorList []color.Attribute) map[string]color.Attribute {
+	colorHash := map[string]color.Attribute{}
 	colorNum := 0
 	for _, id := range ids {
 		var colorAttribute color.Attribute
@@ -43,7 +42,7 @@ func GenerateColorHash(ids []int, colorList []color.Attribute) map[int]color.Att
 }
 
 func IdFormat(carrier todoist.IDCarrier) string {
-	return color.BlueString(strconv.Itoa(carrier.GetID()))
+	return color.BlueString(carrier.GetID())
 }
 
 func ContentPrefix(store *todoist.Store, item *todoist.Item, depth int, c *cli.Context) (prefix string) {
@@ -86,7 +85,7 @@ func PriorityFormat(priority int) string {
 	return priorityColor.SprintFunc()(fmt.Sprintf("p%d", p))
 }
 
-func ProjectFormat(id int, store *todoist.Store, projectColorHash map[int]color.Attribute, c *cli.Context) string {
+func ProjectFormat(id string, store *todoist.Store, projectColorHash map[string]color.Attribute, c *cli.Context) string {
 	var prefix string
 	var namePrefix string
 	project := store.FindProject(id)
@@ -105,7 +104,7 @@ func ProjectFormat(id int, store *todoist.Store, projectColorHash map[int]color.
 	return prefix + color.New(projectColorHash[project.GetID()]).SprintFunc()("#"+namePrefix+projectName)
 }
 
-func SectionFormat(id int, store *todoist.Store, c *cli.Context) string {
+func SectionFormat(id string, store *todoist.Store, c *cli.Context) string {
 	prefix := ""
 	sectionName := ""
 	section := store.FindSection(id)

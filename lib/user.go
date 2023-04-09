@@ -11,7 +11,6 @@ type User struct {
 	CompletedToday    int         `json:"completed_today"`
 	DailyGoal         int         `json:"daily_goal"`
 	DateFormat        int         `json:"date_format"`
-	DefaultReminder   string      `json:"default_reminder"`
 	Email             string      `json:"email"`
 	Features          struct {
 		Beta             int  `json:"beta"`
@@ -19,26 +18,24 @@ type User struct {
 		HasPushReminders bool `json:"has_push_reminders"`
 		Restriction      int  `json:"restriction"`
 	} `json:"features"`
-	FullName     string      `json:"full_name"`
-	ID           int         `json:"id"`
-	ImageID      string      `json:"image_id"`
-	InboxProject int         `json:"inbox_project"`
-	IsBizAdmin   bool        `json:"is_biz_admin"`
-	IsPremium    bool        `json:"is_premium"`
-	JoinDate     string      `json:"join_date"`
-	Karma        float32     `json:"karma"`
-	KarmaTrend   string      `json:"karma_trend"`
-	MobileHost   interface{} `json:"mobile_host"`
-	MobileNumber interface{} `json:"mobile_number"`
-	NextWeek     int         `json:"next_week"`
-	PremiumUntil string      `json:"premium_until"`
-	SortOrder    int         `json:"sort_order"`
-	StartDay     int         `json:"start_day"`
-	StartPage    string      `json:"start_page"`
-	Theme        int         `json:"theme"`
-	TimeFormat   int         `json:"time_format"`
-	Token        string      `json:"token"`
-	TzInfo       struct {
+	FullName       string  `json:"full_name"`
+	ID             string  `json:"id"`
+	ImageID        string  `json:"image_id"`
+	InboxProjectID string  `json:"inbox_project_id"`
+	IsBizAdmin     bool    `json:"is_biz_admin"`
+	IsPremium      bool    `json:"is_premium"`
+	JoinDate       string  `json:"joined_at"`
+	Karma          float32 `json:"karma"`
+	KarmaTrend     string  `json:"karma_trend"`
+	NextWeek       int     `json:"next_week"`
+	PremiumUntil   string  `json:"premium_until"`
+	SortOrder      int     `json:"sort_order"`
+	StartDay       int     `json:"start_day"`
+	StartPage      string  `json:"start_page"`
+	ThemeID        string  `json:"theme_id"`
+	TimeFormat     int     `json:"time_format"`
+	Token          string  `json:"token"`
+	TzInfo         struct {
 		GmtString string `json:"gmt_string"`
 		Hours     int    `json:"hours"`
 		IsDst     int    `json:"is_dst"`

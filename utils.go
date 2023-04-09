@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"io"
-	"strings"
-	"text/tabwriter"
 	"os"
 	"path/filepath"
+	"strings"
+	"text/tabwriter"
 )
 
 type Writer interface {

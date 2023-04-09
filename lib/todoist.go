@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"strconv"
 	"strings"
 )
 
@@ -47,8 +46,6 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	}
 	u.Path = path.Join(u.Path, uri)
 
-	params.Add("token", c.config.AccessToken)
-
 	c.Log("config: %#v", c.config)
 
 	var body io.Reader
@@ -64,6 +61,7 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Authorization", "Bearer "+c.config.AccessToken)
 	req = req.WithContext(ctx)
 
 	c.Log("request: %#v", req)
@@ -119,21 +117,21 @@ func (c *Client) Sync(ctx context.Context) error {
 	return nil
 }
 
-func (c *Client) CompleteItemIDByPrefix(prefix string) (id int, err error) {
-	var matchid int = 0
+func (c *Client) CompleteItemIDByPrefix(prefix string) (id string, err error) {
+	var matchid string = ""
 	for _, cmpid := range c.Store.Items {
-		if strings.HasPrefix(strconv.Itoa(cmpid.GetID()), prefix) {
-			if matchid != 0 {
+		if strings.HasPrefix(cmpid.GetID(), prefix) {
+			if matchid != "" {
 				// Ambiguous prefix, return converted input instead
-				return strconv.Atoi(prefix)
+				return prefix, nil
 			} else {
 				matchid = cmpid.GetID()
 			}
 		}
 	}
-	if matchid != 0 {
+	if matchid != "" {
 		return matchid, nil
 	} else {
-		return strconv.Atoi(prefix)
+		return prefix, nil
 	}
 }

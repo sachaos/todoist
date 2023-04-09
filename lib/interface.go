@@ -5,16 +5,16 @@ import (
 )
 
 type HaveID struct {
-	ID int `json:"id"`
+	ID string `json:"id"`
 }
 type HaveIDs []HaveID
 
 type HaveProjectID struct {
-	ProjectID int `json:"project_id"`
+	ProjectID string `json:"project_id"`
 }
 
 type HaveSectionID struct {
-	SectionID int `json:"section_id"`
+	SectionID string `json:"section_id"`
 }
 
 type HaveIndent struct {
@@ -22,7 +22,7 @@ type HaveIndent struct {
 }
 
 type IDCarrier interface {
-	GetID() int
+	GetID() string
 }
 type Repository interface {
 	Len() int
@@ -30,16 +30,16 @@ type Repository interface {
 }
 
 type HaveParentID struct {
-	ParentID *int `json:"parent_id"`
+	ParentID *string `json:"parent_id"`
 }
 
 type ParentIDCarrier interface {
-	GetParentID() (int, error)
+	GetParentID() (string, error)
 }
 
-func (carrier HaveParentID) GetParentID() (int, error) {
+func (carrier HaveParentID) GetParentID() (string, error) {
 	if carrier.ParentID == nil {
-		return 0, errors.New("Parent ID is null")
+		return "", errors.New("Parent ID is null")
 	}
 	return *carrier.ParentID, nil
 }
@@ -67,10 +67,10 @@ type ContentCarrier interface {
 }
 
 type ProjectIDCarrier interface {
-	GetProjectID() int
+	GetProjectID() string
 }
 
-func (carrier HaveID) GetID() int {
+func (carrier HaveID) GetID() string {
 	return carrier.ID
 }
 
@@ -78,6 +78,6 @@ func (carrier HaveIndent) GetIndent() int {
 	return carrier.Indent
 }
 
-func (carrier HaveProjectID) GetProjectID() int {
+func (carrier HaveProjectID) GetProjectID() string {
 	return carrier.ProjectID
 }

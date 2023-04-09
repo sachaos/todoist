@@ -40,7 +40,7 @@ func List(c *cli.Context) error {
 
 	colorList := ColorList()
 	projectsCount := len(client.Store.Projects)
-	projectIds := make([]int, projectsCount)
+	projectIds := make([]string, projectsCount)
 	for i, project := range client.Store.Projects {
 		projectIds[i] = project.GetID()
 	}
@@ -60,7 +60,7 @@ func List(c *cli.Context) error {
 		if err != nil {
 			return
 		}
-		if !r || item.Checked == 1 {
+		if !r || item.Checked {
 			return
 		}
 		itemList = append(itemList, []string{

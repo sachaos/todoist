@@ -42,7 +42,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
-	app.Version = "0.15.0"
+	app.Version = "0.18.0"
 	app.EnableBashCompletion = true
 
 	contentFlag := cli.StringFlag{
@@ -54,9 +54,9 @@ func main() {
 		Value: 4,
 		Usage: "priority (1-4)",
 	}
-	labelIDsFlag := cli.StringFlag{
-		Name:  "label-ids, L",
-		Usage: "label ids (separated by ,)",
+	labelNamesFlag := cli.StringFlag{
+		Name:  "label-names, L",
+		Usage: "label names (separated by ,)",
 	}
 	projectIDFlag := cli.IntFlag{
 		Name:  "project-id, P",
@@ -185,6 +185,8 @@ func main() {
 
 		if !c.Bool("color") && !config.Color {
 			color.NoColor = true
+		} else {
+			color.NoColor = false
 		}
 
 		if config.DateFormat != "" {
@@ -243,7 +245,7 @@ func main() {
 			Action:  Add,
 			Flags: []cli.Flag{
 				priorityFlag,
-				labelIDsFlag,
+				labelNamesFlag,
 				projectIDFlag,
 				projectNameFlag,
 				dateFlag,
@@ -259,7 +261,7 @@ func main() {
 			Flags: []cli.Flag{
 				contentFlag,
 				priorityFlag,
-				labelIDsFlag,
+				labelNamesFlag,
 				projectIDFlag,
 				projectNameFlag,
 				dateFlag,
