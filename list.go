@@ -21,6 +21,9 @@ func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), de
 	}
 }
 
+var byPriority int = 1
+var byDate int = 2
+
 func sortItems(itemListPtr *[][]string, byIndex int) {
 	itemList := *itemListPtr
 	length := len(itemList)
@@ -74,10 +77,20 @@ func List(c *cli.Context) error {
 		})
 	}, 0)
 
-	if c.Bool("priority") == true {
-		// sort output by priority
-		// and no need to use "else block" as items returned by API are already sorted by task id
-		sortItems(&itemList, 1)
+	switch c.String("sort") {
+	case "priority":
+		sortItems(&itemList, byPriority)
+		break
+	case "date":
+		sortItems(&itemList, byDate)
+		break
+	default:
+		// For backwards compatibility, can be removed when users have had time
+		// to migrate.
+		if c.Bool("priority") == true {
+			sortItems(&itemList, byPriority)
+		}
+
 	}
 
 	defer writer.Flush()
