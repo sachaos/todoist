@@ -19,20 +19,19 @@ import (
 )
 
 var (
-	homePath, _   = os.UserHomeDir()
-	configPath    = filepath.Join(basedir.ConfigHome, "todoist")
-	cachePath     = filepath.Join(basedir.CacheHome, "todoist", "cache.json")
-	CommandFailed = errors.New("command failed")
-	IdNotFound    = errors.New("specified id not found")
-	writer        Writer
+	homePath, _         = os.UserHomeDir()
+	configPath          = filepath.Join(basedir.ConfigHome, "todoist")
+	cachePath           = filepath.Join(basedir.CacheHome, "todoist", "cache.json")
+	CommandFailed       = errors.New("command failed")
+	IdNotFound          = errors.New("specified id not found")
+	writer              Writer
+	ShortDateTimeFormat = "06/01/02(Mon) 15:04"
+	ShortDateFormat     = "06/01/02(Mon)"
 )
 
 const (
 	configName = "config"
 	configType = "json"
-
-	ShortDateTimeFormat = "06/01/02(Mon) 15:04"
-	ShortDateFormat     = "06/01/02(Mon)"
 )
 
 func GetClient(c *cli.Context) *todoist.Client {
@@ -174,7 +173,7 @@ func main() {
 				panic(fmt.Errorf("Config file has wrong permissions. Make sure to give permissions 600 to file %s \n", configFile))
 			}
 		}
-		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color")}
+		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color"), DateFormat: viper.GetString("shortdateformat"), DateTimeFormat: viper.GetString("shortdatetimeformat")}
 
 		client := todoist.NewClient(config)
 		client.Store = &store
@@ -188,6 +187,14 @@ func main() {
 			color.NoColor = true
 		} else {
 			color.NoColor = false
+		}
+
+		if config.DateFormat != "" {
+			ShortDateFormat = config.DateFormat
+		}
+
+		if config.DateTimeFormat != "" {
+			ShortDateTimeFormat = config.DateTimeFormat
 		}
 
 		if c.Bool("csv") {
