@@ -10,7 +10,7 @@ require (
 	github.com/rkoesters/xdg v0.0.0-20181125232953-edd15b846f9b
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
-	github.com/urfave/cli v1.22.12
+	github.com/urfave/cli/v2 v2.25.1
 )
 
 require (
@@ -30,6 +30,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

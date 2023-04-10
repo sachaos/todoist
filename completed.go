@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func CompletedList(c *cli.Context) error {
@@ -27,7 +27,7 @@ func CompletedList(c *cli.Context) error {
 
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
+	if c.Bool("header") {
 		writer.Write([]string{"ID", "CompletedDate", "Project", "Content"})
 	}
 

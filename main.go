@@ -13,9 +13,9 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/rkoesters/xdg/basedir"
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -46,73 +46,83 @@ func main() {
 	app.EnableBashCompletion = true
 
 	contentFlag := cli.StringFlag{
-		Name:  "content, c",
-		Usage: "content",
+		Name:    "content",
+		Aliases: []string{"c"},
+		Usage:   "content",
 	}
 	priorityFlag := cli.IntFlag{
-		Name:  "priority, p",
-		Value: 4,
-		Usage: "priority (1-4)",
+		Name:    "priority",
+		Aliases: []string{"p"},
+		Value:   4,
+		Usage:   "priority (1-4)",
 	}
 	labelNamesFlag := cli.StringFlag{
-		Name:  "label-names, L",
-		Usage: "label names (separated by ,)",
+		Name:    "label-names",
+		Aliases: []string{"L"},
+		Usage:   "label names (separated by ,)",
 	}
 	projectIDFlag := cli.IntFlag{
-		Name:  "project-id, P",
-		Usage: "project id",
+		Name:    "project-id",
+		Aliases: []string{"P"},
+		Usage:   "project id",
 	}
 	projectNameFlag := cli.StringFlag{
-		Name:  "project-name, N",
-		Usage: "project name",
+		Name:    "project-name",
+		Aliases: []string{"N"},
+		Usage:   "project name",
 	}
 	dateFlag := cli.StringFlag{
-		Name:  "date, d",
-		Usage: "date string (today, 2020/04/02, 2020/03/21 18:00)",
+		Name:    "date",
+		Aliases: []string{"d"},
+		Usage:   "date string (today, 2020/04/02, 2020/03/21 18:00)",
 	}
 	browseFlag := cli.BoolFlag{
-		Name:  "browse, o",
-		Usage: "when contain URL, open it",
+		Name:    "browse",
+		Aliases: []string{"o"},
+		Usage:   "when contain URL, open it",
 	}
 	filterFlag := cli.StringFlag{
-		Name:  "filter, f",
-		Usage: "filter expression",
+		Name:    "filter",
+		Aliases: []string{"f"},
+		Usage:   "filter expression",
 	}
 	sortPriorityFlag := cli.BoolFlag{
-		Name:  "priority, p",
-		Usage: "sort the output by priority",
+		Name:    "priority",
+		Aliases: []string{"p"},
+		Usage:   "sort the output by priority",
 	}
 	reminderFlg := cli.BoolFlag{
-		Name:  "reminder, r",
-		Usage: "set reminder (only premium users)",
+		Name:    "reminder",
+		Aliases: []string{"r"},
+		Usage:   "set reminder (only premium users)",
 	}
 
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "header",
 			Usage: "output with header",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "color",
 			Usage: "colorize output",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "csv",
 			Usage: "output in CSV format",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "debug",
 			Usage: "output logs",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "namespace",
 			Usage: "display parent task like namespace",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "indent",
 			Usage: "display children task with indent",
 		},
-		cli.BoolFlag{
+		&cli.BoolFlag{
 			Name:  "project-namespace",
 			Usage: "display parent project like namespace",
 		},
@@ -207,15 +217,15 @@ func main() {
 		return nil
 	}
 
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:    "list",
 			Aliases: []string{"l"},
 			Usage:   "Show all tasks",
 			Action:  List,
 			Flags: []cli.Flag{
-				filterFlag,
-				sortPriorityFlag,
+				&filterFlag,
+				&sortPriorityFlag,
 			},
 			ArgsUsage: " ",
 		},
@@ -224,7 +234,7 @@ func main() {
 			Usage:  "Show task detail",
 			Action: Show,
 			Flags: []cli.Flag{
-				browseFlag,
+				&browseFlag,
 			},
 			ArgsUsage: "<Item ID>",
 		},
@@ -234,7 +244,7 @@ func main() {
 			Usage:   "Show all completed tasks (only premium user)",
 			Action:  CompletedList,
 			Flags: []cli.Flag{
-				filterFlag,
+				&filterFlag,
 			},
 			ArgsUsage: " ",
 		},
@@ -244,12 +254,12 @@ func main() {
 			Usage:   "Add task",
 			Action:  Add,
 			Flags: []cli.Flag{
-				priorityFlag,
-				labelNamesFlag,
-				projectIDFlag,
-				projectNameFlag,
-				dateFlag,
-				reminderFlg,
+				&priorityFlag,
+				&labelNamesFlag,
+				&projectIDFlag,
+				&projectNameFlag,
+				&dateFlag,
+				&reminderFlg,
 			},
 			ArgsUsage: "<Item content>",
 		},
@@ -259,12 +269,12 @@ func main() {
 			Usage:   "Modify task",
 			Action:  Modify,
 			Flags: []cli.Flag{
-				contentFlag,
-				priorityFlag,
-				labelNamesFlag,
-				projectIDFlag,
-				projectNameFlag,
-				dateFlag,
+				&contentFlag,
+				&priorityFlag,
+				&labelNamesFlag,
+				&projectIDFlag,
+				&projectNameFlag,
+				&dateFlag,
 			},
 			ArgsUsage: "<Item ID>",
 		},
@@ -300,11 +310,11 @@ func main() {
 			Usage:   "Add new project",
 			Action:  AddProject,
 			Flags: []cli.Flag{
-				cli.IntFlag{
+				&cli.IntFlag{
 					Name:  "color",
 					Usage: "In range 30-49",
 				},
-				cli.IntFlag{
+				&cli.IntFlag{
 					Name:  "item-order",
 					Usage: "Order index",
 				},

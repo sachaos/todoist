@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli/v2"
 )
 
 func traverseProjects(pjt *todoist.Project, f func(pjt *todoist.Project, depth int), depth int) {
@@ -36,7 +36,7 @@ func Projects(c *cli.Context) error {
 
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
+	if c.Bool("header") {
 		writer.Write([]string{"ID", "Name"})
 	}
 

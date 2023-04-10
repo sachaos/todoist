@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli/v2"
 )
 
 func ColorList() []color.Attribute {
@@ -46,10 +46,10 @@ func IdFormat(carrier todoist.IDCarrier) string {
 }
 
 func ContentPrefix(store *todoist.Store, item *todoist.Item, depth int, c *cli.Context) (prefix string) {
-	if c.GlobalBool("indent") {
+	if c.Bool("indent") {
 		prefix = prefix + strings.Repeat("    ", depth)
 	}
-	if c.GlobalBool("namespace") {
+	if c.Bool("namespace") {
 		parents := todoist.SearchItemParents(store, item)
 		for _, parent := range parents {
 			prefix = prefix + parent.Content + ":"
@@ -95,7 +95,7 @@ func ProjectFormat(id string, store *todoist.Store, projectColorHash map[string]
 	}
 
 	projectName := project.Name
-	if c.GlobalBool("project-namespace") {
+	if c.Bool("project-namespace") {
 		parentProjects := todoist.SearchProjectParents(store, project)
 		for _, project := range parentProjects {
 			namePrefix = namePrefix + project.Name + ":"

@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func Delete(c *cli.Context) error {
 	client := GetClient(c)
 
 	item_ids := []string{}
-	for _, arg := range c.Args() {
+	for _, arg := range c.Args().Slice() {
 		item_id, err := client.CompleteItemIDByPrefix(arg)
 		if err != nil {
 			return err

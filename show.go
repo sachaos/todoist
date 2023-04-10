@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/pkg/browser"
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli/v2"
 )
 
 func Show(c *cli.Context) error {
