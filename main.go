@@ -13,7 +13,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/rkoesters/xdg/basedir"
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
@@ -99,6 +99,10 @@ func main() {
 		cli.BoolFlag{
 			Name:  "csv",
 			Usage: "output in CSV format",
+		},
+		cli.BoolFlag{
+			Name:  "json, j",
+			Usage: "output in JSON format",
 		},
 		cli.BoolFlag{
 			Name:  "debug",

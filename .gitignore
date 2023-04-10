@@ -5,3 +5,5 @@ todoist
 
 _vendor-*
 vendor
+
+.vscode/

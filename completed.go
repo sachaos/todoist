@@ -2,11 +2,19 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 
 	"github.com/urfave/cli"
 )
+
+type CompletedJSON struct {
+	ID            string `json:"id"`
+	CompletedDate string `json:"completed_date"`
+	Project       string `json:"project"`
+	Content       string `json:"content"`
+}
 
 func CompletedList(c *cli.Context) error {
 	client := GetClient(c)
@@ -25,12 +33,15 @@ func CompletedList(c *cli.Context) error {
 		return err
 	}
 
+	isJson := c.GlobalBool("json")
+
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
+	if !isJson && c.GlobalBool("header") {
 		writer.Write([]string{"ID", "CompletedDate", "Project", "Content"})
 	}
 
+	var jsonObjects []CompletedJSON
 	for _, item := range completed.Items {
 		result, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
 		if err != nil {
@@ -39,12 +50,27 @@ func CompletedList(c *cli.Context) error {
 		if !result {
 			continue
 		}
-		writer.Write([]string{
-			IdFormat(item),
-			CompletedDateFormat(item.DateTime()),
-			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
-			ContentFormat(item),
-		})
+
+		obj := CompletedJSON{
+			ID:            IdFormat(item),
+			CompletedDate: CompletedDateFormat(item.DateTime()),
+			Project:       ProjectFormat(item.ProjectID, client.Store, projectColorHash, c),
+			Content:       ContentFormat(item),
+		}
+		if isJson {
+			jsonObjects = append(jsonObjects, obj)
+		} else {
+			writer.Write([]string{obj.ID, obj.CompletedDate, obj.Project, obj.Content})
+		}
+
+	}
+
+	if isJson {
+		jsonData, err := json.Marshal(jsonObjects)
+		if err != nil {
+			return CommandFailed
+		}
+		writer.Write([]string{string(jsonData)})
 	}
 
 	return nil
