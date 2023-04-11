@@ -13,7 +13,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/rkoesters/xdg/basedir"
-	x"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli/v2"
 )
