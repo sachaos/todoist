@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli/v2"
 )
 
 func AddProject(c *cli.Context) error {

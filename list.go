@@ -6,7 +6,7 @@ import (
 
 	"github.com/acarl005/stripansi"
 	todoist "github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), depth int) {
@@ -82,7 +82,7 @@ func List(c *cli.Context) error {
 
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
+	if c.Bool("header") {
 		writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content"})
 	}
 

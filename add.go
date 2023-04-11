@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/sachaos/todoist/lib"
-	"github.com/urfave/cli"
+	todoist "github.com/sachaos/todoist/lib"
+	"github.com/urfave/cli/v2"
 )
 
 var priorityMapping = map[int]int{

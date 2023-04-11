@@ -4,7 +4,7 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func Labels(c *cli.Context) error {
@@ -15,7 +15,7 @@ func Labels(c *cli.Context) error {
 
 	defer writer.Flush()
 
-	if c.GlobalBool("header") {
+	if c.Bool("header") {
 		writer.Write([]string{"ID", "Name"})
 	}
 
