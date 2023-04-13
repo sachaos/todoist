@@ -42,7 +42,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
-	app.Version = "0.18.0"
+	app.Version = "0.20.0"
 	app.EnableBashCompletion = true
 
 	contentFlag := cli.StringFlag{
