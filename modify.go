@@ -35,10 +35,7 @@ func Modify(c *cli.Context) error {
 		return names
 	}(c.String("label-names"))
 
-	due := todoist.Due{
-		String: c.String("date"),
-	}
-	item.Due = &due
+	item.Due = &todoist.Due{String: c.String("date")}
 
 	projectID := c.String("project-id")
 	if projectID == "" {
