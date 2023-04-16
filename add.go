@@ -38,7 +38,9 @@ func Add(c *cli.Context) error {
 		return names
 	}(c.String("label-names"))
 
-	item.DateString = c.String("date")
+	if date := c.String("date"); date != "" {
+		item.Due = &todoist.Due{Date: date}
+	}
 	item.AutoReminder = c.Bool("reminder")
 
 	if err := client.AddItem(context.Background(), item); err != nil {
