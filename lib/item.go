@@ -167,6 +167,9 @@ func (item Item) AddParam() interface{} {
 	if item.ProjectID != "" {
 		param["project_id"] = item.ProjectID
 	}
+	if item.Due != nil {
+		param["due"] = item.Due
+	}
 	param["auto_reminder"] = item.AutoReminder
 
 	return param
@@ -192,6 +195,9 @@ func (item Item) UpdateParam() interface{} {
 	}
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
+	}
+	if item.Due != nil {
+		param["due"] = item.Due
 	}
 	return param
 }

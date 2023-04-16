@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	todoist "github.com/sachaos/todoist/lib"
+	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli/v2"
 )
 
@@ -38,7 +38,8 @@ func Add(c *cli.Context) error {
 		return names
 	}(c.String("label-names"))
 
-	item.DateString = c.String("date")
+	item.Due = &todoist.Due{String: c.String("date")}
+
 	item.AutoReminder = c.Bool("reminder")
 
 	if err := client.AddItem(context.Background(), item); err != nil {
