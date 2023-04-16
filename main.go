@@ -193,6 +193,13 @@ func main() {
 			"config": config,
 		}
 
+		if config.AccessToken != store.User.Token {
+			Sync(c)
+			if err := LoadCache(cachePath, &store); err != nil {
+				return err
+			}
+		}
+
 		if !c.Bool("color") && !config.Color {
 			color.NoColor = true
 		} else {
