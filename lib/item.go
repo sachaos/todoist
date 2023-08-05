@@ -28,12 +28,17 @@ type Due struct {
 type BaseItem struct {
 	HaveID
 	HaveProjectID
-	Content string `json:"content"`
-	UserID  string `json:"user_id"`
+	Content     string `json:"content"`
+	Description string `json:"description"`
+	UserID      string `json:"user_id"`
 }
 
 func (bitem BaseItem) GetContent() string {
 	return bitem.Content
+}
+
+func (bitem BaseItem) GetDescription() string {
+	return bitem.Description
 }
 
 type CompletedItem struct {
@@ -132,6 +137,10 @@ func GetContentTitle(item ContentCarrier) string {
 	return linkRegex.ReplaceAllString(item.GetContent(), "$1")
 }
 
+func GetDescription(item DescriptionCarrier) string {
+	return linkRegex.ReplaceAllString(item.GetDescription(), "$1")
+}
+
 func GetContentURL(item ContentCarrier) []string {
 	if HasURL(item) {
 		matches := linkRegex.FindAllStringSubmatch(item.GetContent(), -1)
@@ -146,14 +155,24 @@ func GetContentURL(item ContentCarrier) []string {
 	return []string{}
 }
 
-func HasURL(item ContentCarrier) bool {
-	return linkRegex.MatchString(item.GetContent())
+func HasURL(item interface{}) bool {
+	switch item.(type) {
+	case ContentCarrier:
+		return linkRegex.MatchString(item.(ContentCarrier).GetContent())
+	case DescriptionCarrier:
+		return linkRegex.MatchString(item.(DescriptionCarrier).GetDescription())
+	default:
+		return false
+	}
 }
 
 func (item Item) AddParam() interface{} {
 	param := map[string]interface{}{}
 	if item.Content != "" {
 		param["content"] = item.Content
+	}
+	if item.Description != "" {
+		param["description"] = item.Description
 	}
 	if item.DateString != "" {
 		param["date_string"] = item.DateString
@@ -182,6 +201,9 @@ func (item Item) UpdateParam() interface{} {
 	}
 	if item.Content != "" {
 		param["content"] = item.Content
+	}
+	if item.Description != "" {
+		param["description"] = item.Description
 	}
 	if item.DateString != "" {
 		param["date_string"] = item.DateString

@@ -26,13 +26,14 @@ func Show(c *cli.Context) error {
 	projectColorHash := GenerateColorHash(projectIds, colorList)
 
 	records := [][]string{
-		[]string{"ID", IdFormat(item)},
-		[]string{"Content", ContentFormat(item)},
-		[]string{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
-		[]string{"Labels", item.LabelsString(client.Store)},
-		[]string{"Priority", PriorityFormat(item.Priority)},
-		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
-		[]string{"URL", strings.Join(todoist.GetContentURL(item), ",")},
+		{"ID", IdFormat(item)},
+		{"Content", ContentFormat(item)},
+		{"Description", DescriptionFormat(item)},
+		{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
+		{"Labels", item.LabelsString(client.Store)},
+		{"Priority", PriorityFormat(item.Priority)},
+		{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
+		{"URL", strings.Join(todoist.GetContentURL(item), ",")},
 	}
 	defer writer.Flush()
 

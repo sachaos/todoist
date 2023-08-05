@@ -24,6 +24,7 @@ func Add(c *cli.Context) error {
 	}
 
 	item.Content = c.Args().First()
+	item.Description = c.String("description")
 	item.Priority = priorityMapping[c.Int("priority")]
 	item.ProjectID = c.String("project-id")
 	if item.ProjectID == "" {

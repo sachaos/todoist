@@ -56,6 +56,12 @@ func main() {
 		Value:   4,
 		Usage:   "priority (1-4)",
 	}
+	descriptionFlag := cli.StringFlag{
+		Name:    "description",
+		Aliases: []string{},
+		Value:   "",
+		Usage:   "task description",
+	}
 	labelNamesFlag := cli.StringFlag{
 		Name:    "label-names",
 		Aliases: []string{"L"},
@@ -262,6 +268,7 @@ func main() {
 			Action:  Add,
 			Flags: []cli.Flag{
 				&priorityFlag,
+				&descriptionFlag,
 				&labelNamesFlag,
 				&projectIDFlag,
 				&projectNameFlag,
@@ -278,6 +285,7 @@ func main() {
 			Flags: []cli.Flag{
 				&contentFlag,
 				&priorityFlag,
+				&descriptionFlag,
 				&labelNamesFlag,
 				&projectIDFlag,
 				&projectNameFlag,
