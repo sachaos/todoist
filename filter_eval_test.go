@@ -23,17 +23,17 @@ func due(s string) *todoist.Due {
 }
 
 func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
-	actual, _ := Eval(Filter(f), &item, todoist.Projects{}, todoist.Labels{})
+	actual, _ := Eval(Filter(f), &item, todoist.Projects{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
 func testFilterEvalWithProject(t *testing.T, f string, item todoist.Item, projects todoist.Projects, expect bool) {
-	actual, _ := Eval(Filter(f), &item, projects, todoist.Labels{})
+	actual, _ := Eval(Filter(f), &item, projects)
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
-func testFilterEvalWithLabel(t *testing.T, f string, item todoist.Item, labels todoist.Labels, expect bool) {
-	actual, _ := Eval(Filter(f), &item, todoist.Projects{}, labels)
+func testFilterEvalWithLabel(t *testing.T, f string, item todoist.Item, expect bool) {
+	actual, _ := Eval(Filter(f), &item, todoist.Projects{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
@@ -47,26 +47,12 @@ func TestPriorityEval(t *testing.T) {
 }
 
 func TestLabelEval(t *testing.T) {
-	labels := todoist.Labels{
-		todoist.Label{
-			HaveID: todoist.HaveID{ID: "1"},
-			Name:   "must",
-		},
-		todoist.Label{
-			HaveID: todoist.HaveID{ID: "2"},
-			Name:   "icebox",
-		}, todoist.Label{
-			HaveID: todoist.HaveID{ID: "3"},
-			Name:   "another",
-		},
-	}
-
 	item1 := todoist.Item{}
-	item1.LabelNames = []string{"1", "2"}
+	item1.LabelNames = []string{"must", "icebox"}
 
-	// testFilterEvalWithLabel(t, "@must", item1, labels, true)
-	// testFilterEvalWithLabel(t, "@icebox", item1, labels, true)
-	testFilterEvalWithLabel(t, "@another", item1, labels, false)
+	testFilterEvalWithLabel(t, "@must", item1, true)
+	testFilterEvalWithLabel(t, "@icebox", item1, true)
+	testFilterEvalWithLabel(t, "@another", item1, false)
 }
 
 func TestProjectEval(t *testing.T) {
