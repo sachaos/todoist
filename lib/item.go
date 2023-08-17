@@ -7,9 +7,7 @@ import (
 	"time"
 )
 
-var (
-	linkRegex = regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
-)
+var linkRegex = regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
 
 const (
 	RFC3339Date                 = "2006-01-02"
@@ -95,20 +93,28 @@ func (a Items) At(i int) IDCarrier { return a[i] }
 
 func (item Item) DateTime() time.Time {
 	var date string
+	// TODO: it would be more correct to get the timezone from Store.User
+	location := time.Local
 
 	if item.Due == nil {
 		date = ""
 	} else {
+		if item.Due.TimeZone != "" {
+			dueTz, err := time.LoadLocation(item.Due.TimeZone)
+			if err == nil {
+				location = dueTz
+			}
+		}
 		date = item.Due.Date
 	}
-	//2020-03-03T14:00:00
-	//2020-01-17T23:00:00Z
-	t, err := time.ParseInLocation(RFC3339DateTimeWithTimeZone, date, time.Local)
+	// 2020-03-03T14:00:00
+	// 2020-01-17T23:00:00Z
+	t, err := time.ParseInLocation(RFC3339DateTimeWithTimeZone, date, location)
 	if err != nil {
-		t, err = time.ParseInLocation(RFC3339DateTime, date, time.Local)
+		t, err = time.ParseInLocation(RFC3339DateTime, date, location)
 	}
 	if err != nil {
-		t, _ = time.ParseInLocation(RFC3339Date, date, time.Local)
+		t, _ = time.ParseInLocation(RFC3339Date, date, location)
 	}
 	return t
 }
