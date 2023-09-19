@@ -66,6 +66,10 @@ type ContentCarrier interface {
 	GetContent() string
 }
 
+type DescriptionCarrier interface {
+	GetDescription() string
+}
+
 type ProjectIDCarrier interface {
 	GetProjectID() string
 }
