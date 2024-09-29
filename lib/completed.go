@@ -16,6 +16,12 @@ type Completed struct {
 
 func (c *Client) CompletedAll(cli *cli.Context, ctx context.Context, r *Completed) error {
 	v := url.Values{}
+
 	v.Add("limit", strconv.Itoa(cli.Int("limit")))
+
+	if since := cli.String("since"); since != "" {
+		v.Add("since", cli.String("since"))
+	}
+
 	return c.doApi(ctx, http.MethodPost, "completed/get_all", v, &r)
 }

@@ -102,6 +102,11 @@ func main() {
 		Usage:   "the number of items to return",
 		Value:   30,
 	}
+	sinceFlag := cli.StringFlag{
+		Name:    "since",
+		Aliases: []string{"s"},
+		Usage:   "return items with a completed date newer than since (a string value formatted as 2007-4-29T10:13)",
+	}
 
 	app.Flags = []cli.Flag{
 		&cli.BoolFlag{
@@ -259,6 +264,7 @@ func main() {
 			Flags: []cli.Flag{
 				&filterFlag,
 				&limitFlag,
+				&sinceFlag,
 			},
 			ArgsUsage: " ",
 		},
