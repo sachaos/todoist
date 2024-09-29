@@ -96,6 +96,12 @@ func main() {
 		Aliases: []string{"r"},
 		Usage:   "set reminder (only premium users)",
 	}
+	limitFlag := cli.IntFlag{
+		Name:    "limit",
+		Aliases: []string{"l"},
+		Usage:   "the number of items to return",
+		Value:   30,
+	}
 
 	app.Flags = []cli.Flag{
 		&cli.BoolFlag{
@@ -252,6 +258,7 @@ func main() {
 			Action:  CompletedList,
 			Flags: []cli.Flag{
 				&filterFlag,
+				&limitFlag,
 			},
 			ArgsUsage: " ",
 		},
