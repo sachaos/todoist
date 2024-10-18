@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/sachaos/todoist/lib"
@@ -19,16 +20,25 @@ func Add(c *cli.Context) error {
 	client := GetClient(c)
 
 	item := todoist.Item{}
-	if !c.Args().Present() {
-		return CommandFailed
+	if c.Args().Len() != 1 {
+		return fmt.Errorf("add command requires 1 positional argument for the task title, but got %v.", c.Args().Len())
 	}
 
 	item.Content = c.Args().First()
+
 	item.Priority = priorityMapping[c.Int("priority")]
-	item.ProjectID = c.String("project-id")
-	if item.ProjectID == "" {
-		item.ProjectID = client.Store.Projects.GetIDByName(c.String("project-name"))
+
+	projectName := c.String("project-name")
+	if projectName != "" {
+		projectId := client.Store.Projects.GetIDByName(projectName)
+		if projectId == "" {
+			return fmt.Errorf("Did not find a project named '%v'", projectName)
+		}
+		item.ProjectID = projectId
+	} else {
+		item.ProjectID = c.String("project-id")
 	}
+
 	item.LabelNames = func(str string) []string {
 		stringNames := strings.Split(str, ",")
 		names := []string{}
