@@ -92,8 +92,7 @@ It has following parameters:
 ### Homebrew (Mac OS)
 
 ```
-$ brew tap sachaos/todoist
-$ brew install todoist
+$ brew install sachaos/todoist/todoist
 ```
 
 ### AUR
