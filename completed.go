@@ -21,7 +21,7 @@ func CompletedList(c *cli.Context) error {
 
 	var completed todoist.Completed
 
-	if err := client.CompletedAll(context.Background(), &completed); err != nil {
+	if err := client.CompletedAll(c, context.Background(), &completed); err != nil {
 		return err
 	}
 
