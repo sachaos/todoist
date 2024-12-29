@@ -34,9 +34,6 @@ archives:
 checksum:
   name_template: checksums.txt
 
-snapshot:
-  name_template: "{{ .Tag }}-next"
-
 changelog:
   sort: asc
   filters:
@@ -45,10 +42,10 @@ changelog:
       - '^test:'
 
 brews:
-  - tap:
+  - repository:
       owner: sachaos
       name: homebrew-todoist
-    folder: Formula
+    directory: Formula
     homepage: https://github.com/sachaos/todoist
     description: Todoist CLI client
     skip_upload: auto
