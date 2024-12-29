@@ -1,9 +1,6 @@
 version: 2
 before:
   hooks:
-    - go install golang.org/x/tools/cmd/goyacc@latest
-    - goyacc -o filter_parser.go filter_parser.y
-    - rm y.output
     - go mod download
 
 builds:
