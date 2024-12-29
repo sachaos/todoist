@@ -46,3 +46,7 @@ brews:
     homepage: https://github.com/sachaos/todoist
     description: Todoist CLI client
     skip_upload: auto
+    install: |
+      bin.install "todoist"
+      zsh_completion.install "todoist_functions.sh" => "_todoist_peco"
+      zsh_completion.install "todoist_functions_fzf.sh" => "_todoist_fzf"
