@@ -1,0 +1,46 @@
+before:
+  hooks:
+    - go get golang.org/x/tools/cmd/goyacc
+    - go yacc -o filter_parser.go filter_parser.y
+    - rm y.output
+    - go mod download
+builds:
+- binary: todoist
+  goos:
+  - darwin
+  - linux
+  - windows
+  goarch:
+  - 386
+  - amd64
+  - arm
+  - arm64
+  ldflags:
+  - -s -w -X main.version={{.Version}}
+archives:
+  - id: replace
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+brews:
+- tap:
+    owner: sachaos
+    name: homebrew-todoist
+  folder: Formula
+  homepage: https://github.com/sachaos/todoist
+  description: Todoist CLI client
+  skip_upload: auto

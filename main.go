@@ -13,12 +13,13 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/rkoesters/xdg/basedir"
-	"github.com/sachaos/todoist/lib"
+	todoist "github.com/sachaos/todoist/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli/v2"
 )
 
 var (
+	version             string
 	homePath, _         = os.UserHomeDir()
 	configPath          = filepath.Join(basedir.ConfigHome, "todoist")
 	cachePath           = filepath.Join(basedir.CacheHome, "todoist", "cache.json")
@@ -42,7 +43,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
 	app.Usage = "Todoist CLI Client"
-	app.Version = "0.20.0"
+	app.Version = version
 	app.EnableBashCompletion = true
 
 	contentFlag := cli.StringFlag{
