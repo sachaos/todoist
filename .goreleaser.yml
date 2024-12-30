@@ -27,6 +27,12 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end -}}
+    files:
+      - LICENSE
+      - README.md
+      - todoist_functions.sh
+      - todoist_functions_fzf.sh
+      - todoist_functions_fzf_bash.sh
 
 checksum:
   name_template: checksums.txt
