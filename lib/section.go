@@ -1,5 +1,7 @@
 package todoist
 
+import "strings"
+
 type Section struct {
 	HaveID
 	HaveProjectID
@@ -11,3 +13,14 @@ type Section struct {
 }
 
 type Sections []Section
+
+func (a Sections) GetIDsByName(name string) []string {
+	var ids []string
+	name = strings.ToLower(name)
+	for _, sec := range a {
+		if strings.Contains(strings.ToLower(sec.Name), name) {
+			ids = append(ids, sec.ID)
+		}
+	}
+	return ids
+}

@@ -33,6 +33,10 @@ type ProjectExpr struct {
     name string
 }
 
+type SectionExpr struct {
+    name string
+}
+
 type LabelExpr struct {
     name string
 }
@@ -79,12 +83,12 @@ var timezone = func() *time.Location {
 %type<expr> s_datetime
 %type<expr> s_date
 %type<expr> s_date_year
-%type<expr> s_overdue s_nodate s_project_key s_project_all_key s_label_key s_no_labels
+%type<expr> s_overdue s_nodate s_project_key s_project_all_key s_section_key s_label_key s_no_labels
 %type<expr> s_time
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
 %token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
-%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE LABELS '#' '@'
+%token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE LABELS '#' '@' '/'
 %left '&' '|'
 
 %%
@@ -120,6 +124,10 @@ expr
     | s_project_all_key STRING
     {
         $$ = ProjectExpr{isAll: true, name: $2.literal}
+    }
+    | s_section_key STRING
+    {
+    	$$ = SectionExpr{name: $2.literal}
     }
     | s_label_key STRING
     {
@@ -167,6 +175,12 @@ s_project_all_key
 
 s_project_key
     : '#'
+    {
+        $$ = $1
+    }
+
+s_section_key
+    : '/'
     {
         $$ = $1
     }

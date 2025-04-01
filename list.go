@@ -56,7 +56,7 @@ func List(c *cli.Context) error {
 	}
 
 	traverseItems(rootItem, func(item *todoist.Item, depth int) {
-		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
+		r, err := Eval(ex, item, client.Store.Projects, client.Store.Sections, client.Store.Labels)
 		if err != nil {
 			return
 		}
