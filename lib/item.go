@@ -28,12 +28,21 @@ type Due struct {
 type BaseItem struct {
 	HaveID
 	HaveProjectID
+	HaveSectionID
 	Content string `json:"content"`
 	UserID  string `json:"user_id"`
 }
 
 func (bitem BaseItem) GetContent() string {
 	return bitem.Content
+}
+
+func (bitem BaseItem) GetProjectID() string {
+	return bitem.ProjectID
+}
+
+func (bitem BaseItem) GetSectionID() string {
+	return bitem.SectionID
 }
 
 type CompletedItem struct {
@@ -48,10 +57,6 @@ func (item CompletedItem) DateTime() time.Time {
 	return t
 }
 
-func (item CompletedItem) GetProjectID() string {
-	return item.ProjectID
-}
-
 func (item CompletedItem) GetLabelNames() []string {
 	return []string{}
 }
@@ -62,7 +67,6 @@ type Item struct {
 	BaseItem
 	HaveParentID
 	HaveIndent
-	HaveSectionID
 	ChildItem      *Item       `json:"-"`
 	BrotherItem    *Item       `json:"-"`
 	AllDay         bool        `json:"all_day"`
@@ -113,10 +117,6 @@ func (item Item) DateTime() time.Time {
 	return t
 }
 
-func (item Item) GetProjectID() string {
-	return item.ProjectID
-}
-
 func (item Item) GetLabelNames() []string {
 	return item.LabelNames
 }
@@ -125,6 +125,7 @@ func (item Item) GetLabelNames() []string {
 type AbstractItem interface {
 	DateTime() time.Time
 	GetProjectID() string
+	GetSectionID() string
 	GetLabelNames() []string
 }
 
