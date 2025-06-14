@@ -20,7 +20,7 @@ func (c *Client) CompletedAll(cli *cli.Context, ctx context.Context, r *Complete
 	v.Add("limit", strconv.Itoa(cli.Int("limit")))
 
 	if since := cli.String("since"); since != "" {
-		v.Add("since", cli.String("since"))
+		v.Add("since", since)
 	}
 
 	return c.doApi(ctx, http.MethodPost, "completed/get_all", v, &r)
