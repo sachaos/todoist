@@ -1,9 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli/v2"
@@ -52,9 +52,31 @@ func Add(c *cli.Context) error {
 
 	item.AutoReminder = c.Bool("reminder")
 
-	if err := client.AddItem(context.Background(), item); err != nil {
-		return err
+	pc, err := GetPipelineCache(pipelineCachePath)
+	if err != nil {
+		return fmt.Errorf("failed to get pipeline cache: %w", err)
 	}
 
-	return Sync(c)
+	command := todoist.NewCommand("item_add", item.AddParam())
+
+	pipelineItem := PipelineItem{
+		Item:      item,
+		Command:   command,
+		IsQuick:   false,
+		CreatedAt: time.Now(),
+	}
+
+	err = pc.AddItem(pipelineItem)
+	if err != nil {
+		return fmt.Errorf("failed to add item to pipeline cache: %w", err)
+	}
+
+	err = WritePipelineCache(pipelineCachePath, pc)
+	if err != nil {
+		return fmt.Errorf("failed to write pipeline cache: %w", err)
+	}
+
+	fmt.Println("Task added to queue for syncing")
+	StartBackgroundSync(client, pipelineCachePath, cachePath)
+	return nil
 }

@@ -23,6 +23,7 @@ var (
 	homePath, _         = os.UserHomeDir()
 	configPath          = filepath.Join(basedir.ConfigHome, "todoist")
 	cachePath           = filepath.Join(basedir.CacheHome, "todoist", "cache.json")
+	pipelineCachePath   = filepath.Join(basedir.CacheHome, "todoist", "pipeline-cache.json")
 	CommandFailed       = errors.New("command failed")
 	IdNotFound          = errors.New("specified id not found")
 	writer              Writer
@@ -343,11 +344,31 @@ func main() {
 			ArgsUsage: " ",
 		},
 		{
+			Name:   "cache",
+			Usage:  "Show all cached tasks (synced and unsynced)",
+			Action: Cache,
+			Flags: []cli.Flag{
+				&filterFlag,
+				&sortPriorityFlag,
+			},
+			ArgsUsage: " ",
+		},
+		{
 			Name:      "quick",
 			Aliases:   []string{"q"},
 			Usage:     "Quick add a task",
 			Action:    Quick,
 			ArgsUsage: "<Item content>",
+		},
+		{
+			Name:   "__background_sync__",
+			Hidden: true,
+			Usage:  "Internal command for background sync (do not call directly)",
+			Action: func(c *cli.Context) error {
+				client := GetClient(c)
+				BackgroundSyncWorker(client, pipelineCachePath, cachePath)
+				return nil
+			},
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
