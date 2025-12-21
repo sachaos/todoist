@@ -153,3 +153,46 @@ func completedDateString(completedDate time.Time) string {
 func CompletedDateFormat(completedDate time.Time) string {
 	return completedDateString(completedDate)
 }
+
+func UnsyncedIdFormat(id string) string {
+	return color.YellowString(id)
+}
+
+func UnsyncedContentFormat(content string) string {
+	return color.YellowString(content)
+}
+
+func UnsyncedPriorityFormat(priority int) string {
+	var p int
+	switch priority {
+	case 1:
+		p = 4
+	case 2:
+		p = 3
+	case 3:
+		p = 2
+	case 4:
+		p = 1
+	default:
+		p = 4
+	}
+	return color.YellowString(fmt.Sprintf("p%d", p))
+}
+
+func UnsyncedDueDateFormat(dateStr string) string {
+	if dateStr == "" {
+		return ""
+	}
+	return color.YellowString(dateStr)
+}
+
+func UnsyncedProjectFormat(projectStr string) string {
+	if projectStr == "" {
+		return ""
+	}
+	return color.YellowString(projectStr)
+}
+
+func UnsyncedStatusFormat(status string) string {
+	return color.YellowString(status)
+}

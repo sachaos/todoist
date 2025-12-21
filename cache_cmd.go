@@ -5,38 +5,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/acarl005/stripansi"
 	todoist "github.com/sachaos/todoist/lib"
 	"github.com/urfave/cli/v2"
 )
 
-func traverseItems(item *todoist.Item, f func(item *todoist.Item, depth int), depth int) {
-	f(item, depth)
-
-	if item.ChildItem != nil {
-		traverseItems(item.ChildItem, f, depth+1)
-	}
-
-	if item.BrotherItem != nil {
-		traverseItems(item.BrotherItem, f, depth)
-	}
-}
-
-func sortItems(itemListPtr *[][]string, byIndex int) {
-	itemList := *itemListPtr
-	length := len(itemList)
-	for i := 0; i < length-1; i++ {
-		for j := 0; j < length-1-i; j++ {
-			if stripansi.Strip(itemList[j][byIndex]) > stripansi.Strip(itemList[j+1][byIndex]) {
-				tmp := itemList[j]
-				itemList[j] = itemList[j+1]
-				itemList[j+1] = tmp
-			}
-		}
-	}
-}
-
-func List(c *cli.Context) error {
+func Cache(c *cli.Context) error {
 	client := GetClient(c)
 
 	colorList := ColorList()
@@ -49,31 +22,33 @@ func List(c *cli.Context) error {
 	ex := Filter(c.String("filter"))
 
 	itemList := [][]string{}
+	syncedCount := 0
+	unsyncedCount := 0
+
 	rootItem := client.Store.RootItem
 
-	if rootItem == nil {
-		fmt.Fprintln(os.Stderr, "There is no task. You can fetch latest tasks by `todoist sync`.")
-		return nil
+	if rootItem != nil {
+		traverseItems(rootItem, func(item *todoist.Item, depth int) {
+			r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
+			if err != nil {
+				return
+			}
+			if !r || item.Checked {
+				return
+			}
+			itemList = append(itemList, []string{
+				IdFormat(item),
+				PriorityFormat(item.Priority),
+				DueDateFormat(item.DateTime(), item.AllDay),
+				ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
+					SectionFormat(item.SectionID, client.Store, c),
+				item.LabelsString(client.Store),
+				ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
+				"synced",
+			})
+			syncedCount++
+		}, 0)
 	}
-
-	traverseItems(rootItem, func(item *todoist.Item, depth int) {
-		r, err := Eval(ex, item, client.Store.Projects, client.Store.Labels)
-		if err != nil {
-			return
-		}
-		if !r || item.Checked {
-			return
-		}
-		itemList = append(itemList, []string{
-			IdFormat(item),
-			PriorityFormat(item.Priority),
-			DueDateFormat(item.DateTime(), item.AllDay),
-			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
-				SectionFormat(item.SectionID, client.Store, c),
-			item.LabelsString(client.Store),
-			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
-		})
-	}, 0)
 
 	pc, err := GetPipelineCache(pipelineCachePath)
 	if err == nil && !pc.IsEmpty() {
@@ -86,12 +61,14 @@ func List(c *cli.Context) error {
 			if pItem.IsQuick {
 				itemList = append(itemList, []string{
 					UnsyncedIdFormat("pending"),
-					UnsyncedPriorityFormat(1),
+					UnsyncedPriorityFormat(1), // Default priority
 					UnsyncedDueDateFormat(""),
 					UnsyncedProjectFormat(""),
 					"",
 					UnsyncedContentFormat(pItem.QuickText),
+					UnsyncedStatusFormat("unsynced"),
 				})
+				unsyncedCount++
 			} else {
 				item := pItem.Item
 				labelStr := ""
@@ -105,21 +82,26 @@ func List(c *cli.Context) error {
 					UnsyncedProjectFormat(ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)),
 					labelStr,
 					UnsyncedContentFormat(todoist.GetContentTitle(&item)),
+					UnsyncedStatusFormat("unsynced"),
 				})
+				unsyncedCount++
 			}
 		}
 	}
 
 	if c.Bool("priority") == true {
-		// sort output by priority
-		// and no need to use "else block" as items returned by API are already sorted by task id
 		sortItems(&itemList, 1)
 	}
 
+	fmt.Fprintf(os.Stderr, "Total cached tasks: %d (synced: %d, unsynced: %d)\n",
+		syncedCount+unsyncedCount, syncedCount, unsyncedCount)
+	if unsyncedCount > 0 {
+		fmt.Fprintf(os.Stderr, "Note: Unsynced tasks are displayed in yellow\n")
+	}
+	fmt.Fprintln(os.Stderr, "")
 	defer writer.Flush()
-
 	if c.Bool("header") {
-		writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content"})
+		writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content", "Status"})
 	}
 
 	for _, strings := range itemList {
