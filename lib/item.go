@@ -210,20 +210,8 @@ func (item *Item) MoveParam(projectId string) interface{} {
 	return param
 }
 
-func (item Item) LabelsString(store *Store) string {
-	var b strings.Builder
-	labelIDs := []string{}
-	for _, labelName := range item.LabelNames {
-		labelIDs = append(labelIDs, store.Labels.GetIDByName(labelName))
-	}
-	for i, labelId := range labelIDs {
-		label := store.FindLabel(labelId)
-		b.WriteString("@" + label.Name)
-		if i < len(labelIDs)-1 {
-			b.WriteString(",")
-		}
-	}
-	return b.String()
+func (item Item) LabelsString() string {
+	return "@" + strings.Join(item.LabelNames, ",@")
 }
 
 func (c *Client) AddItem(ctx context.Context, item Item) error {

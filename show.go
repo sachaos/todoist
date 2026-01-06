@@ -29,7 +29,7 @@ func Show(c *cli.Context) error {
 		[]string{"ID", IdFormat(item)},
 		[]string{"Content", ContentFormat(item)},
 		[]string{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
-		[]string{"Labels", item.LabelsString(client.Store)},
+		[]string{"Labels", item.LabelsString()},
 		[]string{"Priority", PriorityFormat(item.Priority)},
 		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
 		[]string{"URL", strings.Join(todoist.GetContentURL(item), ",")},
