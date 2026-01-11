@@ -214,7 +214,11 @@ func (item Item) LabelsString(store *Store) string {
 	var b strings.Builder
 	labelIDs := []string{}
 	for _, labelName := range item.LabelNames {
-		labelIDs = append(labelIDs, store.Labels.GetIDByName(labelName))
+		labelID := store.Labels.GetIDByName(labelName)
+		if labelID == "" {
+			continue
+		}
+		labelIDs = append(labelIDs, labelID)
 	}
 	for i, labelId := range labelIDs {
 		label := store.FindLabel(labelId)
