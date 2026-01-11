@@ -83,7 +83,7 @@ var timezone = func() *time.Location {
 %type<expr> s_time
 %token<token> STRING NUMBER
 %token<token> MONTH_IDENT TWELVE_CLOCK_IDENT
-%token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT
+%token<token> TODAY_IDENT TOMORROW_IDENT YESTERDAY_IDENT DAY_IDENT 
 %token<token> DUE BEFORE AFTER OVER OVERDUE NO DATE LABELS '#' '@'
 %left '&' '|'
 
@@ -258,6 +258,11 @@ s_date_year
     {
         $$ = today().AddDate(0, 0, -1)
     }
+    | DAY_IDENT
+    {
+        $$ = today().AddDate(0, 0,
+        int(DayIdentHash[strings.ToLower($1.literal)]))
+    }
 
 s_date
     : MONTH_IDENT NUMBER
@@ -323,6 +328,24 @@ var MonthIdentHash = map[string]time.Month{
     "december": time.December,
 }
 
+var DayIdentHash = map[string]time.Weekday{
+  "sun": time.Sunday,
+  "mon": time.Monday,
+  "tue": time.Tuesday,
+  "wed": time.Wednesday,
+  "thu": time.Thursday,
+  "fri": time.Friday,
+  "sat": time.Saturday,
+
+  "sunday": time.Sunday,
+  "monday": time.Monday,
+  "tuesday": time.Tuesday,
+  "wednesday": time.Wednesday,
+  "thursday": time.Thursday,
+  "friday": time.Friday,
+  "saturday": time.Saturday,
+}
+
 var TwelveClockIdentHash = map[string]bool{
     "am": false,
     "pm": true,
@@ -351,6 +374,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
             lowerToken := strings.ToLower(l.TokenText())
             if _, ok := MonthIdentHash[lowerToken]; ok {
                 token = MONTH_IDENT
+            } else if _, ok := DayIdentHash[lowerToken]; ok {
+                token = DAY_IDENT
             } else if _, ok := TwelveClockIdentHash[lowerToken]; ok {
                 token = TWELVE_CLOCK_IDENT
             } else if _, ok := TodayIdentHash[lowerToken]; ok {
