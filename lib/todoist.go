@@ -85,6 +85,54 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	return json.NewDecoder(resp.Body).Decode(&res)
 }
 
+func (c *Client) doRestApi(ctx context.Context, method string, uri string, body interface{}, res interface{}) error {
+	c.Log("doRestApi: called")
+	u, err := url.Parse(Server)
+	if err != nil {
+		return err
+	}
+	u.Path = path.Join(u.Path, uri)
+
+	c.Log("config: %#v", c.config)
+
+	var bodyReader io.Reader
+	if body != nil {
+		jsonData, err := json.Marshal(body)
+		if err != nil {
+			return err
+		}
+		bodyReader = strings.NewReader(string(jsonData))
+	}
+
+	req, err := http.NewRequest(method, u.String(), bodyReader)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.config.AccessToken)
+	req = req.WithContext(ctx)
+
+	c.Log("request: %#v", req)
+	c.Log("request.URL: %#v", req.URL)
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	c.Log("response: %#v", resp)
+
+	if resp.StatusCode != http.StatusOK {
+		c.Log(ParseAPIError("bad request", resp).Error())
+		return ParseAPIError("bad request", resp)
+	} else if res == nil {
+		return nil
+	}
+	return json.NewDecoder(resp.Body).Decode(&res)
+}
+
 type ExecResult struct {
 	SyncToken     string      `json:"sync_token"`
 	SyncStatus    interface{} `json:"sync_status"`
@@ -97,13 +145,13 @@ func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
 }
 
 func (c *Client) QuickCommand(ctx context.Context, text string) error {
-	var r ExecResult
+	var item Item
 
-	values := url.Values{
-		"text": {text},
+	body := map[string]interface{}{
+		"text": text,
 	}
 
-	return c.doApi(ctx, http.MethodPost, "quick/add", values, &r)
+	return c.doRestApi(ctx, http.MethodPost, "tasks/quick", body, &item)
 }
 
 func (c *Client) Sync(ctx context.Context) error {
