@@ -43,14 +43,25 @@ const Server = "https://api.todoist.com/api/v1/"
 ```
 
 #### 2. Quick Add Endpoint
-**File**: `lib/todoist.go:106`
+**File**: `lib/todoist.go`
 ```go
 // Current
+var r ExecResult
+values := url.Values{"text": {text}}
 return c.doApi(ctx, http.MethodPost, "quick/add", values, &r)
 
 // Target
-return c.doApi(ctx, http.MethodPost, "tasks/quick_add", values, &r)
+var item Item
+body := map[string]interface{}{"text": text}
+return c.doRestApi(ctx, http.MethodPost, "tasks/quick", body, &item)
 ```
+
+**Changes**:
+- Endpoint: `quick/add` → `tasks/quick`
+- Content-Type: `application/x-www-form-urlencoded` → `application/json`
+- Request body: URL-encoded values → JSON body
+- Response: `ExecResult` → `Item` (task object)
+- Added new `doRestApi()` method for JSON REST endpoints
 
 #### 3. Completed Tasks Endpoint
 **File**: `lib/completed.go:15`
@@ -58,14 +69,22 @@ return c.doApi(ctx, http.MethodPost, "tasks/quick_add", values, &r)
 // Current
 return c.doApi(ctx, http.MethodPost, "completed/get_all", url.Values{}, &r)
 
-// Target (note: may need to verify exact endpoint and response format)
-return c.doApi(ctx, http.MethodGet, "tasks/completed_by_completion_date", url.Values{}, &r)
+// Target
+now := time.Now()
+since := now.AddDate(0, 0, -30).Format(time.RFC3339)
+until := now.Format(time.RFC3339)
+params := url.Values{
+    "since": {since},
+    "until": {until},
+}
+return c.doApi(ctx, http.MethodGet, "tasks/completed/by_completion_date", params, &r)
 ```
 
-**Note**: The completed tasks endpoint may require additional investigation:
-- v1 uses `GET` method (vs `POST` in v9)
-- Response format may differ
-- May need pagination handling
+**Changes**:
+- HTTP method: `POST` → `GET`
+- Endpoint: `completed/get_all` → `tasks/completed/by_completion_date`
+- Required parameters: `since` and `until` (ISO 8601 UTC format with Z suffix, max 3 month range)
+- Default behavior: Last 30 days of completed tasks
 
 ---
 
