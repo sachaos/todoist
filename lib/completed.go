@@ -14,9 +14,9 @@ type Completed struct {
 
 func (c *Client) CompletedAll(ctx context.Context, r *Completed) error {
 	// v1 API requires since/until parameters in UTC with "Z" suffix (max 3 month range)
-	// Default to last 30 days
+	// Default to last 90 days (max allowed)
 	now := time.Now().UTC()
-	since := now.AddDate(0, 0, -30).Format("2006-01-02T15:04:05Z")
+	since := now.AddDate(0, 0, -90).Format("2006-01-02T15:04:05Z")
 	until := now.Format("2006-01-02T15:04:05Z")
 
 	params := url.Values{
