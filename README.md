@@ -3,7 +3,19 @@ Todoist CLI client
 
 [Todoist](https://todoist.com/) CLI Client, written in Golang.
 
-> **Upgrading to v0.23?** This version migrates to Todoist API v1, which uses alphanumeric IDs instead of numeric IDs. After upgrading, run `todoist sync` to refresh your local cache before using other commands.
+---
+
+## ⚠️ IMPORTANT: Upgrade Required Before February 10, 2026 ⚠️
+
+**All users must upgrade to v0.23 or later.** Older versions will stop working on February 10, 2026 when Todoist shuts down the Todoist Sync API v9 and Todoist REST API v2.
+
+After upgrading:
+1. Run `todoist sync` to refresh your local cache
+2. Note that task/project IDs are now alphanumeric instead of numeric
+
+For more information, see the [official Todoist API announcement](https://groups.google.com/a/doist.com/g/todoist-api/c/brwENjfT_tk).
+
+---
 
 ## Description
 
