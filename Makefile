@@ -25,7 +25,7 @@ release: prepare
 	ghr -u $(GITHUB_USERNAME) -t $(shell cat github_token) --replace ${VERSION} $(ARTIFACTS_DIR)
 
 filter_parser.go: filter_parser.y
-	go get golang.org/x/tools/cmd/goyacc
+	go install golang.org/x/tools/cmd/goyacc@latest
 	goyacc -o filter_parser.go filter_parser.y
 	rm y.output
 
