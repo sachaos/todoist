@@ -7,10 +7,10 @@ This document outlines the minimal migration strategy from v9 Sync API to v1 API
 **Current State**: `https://todoist.com/API/v9/`
 **Target State**: `https://api.todoist.com/api/v1/`
 
-**Key Finding**: The codebase is already largely compatible with v1 API. Only 3 endpoint changes required.
+**Key Finding**: The codebase is largely compatible with v1 API. Only 3 endpoint changes required. ID format changed but cache refreshes automatically on sync.
 
 **Decisions**:
-- **Cache Strategy**: Invalidate on error (defensive), no proactive migration needed since IDs are already strings
+- **Cache Strategy**: Users must run `todoist sync` after upgrading (sync always does full refresh)
 - **Architecture**: Keep existing Sync API patterns, no REST API introduction
 - **Scope**: Minimal changes only - strictly what migration guide requires
 
@@ -22,7 +22,8 @@ This document outlines the minimal migration strategy from v9 Sync API to v1 API
 
 | Aspect | Current State | v1 Requirement | Status |
 |--------|--------------|----------------|--------|
-| ID types | `string` | `string` | ✓ Compatible |
+| ID types (Go) | `string` | `string` | ✓ Compatible |
+| ID format | Numeric (e.g., `123456789`) | Alphanumeric (e.g., `6Cq8vCpPP3pfHAx8`) | ⚠️ Format changed |
 | Map types | `map[string]*Item` etc. | `map[string]*...` | ✓ Compatible |
 | Labels field | `[]string` (label names) with json `"labels"` | `labels: list[str]` | ✓ Compatible |
 | Sync command types | `item_add`, `item_close`, etc. | Same | ✓ Compatible |
@@ -30,7 +31,7 @@ This document outlines the minimal migration strategy from v9 Sync API to v1 API
 | Sync endpoint path | `/sync` | `/sync` | ✓ Compatible |
 | Bearer token auth | Yes | Yes | ✓ Compatible |
 
-### Required Changes (3 Total)
+### Required Changes (3 Code + 1 Documentation)
 
 #### 1. Base URL Change
 **File**: `lib/main.go:15`
@@ -86,6 +87,21 @@ return c.doApi(ctx, http.MethodGet, "tasks/completed/by_completion_date", params
 - Required parameters: `since` and `until` (ISO 8601 UTC format with Z suffix, max 3 month range)
 - Default behavior: Last 30 days of completed tasks
 
+#### 4. ID Format Change
+
+**Impact**: All entity IDs (tasks, projects, labels, sections, etc.) changed format from numeric to alphanumeric.
+
+| Entity | v9 Format | v1 Format |
+|--------|-----------|-----------|
+| Task ID | Numeric (`123456789`) | Alphanumeric (`6Cq8vCpPP3pfHAx8`) |
+| Project ID | Numeric | Alphanumeric |
+| Label ID | Numeric | Alphanumeric |
+| Section ID | Numeric | Alphanumeric |
+
+**Required Action**: Users must run `todoist sync` after upgrading to refresh the cache with new IDs.
+
+Note: The sync command always performs a full refresh (sync_token is hardcoded to `"*"`), so no code changes are needed for cache invalidation.
+
 ---
 
 ## Implementation Checklist
@@ -99,10 +115,8 @@ return c.doApi(ctx, http.MethodGet, "tasks/completed/by_completion_date", params
 - [ ] Update `lib/completed.go:15` - Completed tasks endpoint
 - [ ] Verify response format for completed tasks (may need struct updates)
 
-### Phase 3: Defensive Cache Handling
-- [ ] Add graceful error handling in `cache.go` if unmarshal fails
-- [ ] Log message about cache invalidation
-- [ ] Force re-sync on parse error
+### Phase 3: Documentation
+- [ ] Update README to note users must run `todoist sync` after upgrading
 
 ### Phase 4: Testing
 - [ ] Test `sync` command
@@ -123,7 +137,7 @@ return c.doApi(ctx, http.MethodGet, "tasks/completed/by_completion_date", params
 | Base URL change breaks sync | Low | High | Test immediately after change |
 | Quick add response format differs | Medium | Low | Verify response parsing |
 | Completed endpoint response differs | High | Medium | Investigate v1 response format |
-| Cache incompatibility | Low | Low | Graceful cache invalidation |
+| Cache incompatibility due to ID format change | **Certain** | Low | Document: run `todoist sync` after upgrade |
 
 ---
 
