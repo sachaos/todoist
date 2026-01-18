@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -12,7 +13,7 @@ var (
 )
 
 const (
-	Server = "https://todoist.com/API/v9/"
+	Server = "https://api.todoist.com/api/v1/"
 )
 
 func ParseAPIError(prefix string, resp *http.Response) error {
@@ -21,9 +22,14 @@ func ParseAPIError(prefix string, resp *http.Response) error {
 		Error string `json:"error"`
 	}
 
-	json.NewDecoder(resp.Body).Decode(&e)
+	bodyBytes, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	json.Unmarshal(bodyBytes, &e)
 	if e.Error != "" {
 		errMsg = fmt.Sprintf("%s: %s", errMsg, e.Error)
+	} else if len(bodyBytes) > 0 {
+		errMsg = fmt.Sprintf("%s: %s", errMsg, string(bodyBytes))
 	}
 
 	return errors.New(errMsg)

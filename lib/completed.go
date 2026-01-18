@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type Completed struct {
@@ -12,5 +13,16 @@ type Completed struct {
 }
 
 func (c *Client) CompletedAll(ctx context.Context, r *Completed) error {
-	return c.doApi(ctx, http.MethodPost, "completed/get_all", url.Values{}, &r)
+	// v1 API requires since/until parameters in UTC with "Z" suffix (max 3 month range)
+	// Default to last 90 days (max allowed)
+	now := time.Now().UTC()
+	since := now.AddDate(0, 0, -90).Format("2006-01-02T15:04:05Z")
+	until := now.Format("2006-01-02T15:04:05Z")
+
+	params := url.Values{
+		"since": {since},
+		"until": {until},
+	}
+
+	return c.doApi(ctx, http.MethodGet, "tasks/completed/by_completion_date", params, &r)
 }

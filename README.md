@@ -3,6 +3,8 @@ Todoist CLI client
 
 [Todoist](https://todoist.com/) CLI Client, written in Golang.
 
+> **Upgrading to v0.23?** This version migrates to Todoist API v1, which uses alphanumeric IDs instead of numeric IDs. After upgrading, run `todoist sync` to refresh your local cache before using other commands.
+
 ## Description
 
 [Todoist](https://todoist.com/) is a cool TODO list web application.
