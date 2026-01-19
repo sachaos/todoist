@@ -65,6 +65,13 @@ func ContentFormat(item todoist.ContentCarrier) string {
 	return todoist.GetContentTitle(item)
 }
 
+func DescriptionFormat(item *todoist.Item) string {
+	if item.Description == "" {
+		return ""
+	}
+	return item.Description
+}
+
 func PriorityFormat(priority int) string {
 	priorityColor := color.New(color.Bold)
 	var p int
