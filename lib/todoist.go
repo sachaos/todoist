@@ -183,3 +183,56 @@ func (c *Client) CompleteItemIDByPrefix(prefix string) (id string, err error) {
 		return prefix, nil
 	}
 }
+
+// doRestApiV2 makes requests to the Todoist REST API v2
+// Used for endpoints like /reminders that are not part of the Sync API
+func (c *Client) doRestApiV2(ctx context.Context, method string, uri string, body interface{}, res interface{}) error {
+	c.Log("doRestApiV2: called")
+	u, err := url.Parse(RestV2Server)
+	if err != nil {
+		return err
+	}
+	u.Path = path.Join(u.Path, uri)
+
+	c.Log("config: %#v", c.config)
+
+	var bodyReader io.Reader
+	if body != nil {
+		jsonData, err := json.Marshal(body)
+		if err != nil {
+			return err
+		}
+		bodyReader = strings.NewReader(string(jsonData))
+	}
+
+	req, err := http.NewRequest(method, u.String(), bodyReader)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.config.AccessToken)
+	req = req.WithContext(ctx)
+
+	c.Log("request: %#v", req)
+	c.Log("request.URL: %#v", req.URL)
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	c.Log("response: %#v", resp)
+
+	// Accept both 200 OK and 204 No Content as success
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
+		c.Log(ParseAPIError("bad request", resp).Error())
+		return ParseAPIError("bad request", resp)
+	}
+
+	if res != nil && resp.StatusCode == http.StatusOK {
+		return json.NewDecoder(resp.Body).Decode(res)
+	}
+	return nil
+}
