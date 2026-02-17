@@ -19,21 +19,23 @@ func due(s string) *todoist.Due {
 	date := t.Format(todoist.RFC3339DateTime)
 	return &todoist.Due{
 		Date: date,
+		// these tests will break in other timezones
+		TimeZone: "Asia/Tokyo",
 	}
 }
 
 func testFilterEval(t *testing.T, f string, item todoist.Item, expect bool) {
-	actual, _ := Eval(Filter(f), &item, todoist.Projects{}, todoist.Labels{})
+	actual, _ := Eval(Filter(f), &item, todoist.Projects{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
 func testFilterEvalWithProject(t *testing.T, f string, item todoist.Item, projects todoist.Projects, expect bool) {
-	actual, _ := Eval(Filter(f), &item, projects, todoist.Labels{})
+	actual, _ := Eval(Filter(f), &item, projects)
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
-func testFilterEvalWithLabel(t *testing.T, f string, item todoist.Item, labels todoist.Labels, expect bool) {
-	actual, _ := Eval(Filter(f), &item, todoist.Projects{}, labels)
+func testFilterEvalWithLabel(t *testing.T, f string, item todoist.Item, expect bool) {
+	actual, _ := Eval(Filter(f), &item, todoist.Projects{})
 	assert.Equal(t, expect, actual, "they should be equal")
 }
 
@@ -47,26 +49,12 @@ func TestPriorityEval(t *testing.T) {
 }
 
 func TestLabelEval(t *testing.T) {
-	labels := todoist.Labels{
-		todoist.Label{
-			HaveID: todoist.HaveID{ID: "1"},
-			Name:   "must",
-		},
-		todoist.Label{
-			HaveID: todoist.HaveID{ID: "2"},
-			Name:   "icebox",
-		}, todoist.Label{
-			HaveID: todoist.HaveID{ID: "3"},
-			Name:   "another",
-		},
-	}
-
 	item1 := todoist.Item{}
-	item1.LabelNames = []string{"1", "2"}
+	item1.LabelNames = []string{"must", "icebox"}
 
-	// testFilterEvalWithLabel(t, "@must", item1, labels, true)
-	// testFilterEvalWithLabel(t, "@icebox", item1, labels, true)
-	testFilterEvalWithLabel(t, "@another", item1, labels, false)
+	testFilterEvalWithLabel(t, "@must", item1, true)
+	testFilterEvalWithLabel(t, "@icebox", item1, true)
+	testFilterEvalWithLabel(t, "@another", item1, false)
 }
 
 func TestProjectEval(t *testing.T) {
@@ -114,16 +102,16 @@ func TestDueOnEval(t *testing.T) {
 	timeNow := time.Date(2017, time.October, 2, 1, 0, 0, 0, testTimeZone) // JST: Mon 2 Oct 2017 00:00:00
 	setNow(timeNow)
 
-	// testFilterEval(t, "today", todoist.Item{Due: due("Sun 1 Oct 2017 15:00:00 +0000")}, true)  // JST: Mon 2 Oct 2017 00:00:00
-	// testFilterEval(t, "today", todoist.Item{Due: due("Mon 2 Oct 2017 14:59:59 +0000")}, true)  // JST: Mon 2 Oct 2017 23:59:59
+	testFilterEval(t, "today", todoist.Item{Due: due("Sun 1 Oct 2017 15:00:00 +0000")}, true)  // JST: Mon 2 Oct 2017 00:00:00
+	testFilterEval(t, "today", todoist.Item{Due: due("Mon 2 Oct 2017 14:59:59 +0000")}, true)  // JST: Mon 2 Oct 2017 23:59:59
 	testFilterEval(t, "today", todoist.Item{Due: due("Mon 2 Oct 2017 15:00:00 +0000")}, false) // JST: Tue 3 Oct 2017 00:00:00
 
-	// testFilterEval(t, "yesterday", todoist.Item{Due: due("Sun 1 Oct 2017 14:59:59 +0000")}, true)   // JST: Sun 1 Oct 2017 23:59:59
-	// testFilterEval(t, "yesterday", todoist.Item{Due: due("Sat 30 Sep 2017 15:00:00 +0000")}, true)  // JST: Sun 1 Oct 2017 00:00:00
-	// testFilterEval(t, "yesterday", todoist.Item{Due: due("Sat 30 Sep 2017 14:59:59 +0000")}, false) // JST: Sat 30 Sept 2017 23:59:59
-	// testFilterEval(t, "tomorrow", todoist.Item{Due: due("Mon 2 Oct 2017 15:00:00 +0000")}, true)  // JST: Tue 3 Oct 2017 00:00:00
-	// testFilterEval(t, "tomorrow", todoist.Item{Due: due("Tue 3 Oct 2017 14:59:59 +0000")}, true)  // JST: Tue 3 Oct 2017 23:59:59
-	testFilterEval(t, "tomorrow", todoist.Item{Due: due("Tue 3 Oct 2017 15:00:00 +0000")}, false) // JST: Wed 4 Oct 2017 00:00:00
+	testFilterEval(t, "yesterday", todoist.Item{Due: due("Sun 1 Oct 2017 14:59:59 +0000")}, true)   // JST: Sun 1 Oct 2017 23:59:59
+	testFilterEval(t, "yesterday", todoist.Item{Due: due("Sat 30 Sep 2017 15:00:00 +0000")}, true)  // JST: Sun 1 Oct 2017 00:00:00
+	testFilterEval(t, "yesterday", todoist.Item{Due: due("Sat 30 Sep 2017 14:59:59 +0000")}, false) // JST: Sat 30 Sept 2017 23:59:59
+	testFilterEval(t, "tomorrow", todoist.Item{Due: due("Mon 2 Oct 2017 15:00:00 +0000")}, true)    // JST: Tue 3 Oct 2017 00:00:00
+	testFilterEval(t, "tomorrow", todoist.Item{Due: due("Tue 3 Oct 2017 14:59:59 +0000")}, true)    // JST: Tue 3 Oct 2017 23:59:59
+	testFilterEval(t, "tomorrow", todoist.Item{Due: due("Tue 3 Oct 2017 15:00:00 +0000")}, false)   // JST: Wed 4 Oct 2017 00:00:00
 
 	testFilterEval(t, "10/2/2017", todoist.Item{Due: due("Mon 2 Oct 2017 01:00:00 +0000")}, true)        // JST: Mon 2 Oct 2017 10:00:00
 	testFilterEval(t, "10/2/2017 10:00", todoist.Item{Due: due("Mon 2 Oct 2017 01:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 10:00:00
@@ -140,10 +128,10 @@ func TestDueBeforeEval(t *testing.T) {
 	timeNow := time.Date(2017, time.October, 2, 1, 0, 0, 0, testTimeZone) // JST: Mon 2 Oct 2017 00:00:00
 	setNow(timeNow)
 
-	testFilterEval(t, "due before: 10/2/2017", todoist.Item{Due: due("Sun 1 Oct 2017 15:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 00:00:00
-	// testFilterEval(t, "due before: 10/2/2017", todoist.Item{Due: due("Sun 1 Oct 2017 14:59:59 +0000")}, true)  // JST: Sun 1 Oct 2017 23:59:59
+	testFilterEval(t, "due before: 10/2/2017", todoist.Item{Due: due("Sun 1 Oct 2017 15:00:00 +0000")}, false)      // JST: Mon 2 Oct 2017 00:00:00
+	testFilterEval(t, "due before: 10/2/2017", todoist.Item{Due: due("Sun 1 Oct 2017 14:59:59 +0000")}, true)       // JST: Sun 1 Oct 2017 23:59:59
 	testFilterEval(t, "due before: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 4:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 13:00:00
-	// testFilterEval(t, "due before: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 3:59:00 +0000")}, true)  // JST: Mon 2 Oct 2017 12:59:00
+	testFilterEval(t, "due before: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 3:59:00 +0000")}, true)  // JST: Mon 2 Oct 2017 12:59:00
 
 	testFilterEval(t, "due before: 10/2/2017 13:00", todoist.Item{Due: nil}, false) // JST: Mon 2 Oct 2017 12:59:00
 }
@@ -152,22 +140,22 @@ func TestOverDueEval(t *testing.T) {
 	timeNow := time.Date(2017, time.October, 2, 12, 0, 0, 0, testTimeZone) // JST: Mon 2 Oct 2017 12:00:00
 	setNow(timeNow)
 
-	// testFilterEval(t, "over due", todoist.Item{Due: due("Mon 2 Oct 2017 2:59:00 +0000")}, true) // JST: Mon 2 Oct 2017 11:59:00
-	// testFilterEval(t, "over due", todoist.Item{Due: due("Mon 2 Oct 2017 3:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 12:00:00
-	// testFilterEval(t, "od", todoist.Item{Due: due("Mon 2 Oct 2017 2:59:00 +0000")}, true)        // JST: Mon 2 Oct 2017 11:59:00
-	// testFilterEval(t, "od", todoist.Item{Due: due("Mon 2 Oct 2017 3:00:00 +0000")}, false)       // JST: Mon 2 Oct 2017 12:00:00
+	testFilterEval(t, "over due", todoist.Item{Due: due("Mon 2 Oct 2017 2:59:00 +0000")}, true)  // JST: Mon 2 Oct 2017 11:59:00
+	testFilterEval(t, "over due", todoist.Item{Due: due("Mon 2 Oct 2017 3:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 12:00:00
+	testFilterEval(t, "od", todoist.Item{Due: due("Mon 2 Oct 2017 2:59:00 +0000")}, true)        // JST: Mon 2 Oct 2017 11:59:00
+	testFilterEval(t, "od", todoist.Item{Due: due("Mon 2 Oct 2017 3:00:00 +0000")}, false)       // JST: Mon 2 Oct 2017 12:00:00
 
-	// testFilterEval(t, "od", todoist.Item{Due: nil}, false) // JST: Mon 2 Oct 2017 12:00:00
+	testFilterEval(t, "od", todoist.Item{Due: nil}, false) // JST: Mon 2 Oct 2017 12:00:00
 }
 
 func TestDueAfterEval(t *testing.T) {
 	timeNow := time.Date(2017, time.October, 2, 1, 0, 0, 0, testTimeZone) // JST: Mon 2 Oct 2017 00:00:00
 	setNow(timeNow)
 
-	//testFilterEval(t, "due after: 10/2/2017", todoist.Item{Due: due("Mon 2 Oct 2017 14:59:59 +0000")}, false)      // JST: Mon 2 Oct 2017 23:59:59
-	//testFilterEval(t, "due after: 10/2/2017", todoist.Item{Due: due("Mon 2 Oct 2017 15:00:00 +0000")}, true)       // JST: Tue 3 Oct 2017 00:00:00
-	//testFilterEval(t, "due after: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 4:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 13:00:00
-	//testFilterEval(t, "due after: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 4:01:00 +0000")}, true)  // JST: Mon 2 Oct 2017 13:01:00
-	//
-	//testFilterEval(t, "due after: 10/2/2017 13:00", todoist.Item{Due: nil}, false) // JST: Mon 2 Oct 2017 13:01:00
+	testFilterEval(t, "due after: 10/2/2017", todoist.Item{Due: due("Mon 2 Oct 2017 14:59:59 +0000")}, false)      // JST: Mon 2 Oct 2017 23:59:59
+	testFilterEval(t, "due after: 10/2/2017", todoist.Item{Due: due("Mon 2 Oct 2017 15:00:00 +0000")}, true)       // JST: Tue 3 Oct 2017 00:00:00
+	testFilterEval(t, "due after: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 4:00:00 +0000")}, false) // JST: Mon 2 Oct 2017 13:00:00
+	testFilterEval(t, "due after: 10/2/2017 13:00", todoist.Item{Due: due("Mon 2 Oct 2017 4:01:00 +0000")}, true)  // JST: Mon 2 Oct 2017 13:01:00
+
+	testFilterEval(t, "due after: 10/2/2017 13:00", todoist.Item{Due: nil}, false) // JST: Mon 2 Oct 2017 13:01:00
 }
