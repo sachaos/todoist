@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -39,14 +40,14 @@ func (c *Client) Log(format string, v ...interface{}) {
 }
 
 func (c *Client) doApi(ctx context.Context, method string, uri string, params url.Values, res interface{}) error {
-	c.Log("doAPi: called")
+	c.Log("=== doAPi: called ===")
 	u, err := url.Parse(Server)
 	if err != nil {
 		return err
 	}
 	u.Path = path.Join(u.Path, uri)
 
-	c.Log("config: %#v", c.config)
+	c.Log("config - color:%t debug:%t shortdatetimeformat:%s shortdateformat:%s", c.config.Color, c.config.DebugMode, c.config.DateTimeFormat, c.config.DateFormat)
 
 	var body io.Reader
 	if method == http.MethodGet {
@@ -64,9 +65,13 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	req.Header.Set("Authorization", "Bearer "+c.config.AccessToken)
 	req = req.WithContext(ctx)
 
-	c.Log("request: %#v", req)
-	c.Log("request.URL: %#v", req.URL)
-	c.Log("params: %#v", body)
+	c.Log("request.URL: %s", req.URL)
+	marshaled, err := json.Marshal(params)
+
+	if err != nil {
+		return err
+	}
+	c.Log("params: %s", marshaled)
 
 	resp, err := c.Do(req)
 	if err != nil {
@@ -74,7 +79,19 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	}
 	defer resp.Body.Close()
 
-	c.Log("response: %#v", resp)
+	c.Log("resp status code: %s", resp.Status)
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	respBodyJson, err := json.Marshal(string(respBody))
+	if err != nil {
+		return err
+	}
+
+	c.Log("resp body: %s", respBodyJson)
 
 	if resp.StatusCode != http.StatusOK {
 		c.Log(ParseAPIError("bad request", resp).Error())
@@ -82,7 +99,8 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	} else if res == nil {
 		return nil
 	}
-	return json.NewDecoder(resp.Body).Decode(&res)
+	return json.Unmarshal(respBody, &res)
+
 }
 
 func (c *Client) doRestApi(ctx context.Context, method string, uri string, body interface{}, res interface{}) error {
