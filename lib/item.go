@@ -218,7 +218,11 @@ func (item Item) LabelsString(store *Store) string {
 	}
 	for i, labelId := range labelIDs {
 		label := store.FindLabel(labelId)
-		b.WriteString("@" + label.Name)
+		if label != nil {
+			b.WriteString("@" + label.Name)
+		} else {
+			b.WriteString("@" + item.LabelNames[i])
+		}
 		if i < len(labelIDs)-1 {
 			b.WriteString(",")
 		}
