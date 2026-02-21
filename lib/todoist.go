@@ -77,7 +77,7 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 	c.Log("response: %#v", resp)
 
 	if resp.StatusCode != http.StatusOK {
-		c.Log(ParseAPIError("bad request", resp).Error())
+		c.Log("%s", ParseAPIError("bad request", resp).Error())
 		return ParseAPIError("bad request", resp)
 	} else if res == nil {
 		return nil
@@ -125,7 +125,7 @@ func (c *Client) doRestApi(ctx context.Context, method string, uri string, body 
 	c.Log("response: %#v", resp)
 
 	if resp.StatusCode != http.StatusOK {
-		c.Log(ParseAPIError("bad request", resp).Error())
+		c.Log("%s", ParseAPIError("bad request", resp).Error())
 		return ParseAPIError("bad request", resp)
 	} else if res == nil {
 		return nil
