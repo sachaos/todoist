@@ -111,7 +111,7 @@ $ brew install sachaos/todoist/todoist
 
 ### AUR
 
-* [todoist](https://aur.archlinux.org/packages/todoist/)
+* [todoist-bin](https://aur.archlinux.org/packages/todoist-bin/)
 * [todoist-git](https://aur.archlinux.org/packages/todoist-git/)
 
 ### Nix/NixOS

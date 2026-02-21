@@ -69,7 +69,7 @@ func List(c *cli.Context) error {
 			DueDateFormat(item.DateTime(), item.AllDay),
 			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
 				SectionFormat(item.SectionID, client.Store, c),
-			item.LabelsString(client.Store),
+			item.LabelsString(),
 			ContentPrefix(client.Store, item, depth, c) + ContentFormat(item),
 		})
 	}, 0)
