@@ -211,6 +211,9 @@ func (item *Item) MoveParam(projectId string) interface{} {
 }
 
 func (item Item) LabelsString() string {
+	if len(item.LabelNames) == 0 {
+		return ""
+	}
 	return "@" + strings.Join(item.LabelNames, ",@")
 }
 
