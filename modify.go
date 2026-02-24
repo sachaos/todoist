@@ -24,18 +24,28 @@ func Modify(c *cli.Context) error {
 	if item == nil {
 		return IdNotFound
 	}
-	item.Content = c.String("content")
-	item.Priority = priorityMapping[c.Int("priority")]
-	item.LabelNames = func(str string) []string {
-		stringNames := strings.Split(str, ",")
-		names := []string{}
-		for _, stringName := range stringNames {
-			names = append(names, stringName)
-		}
-		return names
-	}(c.String("label-names"))
+	if c.IsSet("content") {
+		item.Content = c.String("content")
+	}
+	if c.IsSet("priority") {
+		item.Priority = priorityMapping[c.Int("priority")]
+	}
+	if c.IsSet("label-names") {
+		item.LabelNames = func(str string) []string {
+			stringNames := strings.Split(str, ",")
+			names := []string{}
+			for _, stringName := range stringNames {
+				if stringName != "" {
+					names = append(names, stringName)
+				}
+			}
+			return names
+		}(c.String("label-names"))
+	}
 
-	item.Due = &todoist.Due{String: c.String("date")}
+	if c.IsSet("date") {
+		item.Due = &todoist.Due{String: c.String("date")}
+	}
 
 	projectID := c.String("project-id")
 	if projectID == "" {
