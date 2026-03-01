@@ -17,12 +17,12 @@ type Config struct {
 	Color          bool
 	DateFormat     string
 	DateTimeFormat string
-	BaseURL        string
+	APIURL         string
 }
 
 func (c *Client) baseURL() string {
-	if c.config.BaseURL != "" {
-		return c.config.BaseURL
+	if c.config.APIURL != "" {
+		return c.config.APIURL
 	}
 	return Server
 }

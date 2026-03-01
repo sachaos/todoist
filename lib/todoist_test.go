@@ -17,7 +17,7 @@ func TestBaseURL_Default(t *testing.T) {
 
 func TestBaseURL_Custom(t *testing.T) {
 	custom := "https://proxy.example.com/api/v1/"
-	client := NewClient(&Config{AccessToken: "token", BaseURL: custom})
+	client := NewClient(&Config{AccessToken: "token", APIURL: custom})
 	if client.baseURL() != custom {
 		t.Errorf("expected %s, got %s", custom, client.baseURL())
 	}
@@ -32,7 +32,7 @@ func TestDoApi_UsesCustomBaseURL(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(&Config{AccessToken: "token", BaseURL: srv.URL + "/api/v1/"})
+	client := NewClient(&Config{AccessToken: "token", APIURL: srv.URL + "/api/v1/"})
 	client.doApi(context.Background(), http.MethodPost, "sync", url.Values{"sync_token": {"*"}}, nil)
 
 	if gotPath != "/api/v1/sync" {
@@ -49,7 +49,7 @@ func TestDoRestApi_UsesCustomBaseURL(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	client := NewClient(&Config{AccessToken: "token", BaseURL: srv.URL + "/api/v1/"})
+	client := NewClient(&Config{AccessToken: "token", APIURL: srv.URL + "/api/v1/"})
 	client.doRestApi(context.Background(), http.MethodPost, "tasks/quick", nil, nil)
 
 	if gotPath != "/api/v1/tasks/quick" {
