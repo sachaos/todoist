@@ -184,7 +184,7 @@ func main() {
 				panic(fmt.Errorf("Config file has wrong permissions. Make sure to give permissions 600 to file %s \n", configFile))
 			}
 		}
-		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color"), DateFormat: viper.GetString("shortdateformat"), DateTimeFormat: viper.GetString("shortdatetimeformat")}
+		config := &todoist.Config{AccessToken: viper.GetString("token"), DebugMode: c.Bool("debug"), Color: viper.GetBool("color"), DateFormat: viper.GetString("shortdateformat"), DateTimeFormat: viper.GetString("shortdatetimeformat"), BaseURL: viper.GetString("api_url")}
 
 		client := todoist.NewClient(config)
 		client.Store = &store
