@@ -1,4 +1,4 @@
-select_items_command="todoist --namespace --project-namespace list | fzf | cut -d ' ' -f 1 | tr '\n' ' '"
+select_items_command="todoist --namespace --project-namespace list | fzf --ansi | cut -d ' ' -f 1 | tr '\n' ' '"
 
 function insert-in-buffer () {
     if [ -n "$1" ]; then
@@ -25,7 +25,7 @@ bindkey "^xtt" fzf-todoist-item
 
 # todoist find project
 function fzf-todoist-project () {
-    local SELECTED_PROJECT="$(todoist --project-namespace projects | fzf | head -n1 | cut -d ' ' -f 1)"
+    local SELECTED_PROJECT="$(todoist --project-namespace projects | fzf --ansi | head -n1 | cut -d ' ' -f 1)"
     insert-in-buffer "${SELECTED_PROJECT}" "-P"
 }
 zle -N fzf-todoist-project
@@ -33,7 +33,7 @@ bindkey "^xtp" fzf-todoist-project
 
 # todoist find labels
 function fzf-todoist-labels () {
-    local SELECTED_LABELS="$(todoist labels | fzf | cut -d ' ' -f 1 | tr '\n' ',' | sed -e 's/,$//')"
+    local SELECTED_LABELS="$(todoist labels | fzf --ansi | cut -d ' ' -f 1 | tr '\n' ',' | sed -e 's/,$//')"
     insert-in-buffer "${SELECTED_LABELS}" "-L"
 }
 zle -N fzf-todoist-labels
@@ -50,7 +50,7 @@ function fzf-todoist-date () {
         OPTION="-d # day"
     fi
 
-    local SELECTED_DATE="$(seq 0 30 | xargs -I# date $OPTION '+%d/%m/%Y %a' | fzf | cut -d ' ' -f 1)"
+    local SELECTED_DATE="$(seq 0 30 | xargs -I# date $OPTION '+%d/%m/%Y %a' | fzf --ansi | cut -d ' ' -f 1)"
     insert-in-buffer "'${SELECTED_DATE}'" "-d"
 }
 zle -N fzf-todoist-date
