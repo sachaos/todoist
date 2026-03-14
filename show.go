@@ -28,6 +28,7 @@ func Show(c *cli.Context) error {
 	records := [][]string{
 		[]string{"ID", IdFormat(item)},
 		[]string{"Content", ContentFormat(item)},
+		[]string{"Description", DescriptionFormat(item)},
 		[]string{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
 		[]string{"Labels", item.LabelsString()},
 		[]string{"Priority", PriorityFormat(item.Priority)},
