@@ -1,7 +1,7 @@
 Todoist CLI client
 ===
 
-[Todoist](https://todoist.com/) CLI Client, written in Golang.
+Unofficial [Todoist](https://todoist.com/) CLI Client, written in Golang.
 
 ---
 
