@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/sachaos/todoist/lib"
@@ -42,6 +43,15 @@ func Modify(c *cli.Context) error {
 		projectID = client.Store.Projects.GetIDByName(c.String("project-name"))
 	}
 
+	sectionName := c.String("section-name")
+	sectionID := c.String("section-id")
+	if sectionName != "" {
+		sectionID = client.Store.Sections.GetIDByName(sectionName)
+		if sectionID == "" {
+			return fmt.Errorf("Did not find a section named '%v'", sectionName)
+		}
+	}
+
 	if !c.Args().Present() {
 		return CommandFailed
 	}
@@ -52,6 +62,12 @@ func Modify(c *cli.Context) error {
 
 	if err := client.MoveItem(context.Background(), item, projectID); err != nil {
 		return err
+	}
+
+	if sectionID != "" {
+		if err := client.MoveItemToSection(context.Background(), item, sectionID); err != nil {
+			return err
+		}
 	}
 
 	return Sync(c)

@@ -48,6 +48,17 @@ func Add(c *cli.Context) error {
 		return names
 	}(c.String("label-names"))
 
+	sectionName := c.String("section-name")
+	if sectionName != "" {
+		sectionID := client.Store.Sections.GetIDByName(sectionName)
+		if sectionID == "" {
+			return fmt.Errorf("Did not find a section named '%v'", sectionName)
+		}
+		item.SectionID = sectionID
+	} else if c.String("section-id") != "" {
+		item.SectionID = c.String("section-id")
+	}
+
 	item.Due = &todoist.Due{String: c.String("date")}
 
 	item.AutoReminder = c.Bool("reminder")

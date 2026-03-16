@@ -29,6 +29,7 @@ func Show(c *cli.Context) error {
 		[]string{"ID", IdFormat(item)},
 		[]string{"Content", ContentFormat(item)},
 		[]string{"Project", ProjectFormat(item.ProjectID, client.Store, projectColorHash, c)},
+		[]string{"Section", SectionFormat(item.SectionID, client.Store, c)},
 		[]string{"Labels", item.LabelsString()},
 		[]string{"Priority", PriorityFormat(item.Priority)},
 		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},

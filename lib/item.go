@@ -170,6 +170,9 @@ func (item Item) AddParam() interface{} {
 	if item.Due != nil {
 		param["due"] = item.Due
 	}
+	if item.SectionID != "" {
+		param["section_id"] = item.SectionID
+	}
 	param["auto_reminder"] = item.AutoReminder
 
 	return param
@@ -252,6 +255,20 @@ func (c *Client) DeleteItem(ctx context.Context, ids []string) error {
 func (c *Client) MoveItem(ctx context.Context, item *Item, projectId string) error {
 	commands := Commands{
 		NewCommand("item_move", item.MoveParam(projectId)),
+	}
+	return c.ExecCommands(ctx, commands)
+}
+
+func (item *Item) MoveToSectionParam(sectionId string) interface{} {
+	return map[string]interface{}{
+		"id":         item.ID,
+		"section_id": sectionId,
+	}
+}
+
+func (c *Client) MoveItemToSection(ctx context.Context, item *Item, sectionId string) error {
+	commands := Commands{
+		NewCommand("item_move", item.MoveToSectionParam(sectionId)),
 	}
 	return c.ExecCommands(ctx, commands)
 }
