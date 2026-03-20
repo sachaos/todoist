@@ -137,7 +137,7 @@ PS: We add a step that is run `sync` before any command, so you will be always u
 
 ### Build it yourself
 
-You need go 1.12.
+You need go 1.12+.
 
 ```
 $ mkdir -p $GOPATH/src/github.com/sachaos
