@@ -14,10 +14,8 @@ func UnarchiveSection(c *cli.Context) error {
 	}
 
 	sectionID := c.Args().First()
-	if client.Store.FindSection(sectionID) == nil {
-		return IdNotFound
-	}
 
+	// Don't validate against local cache - archived sections aren't cached locally
 	if err := client.UnarchiveSection(context.Background(), sectionID); err != nil {
 		return err
 	}
