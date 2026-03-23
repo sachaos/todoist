@@ -39,6 +39,20 @@ func GetClient(c *cli.Context) *todoist.Client {
 	return c.App.Metadata["client"].(*todoist.Client)
 }
 
+// isHelpCommand returns true if the given arguments represent a help invocation
+// that should skip authentication and config setup.
+func isHelpCommand(cliArgs []string, osArgs []string) bool {
+	if len(cliArgs) == 0 || cliArgs[0] == "help" || cliArgs[0] == "h" {
+		return true
+	}
+	for _, a := range osArgs {
+		if a == "-h" || a == "--help" {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
@@ -130,6 +144,11 @@ func main() {
 	}
 
 	app.Before = func(c *cli.Context) error {
+		// Skip auth/config setup for help commands
+		if isHelpCommand(c.Args().Slice(), os.Args) {
+			return nil
+		}
+
 		var store todoist.Store
 
 		if err := LoadCache(cachePath, &store); err != nil {
