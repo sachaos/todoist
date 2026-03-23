@@ -173,20 +173,22 @@ func main() {
 			if _, isConfigNotFoundError := err.(viper.ConfigFileNotFoundError); !isConfigNotFoundError {
 				// config file was found but could not be read => not recoverable
 				return err
-			} else if !viper.IsSet("token") {
-				// config file not found and token missing (not provided via another source,
-				// such as environment variables) => ask interactively for token and store it in config file.
-				fmt.Printf("Input API Token: ")
-				fmt.Scan(&token)
-				viper.Set("token", token)
-				buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
-				if err != nil {
-					panic(fmt.Errorf("Fatal error config file: %s \n", err))
-				}
-				err = ioutil.WriteFile(configFile, buf, 0600)
-				if err != nil {
-					panic(fmt.Errorf("Fatal error config file: %s \n", err))
-				}
+			}
+		}
+
+		if !viper.IsSet("token") || viper.GetString("token") == "" {
+			// token missing (not provided via config file or environment variables)
+			// => ask interactively for token and store it in config file.
+			fmt.Printf("Input API Token: ")
+			fmt.Scan(&token)
+			viper.Set("token", token)
+			buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			}
+			err = ioutil.WriteFile(configFile, buf, 0600)
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
 			}
 		}
 
