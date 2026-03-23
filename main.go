@@ -39,6 +39,20 @@ func GetClient(c *cli.Context) *todoist.Client {
 	return c.App.Metadata["client"].(*todoist.Client)
 }
 
+// isHelpCommand returns true if the given arguments represent a help invocation
+// that should skip authentication and config setup.
+func isHelpCommand(cliArgs []string, osArgs []string) bool {
+	if len(cliArgs) == 0 || cliArgs[0] == "help" || cliArgs[0] == "h" {
+		return true
+	}
+	for _, a := range osArgs {
+		if a == "-h" || a == "--help" {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "todoist"
@@ -130,6 +144,11 @@ func main() {
 	}
 
 	app.Before = func(c *cli.Context) error {
+		// Skip auth/config setup for help commands
+		if isHelpCommand(c.Args().Slice(), os.Args) {
+			return nil
+		}
+
 		var store todoist.Store
 
 		if err := LoadCache(cachePath, &store); err != nil {
@@ -154,20 +173,22 @@ func main() {
 			if _, isConfigNotFoundError := err.(viper.ConfigFileNotFoundError); !isConfigNotFoundError {
 				// config file was found but could not be read => not recoverable
 				return err
-			} else if !viper.IsSet("token") {
-				// config file not found and token missing (not provided via another source,
-				// such as environment variables) => ask interactively for token and store it in config file.
-				fmt.Printf("Input API Token: ")
-				fmt.Scan(&token)
-				viper.Set("token", token)
-				buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
-				if err != nil {
-					panic(fmt.Errorf("Fatal error config file: %s \n", err))
-				}
-				err = ioutil.WriteFile(configFile, buf, 0600)
-				if err != nil {
-					panic(fmt.Errorf("Fatal error config file: %s \n", err))
-				}
+			}
+		}
+
+		if !viper.IsSet("token") || viper.GetString("token") == "" {
+			// token missing (not provided via config file or environment variables)
+			// => ask interactively for token and store it in config file.
+			fmt.Printf("Input API Token: ")
+			fmt.Scan(&token)
+			viper.Set("token", token)
+			buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
+			}
+			err = ioutil.WriteFile(configFile, buf, 0600)
+			if err != nil {
+				panic(fmt.Errorf("Fatal error config file: %s \n", err))
 			}
 		}
 
