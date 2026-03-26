@@ -29,6 +29,10 @@ func AddSection(c *cli.Context) error {
 		section.ProjectID = c.String("project-id")
 	}
 
+	if section.ProjectID == "" {
+		return fmt.Errorf("project is required: use --project-name or --project-id (note: flags must come before the section name)")
+	}
+
 	if err := client.AddSection(context.Background(), section); err != nil {
 		return err
 	}

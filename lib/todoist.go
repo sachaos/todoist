@@ -3,6 +3,7 @@ package todoist
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -134,14 +135,22 @@ func (c *Client) doRestApi(ctx context.Context, method string, uri string, body 
 }
 
 type ExecResult struct {
-	SyncToken     string      `json:"sync_token"`
-	SyncStatus    interface{} `json:"sync_status"`
-	TempIdMapping interface{} `json:"temp_id_mapping"`
+	SyncToken     string                 `json:"sync_token"`
+	SyncStatus    map[string]interface{} `json:"sync_status"`
+	TempIdMapping interface{}            `json:"temp_id_mapping"`
 }
 
 func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
 	var r ExecResult
-	return c.doApi(ctx, http.MethodPost, "sync", commands.UrlValues(), &r)
+	if err := c.doApi(ctx, http.MethodPost, "sync", commands.UrlValues(), &r); err != nil {
+		return err
+	}
+	for uuid, status := range r.SyncStatus {
+		if status != "ok" {
+			return fmt.Errorf("command %s failed: %v", uuid, status)
+		}
+	}
+	return nil
 }
 
 func (c *Client) QuickCommand(ctx context.Context, text string) error {
