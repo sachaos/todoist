@@ -164,7 +164,7 @@ func (item Item) AddParam() interface{} {
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
 	}
-	if item.ProjectID != "" {
+	if item.ProjectID != "" && item.ProjectID != "0" {
 		param["project_id"] = item.ProjectID
 	}
 	if item.Due != nil {

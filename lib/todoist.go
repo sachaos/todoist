@@ -3,6 +3,7 @@ package todoist
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -134,14 +135,40 @@ func (c *Client) doRestApi(ctx context.Context, method string, uri string, body 
 }
 
 type ExecResult struct {
-	SyncToken     string      `json:"sync_token"`
-	SyncStatus    interface{} `json:"sync_status"`
-	TempIdMapping interface{} `json:"temp_id_mapping"`
+	SyncToken     string                 `json:"sync_token"`
+	SyncStatus    map[string]interface{} `json:"sync_status"`
+	TempIdMapping interface{}            `json:"temp_id_mapping"`
 }
 
 func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
 	var r ExecResult
-	return c.doApi(ctx, http.MethodPost, "sync", commands.UrlValues(), &r)
+	params := commands.UrlValues()
+	if c.Store != nil && c.Store.SyncToken != "" {
+		params.Set("sync_token", c.Store.SyncToken)
+	} else {
+		params.Set("sync_token", "*")
+	}
+
+	if err := c.doApi(ctx, http.MethodPost, "sync", params, &r); err != nil {
+		return err
+	}
+
+	if c.Store != nil {
+		c.Store.SyncToken = r.SyncToken
+	}
+
+	for _, command := range commands {
+		status, ok := r.SyncStatus[command.UUID]
+		if !ok {
+			continue
+		}
+
+		if status != "ok" {
+			return fmt.Errorf("command %s failed: %v", command.Type, status)
+		}
+	}
+
+	return nil
 }
 
 func (c *Client) QuickCommand(ctx context.Context, text string) error {

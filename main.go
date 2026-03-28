@@ -76,7 +76,7 @@ func main() {
 		Aliases: []string{"L"},
 		Usage:   "label names (separated by ,)",
 	}
-	projectIDFlag := cli.IntFlag{
+	projectIDFlag := cli.StringFlag{
 		Name:    "project-id",
 		Aliases: []string{"P"},
 		Usage:   "project id",
