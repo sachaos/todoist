@@ -153,10 +153,6 @@ func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
 		return err
 	}
 
-	if c.Store != nil {
-		c.Store.SyncToken = r.SyncToken
-	}
-
 	for _, command := range commands {
 		status, ok := r.SyncStatus[command.UUID]
 		if !ok {
