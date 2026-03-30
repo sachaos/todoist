@@ -26,14 +26,14 @@ func Modify(c *cli.Context) error {
 	}
 	item.Content = c.String("content")
 	item.Priority = priorityMapping[c.Int("priority")]
-	item.LabelNames = func(str string) []string {
-		stringNames := strings.Split(str, ",")
+	if labelNames := c.String("label-names"); labelNames != "" {
+		stringNames := strings.Split(labelNames, ",")
 		names := []string{}
 		for _, stringName := range stringNames {
-			names = append(names, stringName)
+			names = append(names, strings.TrimSpace(stringName))
 		}
-		return names
-	}(c.String("label-names"))
+		item.LabelNames = names
+	}
 
 	item.Due = &todoist.Due{String: c.String("date")}
 
@@ -50,8 +50,10 @@ func Modify(c *cli.Context) error {
 		return err
 	}
 
-	if err := client.MoveItem(context.Background(), item, projectID); err != nil {
-		return err
+	if projectID != "" {
+		if err := client.MoveItem(context.Background(), item, projectID); err != nil {
+			return err
+		}
 	}
 
 	return Sync(c)

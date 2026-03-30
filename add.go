@@ -39,14 +39,15 @@ func Add(c *cli.Context) error {
 		item.ProjectID = c.String("project-id")
 	}
 
-	item.LabelNames = func(str string) []string {
-		stringNames := strings.Split(str, ",")
+	labelNames := c.String("label-names")
+	if labelNames != "" {
+		stringNames := strings.Split(labelNames, ",")
 		names := []string{}
 		for _, stringName := range stringNames {
-			names = append(names, stringName)
+			names = append(names, strings.TrimSpace(stringName))
 		}
-		return names
-	}(c.String("label-names"))
+		item.LabelNames = names
+	}
 
 	item.Due = &todoist.Due{String: c.String("date")}
 

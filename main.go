@@ -76,7 +76,7 @@ func main() {
 		Aliases: []string{"L"},
 		Usage:   "label names (separated by ,)",
 	}
-	projectIDFlag := cli.IntFlag{
+	projectIDFlag := cli.StringFlag{
 		Name:    "project-id",
 		Aliases: []string{"P"},
 		Usage:   "project id",
@@ -179,7 +179,10 @@ func main() {
 		if !viper.IsSet("token") || viper.GetString("token") == "" {
 			// token missing (not provided via config file or environment variables)
 			// => ask interactively for token and store it in config file.
-			fmt.Printf("Input API Token: ")
+			fmt.Println("No API token found. A Todoist API token is required for this application.")
+			fmt.Println("You can find your token in the Todoist Settings under Integrations > Developer:")
+			fmt.Printf("%s\n", color.CyanString("https://todoist.com/app/settings/integrations/developer"))
+			fmt.Print("\nTodoist API Token: ")
 			fmt.Scan(&token)
 			viper.Set("token", token)
 			buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
