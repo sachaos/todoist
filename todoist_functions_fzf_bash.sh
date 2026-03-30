@@ -19,7 +19,7 @@ _todoist() {
     fzfquery=''
 
     [ -n "$cur" ] && fzfquery="-q $(echo $cur | tr -d " " | tr -d "'")"
-    fzfcmd="fzf --select-1 --exit-0 $fzfquery"
+    fzfcmd="fzf --ansi --select-1 --exit-0 $fzfquery"
     fzftasks=0
 
     __todoist_debug "${FUNCNAME[0]}(): cur=$cur / prev=$prev"\
@@ -99,17 +99,17 @@ _todoist() {
         --label-ids|-L)
             # shellcheck disable=SC2207
             COMPREPLY=( $(todoist labels | $fzfcmd --multi | cut -d ' ' -f 1 \
-            | paste -d, -s -) )
+            | sed $'s/\e\\[[0-9;]*m//g' | paste -d, -s -) )
             return 0
             ;;
         --project-id|-P)
             # shellcheck disable=SC2207
-            COMPREPLY=( $(todoist projects | $fzfcmd | cut -d ' ' -f 1) )
+            COMPREPLY=( $(todoist projects | $fzfcmd | cut -d ' ' -f 1 | sed $'s/\e\\[[0-9;]*m//g') )
             return 0
             ;;
         --project-name|-N)
             COMPREPLY=( "'$(todoist projects | $fzfcmd | cut -d ' ' -f 2- \
-            | cut -b 2- )'" )
+            | cut -b 2- | sed $'s/\e\\[[0-9;]*m//g' )'" )
             return 0
             ;;
         *)
@@ -145,7 +145,7 @@ _todoist() {
 
         # shellcheck disable=SC2207
         COMPREPLY=( $(todoist --namespace --project-namespace list \
-        | $fzfcmd | cut -d ' ' -f 1 | tr -d "'") )
+        | $fzfcmd | cut -d ' ' -f 1 | sed $'s/\e\\[[0-9;]*m//g' | tr -d "'") )
         return 0
     fi
 
