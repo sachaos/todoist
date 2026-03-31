@@ -18,6 +18,14 @@ type Config struct {
 	Color          bool
 	DateFormat     string
 	DateTimeFormat string
+	APIURL         string
+}
+
+func (c *Client) baseURL() string {
+	if c.config.APIURL != "" {
+		return c.config.APIURL
+	}
+	return Server
 }
 
 type Client struct {
@@ -41,7 +49,7 @@ func (c *Client) Log(format string, v ...interface{}) {
 
 func (c *Client) doApi(ctx context.Context, method string, uri string, params url.Values, res interface{}) error {
 	c.Log("doAPi: called")
-	u, err := url.Parse(Server)
+	u, err := url.Parse(c.baseURL())
 	if err != nil {
 		return err
 	}
@@ -88,7 +96,7 @@ func (c *Client) doApi(ctx context.Context, method string, uri string, params ur
 
 func (c *Client) doRestApi(ctx context.Context, method string, uri string, body interface{}, res interface{}) error {
 	c.Log("doRestApi: called")
-	u, err := url.Parse(Server)
+	u, err := url.Parse(c.baseURL())
 	if err != nil {
 		return err
 	}
