@@ -70,6 +70,7 @@ type Item struct {
 	Checked        bool        `json:"checked"`
 	Collapsed      bool        `json:"collapsed"`
 	DateAdded      string      `json:"added_at"`
+	Description    string      `json:"description"`
 	DateLang       string      `json:"date_lang"`
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
