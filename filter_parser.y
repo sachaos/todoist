@@ -393,6 +393,8 @@ func (l *Lexer) Error(e string) {
 func Filter(f string) (e Expression) {
     l := new(Lexer)
     l.Init(strings.NewReader(f))
+    // important to exclude scanner.ScanFloats because afternoon times in am/pm format trigger float parsing
+    l.Mode = scanner.ScanIdents | scanner.ScanInts | scanner.SkipComments
     yyParse(l)
     return l.result
 }
