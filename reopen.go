@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/urfave/cli/v2"
 )
@@ -11,7 +12,7 @@ func Reopen(c *cli.Context) error {
 
 	for _, id := range c.Args().Slice() {
 		if err := client.ReopenItem(context.Background(), id); err != nil {
-			return err
+			return fmt.Errorf("failed to reopen task %s: %w", id, err)
 		}
 	}
 
