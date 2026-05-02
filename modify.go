@@ -52,10 +52,6 @@ func Modify(c *cli.Context) error {
 		}
 	}
 
-	if !c.Args().Present() {
-		return CommandFailed
-	}
-
 	if err := client.UpdateItem(context.Background(), *item); err != nil {
 		return err
 	}
