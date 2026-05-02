@@ -44,7 +44,7 @@ func (a Projects) GetIDsByName(name string, isAll bool) []string {
 	ids := []string{}
 	name = strings.ToLower(name)
 	for _, pjt := range a {
-		if strings.Contains(strings.ToLower(pjt.Name), name) {
+		if strings.ToLower(pjt.Name) == name {
 			ids = append(ids, pjt.ID)
 			if isAll {
 				parentID := pjt.ID
