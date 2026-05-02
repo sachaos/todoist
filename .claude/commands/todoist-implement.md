@@ -65,4 +65,15 @@ PR body should include:
 
 Invoke the `/code-review:code-review` skill against the new PR number.
 
-Report the PR URL to the user and wait for their manual testing before they call `/todoist-ship`.
+## Step 9 — Prompt for manual testing
+
+Tell the user the PR URL and present a manual test checklist derived from the spec. At minimum include:
+
+- The happy path (valid ID, expected success behavior)
+- The no-args case (should show usage, not a cryptic error)
+- An invalid ID (should surface a clear API error message)
+- Any edge cases called out in the spec (recurring tasks, already-active tasks, etc.)
+
+Then explicitly ask: **"Please run through the test checklist above. When you're done, call `/todoist-ship <PR-number>` to merge."**
+
+Do not proceed further — the skill ends here and waits for the user.
