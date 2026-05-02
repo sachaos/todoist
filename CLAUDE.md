@@ -163,9 +163,9 @@ Use the **REST API** (`doRestApi`) when:
 
 ### When to call Sync(c) after a mutation
 
-**Call `Sync(c)`** when the command modifies an active task that is currently in the local cache. This keeps `todoist list` accurate immediately after the operation.
+**Call `Sync(c)`** when the command modifies an active task that is currently in the local cache. This keeps `todoist list` accurate immediately after the operation. Examples: `close`, `delete`, `add`, `modify`.
 
-**Do NOT call `Sync(c)`** when the command operates on completed tasks or resources that were never in the cache. The cache stays internally consistent because it never held those items. Add a comment in the handler explaining the omission so future maintainers don't add it back by mistake.
+**Do NOT call `Sync(c)`** when the command operates on completed tasks or resources that were never in the cache. The cache stays internally consistent because it never held those items. Examples: `reopen`. Add a comment in the handler explaining the omission so future maintainers don't add it back by mistake.
 
 ### doRestApi behavior
 
@@ -205,7 +205,7 @@ if c.Args().Len() == 0 {
 
 ### Existing command aliases
 
-These single-letter aliases are taken: `l`, `a`, `m`, `c`, `d`, `s`, `q`. These multi-character aliases are taken: `ap`, `cl`, `c-l`. Do not reuse them. New commands may omit an alias rather than introduce a confusing one.
+Check `main.go` for the current list of registered aliases before adding a new one. New commands may omit an alias rather than introduce a confusing one.
 
 ### Cache architecture
 
