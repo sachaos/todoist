@@ -13,7 +13,7 @@ func Sections(c *cli.Context) error {
 		writer.Write([]string{"ID", "Project", "Name"})
 	}
 
-	for _, section := range client.Store.Sections {
+	for _, section := range client.Store.Sections.Active() {
 		project := client.Store.FindProject(section.ProjectID)
 		projectName := ""
 		if project != nil {

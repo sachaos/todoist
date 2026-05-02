@@ -14,6 +14,16 @@ type Section struct {
 
 type Sections []Section
 
+func (a Sections) Active() Sections {
+	result := Sections{}
+	for _, s := range a {
+		if !s.IsDeleted && !s.IsArchived {
+			result = append(result, s)
+		}
+	}
+	return result
+}
+
 func (a Sections) GetIDByName(name string) string {
 	for _, s := range a {
 		if s.Name == name {

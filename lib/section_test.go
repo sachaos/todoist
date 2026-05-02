@@ -4,6 +4,23 @@ import (
 	"testing"
 )
 
+func TestSections_Active(t *testing.T) {
+	sections := Sections{
+		Section{HaveID: HaveID{ID: "1"}, Name: "Active"},
+		Section{HaveID: HaveID{ID: "2"}, Name: "Deleted", IsDeleted: true},
+		Section{HaveID: HaveID{ID: "3"}, Name: "Archived", IsArchived: true},
+		Section{HaveID: HaveID{ID: "4"}, Name: "Also Active"},
+	}
+
+	active := sections.Active()
+	if len(active) != 2 {
+		t.Fatalf("expected 2 active sections, got %d", len(active))
+	}
+	if active[0].ID != "1" || active[1].ID != "4" {
+		t.Errorf("unexpected active sections: %v", active)
+	}
+}
+
 func TestSections_GetIDByName(t *testing.T) {
 	sections := Sections{
 		Section{
