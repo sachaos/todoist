@@ -92,6 +92,26 @@ func TestProjectEval(t *testing.T) {
 	testFilterEvalWithProject(t, "#hoge", item1, projects, false)
 	testFilterEvalWithProject(t, "#private", item2, projects, false)
 	testFilterEvalWithProject(t, "##private", item2, projects, true)
+
+	// Exact match only — prefix/substring should not match
+	projectsWithSimilarNames := todoist.Projects{
+		todoist.Project{
+			HaveID: todoist.HaveID{ID: "10"},
+			Name:   "Work",
+		},
+		todoist.Project{
+			HaveID: todoist.HaveID{ID: "11"},
+			Name:   "Work Admin",
+		},
+	}
+	itemInWork := todoist.Item{}
+	itemInWork.ProjectID = "10"
+	itemInWorkAdmin := todoist.Item{}
+	itemInWorkAdmin.ProjectID = "11"
+
+	testFilterEvalWithProject(t, "#Work", itemInWork, projectsWithSimilarNames, true)
+	testFilterEvalWithProject(t, "#Work", itemInWorkAdmin, projectsWithSimilarNames, false) // must not match "Work Admin"
+	testFilterEvalWithProject(t, "#WORK", itemInWork, projectsWithSimilarNames, true)       // case-insensitive
 }
 
 func TestBoolInfixOpExp(t *testing.T) {
