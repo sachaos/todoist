@@ -68,6 +68,7 @@ COMMANDS:
      add, a                   Add task
      modify, m                Modify task
      close, c                 Close task
+     reopen                   Reopen (uncomplete) a closed task
      delete, d                Delete task
      labels                   Show all labels
      projects                 Show all projects

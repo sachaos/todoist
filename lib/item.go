@@ -2,6 +2,7 @@ package todoist
 
 import (
 	"context"
+	"net/http"
 	"regexp"
 	"strings"
 	"time"
@@ -257,6 +258,10 @@ func (c *Client) DeleteItem(ctx context.Context, ids []string) error {
 		commands = append(commands, command)
 	}
 	return c.ExecCommands(ctx, commands)
+}
+
+func (c *Client) ReopenItem(ctx context.Context, id string) error {
+	return c.doRestApi(ctx, http.MethodPost, "tasks/"+id+"/reopen", nil, nil)
 }
 
 func (c *Client) MoveItem(ctx context.Context, item *Item, projectId string) error {

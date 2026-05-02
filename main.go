@@ -336,6 +336,18 @@ func main() {
 			ArgsUsage: "<Item ID>",
 		},
 		{
+			Name:      "reopen",
+			Usage:     "Reopen (uncomplete) a closed task",
+			Action:    Reopen,
+			ArgsUsage: "<Item ID> [<Item ID>...]",
+			Description: "IDs can be obtained from `todoist completed-list`.\n\n" +
+				"The reopened task won't appear in `todoist list` until the next\n" +
+				"`todoist sync` -- the local cache only tracks active tasks, and\n" +
+				"reopen does not refresh it.\n\n" +
+				"Note: per the Todoist API, reopening a subtask will also restore\n" +
+				"any completed parent tasks and the parent section from history.",
+		},
+		{
 			Name:      "delete",
 			Aliases:   []string{"d"},
 			Usage:     "Delete task",
