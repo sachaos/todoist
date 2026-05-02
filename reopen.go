@@ -17,7 +17,7 @@ func Reopen(c *cli.Context) error {
 	}
 
 	if c.Args().Len() == 0 {
-		return CommandFailed
+		return fmt.Errorf("no task IDs provided\nUsage: todoist reopen <Item ID> [<Item ID>...]\nUse `todoist completed-list` to find IDs of recently closed tasks")
 	}
 
 	// No Sync(c): completed tasks are never in the local cache, so the cache

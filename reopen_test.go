@@ -13,7 +13,7 @@ func TestReopen_NoArgs(t *testing.T) {
 	ctx := newTestContext(client, []string{})
 
 	err := Reopen(ctx)
-	if err != CommandFailed {
-		t.Errorf("expected CommandFailed, got %v", err)
+	if err == nil {
+		t.Error("expected error for no args, got nil")
 	}
 }
