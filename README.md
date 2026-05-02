@@ -17,6 +17,20 @@ For more information, see the [official Todoist API announcement](https://groups
 
 ---
 
+## Sections support (BETA)
+
+The `sections` command is now available for managing Todoist sections. This feature is in **BETA** — please report any issues.
+
+```
+$ todoist sections --help
+```
+
+Subcommands: `list`, `add`, `delete`, `archive`, `unarchive`, `update`, `move`, `reorder`
+
+You can also assign tasks to sections using the `--section-name` or `--section-id` flags on the `add` and `modify` commands.
+
+---
+
 ## Description
 
 [Todoist](https://todoist.com/) is a cool TODO list web application.
