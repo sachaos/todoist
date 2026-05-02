@@ -163,9 +163,9 @@ Use the **REST API** (`doRestApi`) when:
 
 ### When to call Sync(c) after a mutation
 
-**Call `Sync(c)`** when the command modifies an active task that is currently in the local cache. This keeps `todoist list` accurate immediately after the operation. Examples: `close`, `delete`, `add`, `modify`.
+**Call `Sync(c)`** when the command modifies an active task that is currently in the local cache. This keeps `todoist list` accurate immediately after the operation.
 
-**Do NOT call `Sync(c)`** when the command operates on completed tasks or resources that were never in the cache. The cache stays internally consistent because it never held those items. Examples: `reopen`. Add a comment explaining the omission so future maintainers don't add it back by mistake.
+**Do NOT call `Sync(c)`** when the command operates on completed tasks or resources that were never in the cache. The cache stays internally consistent because it never held those items. Add a comment in the handler explaining the omission so future maintainers don't add it back by mistake.
 
 ### doRestApi behavior
 
