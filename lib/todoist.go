@@ -125,6 +125,9 @@ func (c *Client) doRestApi(ctx context.Context, method string, uri string, body 
 
 	c.Log("response: %#v", resp)
 
+	if resp.StatusCode == http.StatusNoContent {
+		return nil
+	}
 	if resp.StatusCode != http.StatusOK {
 		c.Log("%s", ParseAPIError("bad request", resp).Error())
 		return ParseAPIError("bad request", resp)
