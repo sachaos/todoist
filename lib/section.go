@@ -24,9 +24,9 @@ func (a Sections) Active() Sections {
 	return result
 }
 
-func (a Sections) GetIDByName(name string) string {
-	for _, s := range a {
-		if s.Name == name {
+func (a Sections) GetIDByName(name, projectID string) string {
+	for _, s := range a.Active() {
+		if s.Name == name && (projectID == "" || s.ProjectID == projectID) {
 			return s.GetID()
 		}
 	}

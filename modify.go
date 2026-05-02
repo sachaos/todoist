@@ -46,7 +46,7 @@ func Modify(c *cli.Context) error {
 	sectionName := c.String("section-name")
 	sectionID := c.String("section-id")
 	if sectionName != "" {
-		sectionID = client.Store.Sections.GetIDByName(sectionName)
+		sectionID = client.Store.Sections.GetIDByName(sectionName, projectID)
 		if sectionID == "" {
 			return fmt.Errorf("Did not find a section named '%v'", sectionName)
 		}

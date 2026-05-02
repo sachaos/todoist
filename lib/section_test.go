@@ -36,29 +36,51 @@ func TestSections_GetIDByName(t *testing.T) {
 		Section{
 			HaveID:        HaveID{ID: "300"},
 			HaveProjectID: HaveProjectID{ProjectID: "2"},
-			Name:          "Done",
+			Name:          "Backlog",
+		},
+		Section{
+			HaveID:        HaveID{ID: "400"},
+			HaveProjectID: HaveProjectID{ProjectID: "2"},
+			Name:          "Archived Backlog",
+			IsArchived:    true,
+		},
+		Section{
+			HaveID:        HaveID{ID: "500"},
+			HaveProjectID: HaveProjectID{ProjectID: "2"},
+			Name:          "Deleted Backlog",
+			IsDeleted:     true,
 		},
 	}
 
-	// Found
-	if id := sections.GetIDByName("Backlog"); id != "100" {
+	// Project-scoped lookup returns the correct section
+	if id := sections.GetIDByName("Backlog", "1"); id != "100" {
 		t.Errorf("expected '100', got '%s'", id)
 	}
-	if id := sections.GetIDByName("In Progress"); id != "200" {
-		t.Errorf("expected '200', got '%s'", id)
-	}
-	if id := sections.GetIDByName("Done"); id != "300" {
+	if id := sections.GetIDByName("Backlog", "2"); id != "300" {
 		t.Errorf("expected '300', got '%s'", id)
 	}
 
+	// Global lookup (no project) returns first match
+	if id := sections.GetIDByName("In Progress", ""); id != "200" {
+		t.Errorf("expected '200', got '%s'", id)
+	}
+
+	// Archived and deleted sections are never returned
+	if id := sections.GetIDByName("Archived Backlog", ""); id != "" {
+		t.Errorf("expected '', got '%s'", id)
+	}
+	if id := sections.GetIDByName("Deleted Backlog", ""); id != "" {
+		t.Errorf("expected '', got '%s'", id)
+	}
+
 	// Not found
-	if id := sections.GetIDByName("Nonexistent"); id != "" {
+	if id := sections.GetIDByName("Nonexistent", ""); id != "" {
 		t.Errorf("expected '', got '%s'", id)
 	}
 
 	// Empty sections
 	empty := Sections{}
-	if id := empty.GetIDByName("Backlog"); id != "" {
+	if id := empty.GetIDByName("Backlog", ""); id != "" {
 		t.Errorf("expected '', got '%s'", id)
 	}
 }

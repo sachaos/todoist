@@ -51,7 +51,7 @@ func Add(c *cli.Context) error {
 
 	sectionName := c.String("section-name")
 	if sectionName != "" {
-		sectionID := client.Store.Sections.GetIDByName(sectionName)
+		sectionID := client.Store.Sections.GetIDByName(sectionName, item.ProjectID)
 		if sectionID == "" {
 			return fmt.Errorf("Did not find a section named '%v'", sectionName)
 		}
