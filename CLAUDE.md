@@ -148,6 +148,76 @@ Command types: `item_add`, `item_update`, `item_close`, `item_delete`, `item_mov
 - **Shell completion**: Supports bash/zsh autocomplete via urfave/cli
 - **Browser integration**: Can open URLs embedded in task content (markdown links)
 
+## Architectural Guidelines
+
+These rules reflect hard-won patterns. Follow them when adding or modifying commands.
+
+### REST vs Sync API
+
+Use the **Sync API** (`ExecCommands`) for operations on **active tasks** that live in the local cache — add, update, close, delete, move. These can be batched atomically.
+
+Use the **REST API** (`doRestApi`) when:
+- The operation targets resources **not in the local cache** (e.g. completed tasks, which are fetched live and never cached)
+- No sync command type exists for the operation
+- The endpoint is one-shot by nature (e.g. `POST /tasks/{id}/reopen`)
+
+### When to call Sync(c) after a mutation
+
+**Call `Sync(c)`** when the command modifies an active task that is currently in the local cache. This keeps `todoist list` accurate immediately after the operation. Examples: `close`, `delete`, `add`, `modify`.
+
+**Do NOT call `Sync(c)`** when the command operates on completed tasks or resources that were never in the cache. The cache stays internally consistent because it never held those items. Examples: `reopen`. Add a comment in the handler explaining the omission so future maintainers don't add it back by mistake.
+
+### doRestApi behavior
+
+`doRestApi` in `lib/todoist.go` treats both **200 OK** and **204 No Content** as success. When adding a new REST-based lib function, always check the OpenAPI spec (at `todoist-openapi.json` in the repo root) to confirm which status code the endpoint returns — don't assume 200.
+
+### Lib layer conventions
+
+Functions in `lib/item.go` that operate on multiple IDs take `[]string`, not a single `string`. This keeps the lib API consistent and lets callers decide whether to loop or not. Example signatures:
+```go
+func (c *Client) CloseItem(ctx context.Context, ids []string) error
+func (c *Client) DeleteItem(ctx context.Context, ids []string) error
+```
+
+### Error handling conventions
+
+When a CLI handler loops over multiple IDs, **stop on first error** and wrap the error with the failing ID for clarity:
+```go
+if err := client.SomeOperation(ctx, id); err != nil {
+    return fmt.Errorf("failed to <action> task %s: %w", id, err)
+}
+```
+
+This lets users re-run the command with the remaining IDs after fixing the cause.
+
+### Command registration conventions
+
+In `main.go`, every command must have:
+- `ArgsUsage` — describes expected arguments (e.g. `"<Item ID> [<Item ID>...]"`)
+- `Description` — multi-line string shown in `--help`; explain non-obvious behavior (cache effects, side effects, recovery from partial failure)
+
+When a command is invoked with no arguments and arguments are required, return a descriptive error with usage guidance — not the generic `CommandFailed`:
+```go
+if c.Args().Len() == 0 {
+    return fmt.Errorf("no task IDs provided\nUsage: todoist <cmd> <Item ID> [<Item ID>...]\n...")
+}
+```
+
+### Existing command aliases
+
+Check `main.go` for the current list of registered aliases before adding a new one. New commands may omit an alias rather than introduce a confusing one.
+
+### Cache architecture
+
+The local cache (`~/.cache/todoist/cache.json`) stores only **active** tasks. Completed tasks are never cached — they are always fetched live from `GET /tasks/completed/by_completion_date`. Reopening a completed task does not require a cache update; the task will appear in `todoist list` after the next `todoist sync`.
+
+### Testing approach
+
+The test infrastructure supports two patterns:
+
+1. **Pure logic and read-only handlers**: Use `newTestContext()` from `show_test.go` with an in-memory `Store`. No HTTP calls needed. Always test the zero-args guard this way.
+2. **Mutation handlers**: These require HTTP mocking (no `httptest.Server` infrastructure currently exists). Follow the existing convention — mutation handlers (`close`, `delete`, `add`) have no tests. Do not introduce HTTP mocking infrastructure without explicit discussion.
+
 ## Dependencies
 
 Key dependencies (from go.mod):
