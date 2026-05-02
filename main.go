@@ -429,9 +429,10 @@ func main() {
 				},
 				{
 					Name:      "reorder",
-					Usage:     "Reorder sections within a project",
+					Usage:     "Reorder sections by specifying section IDs in the desired order",
 					Action:    ReorderSections,
 					ArgsUsage: "<Section ID> <Section ID> ...",
+					Description: "Reorder sections within a project. The sections will be arranged in the\norder you specify. Requires at least 2 section IDs.\n\nExample: todoist sections reorder <id1> <id2> <id3>",
 				},
 			},
 		},

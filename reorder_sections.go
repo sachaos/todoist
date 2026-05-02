@@ -11,7 +11,7 @@ func ReorderSections(c *cli.Context) error {
 	client := GetClient(c)
 
 	if c.Args().Len() < 2 {
-		return fmt.Errorf("reorder-sections requires at least 2 section IDs")
+		return fmt.Errorf("sections reorder requires at least 2 section IDs")
 	}
 
 	ids := c.Args().Slice()
