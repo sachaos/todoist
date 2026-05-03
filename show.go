@@ -42,6 +42,9 @@ func Show(c *cli.Context) error {
 		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
 		[]string{"URL", strings.Join(todoist.GetContentURL(item), ",")},
 	}
+	if item.Deadline != nil && item.Deadline.Date != "" {
+		records = append(records, []string{"Deadline", item.Deadline.Date})
+	}
 	defer writer.Flush()
 
 	for _, record := range records {
