@@ -75,16 +75,8 @@ func Add(c *cli.Context) error {
 
 	item.AutoReminder = c.Bool("reminder")
 
-	newID, err := client.AddItem(context.Background(), item)
-	if err != nil {
+	if err := client.AddItem(context.Background(), item); err != nil {
 		return err
-	}
-
-	if c.IsSet("deadline") {
-		deadlineDate := c.String("deadline")
-		if err := client.UpdateItemDeadline(context.Background(), newID, deadlineDate); err != nil {
-			return fmt.Errorf("failed to update deadline for task %s: %w", newID, err)
-		}
 	}
 
 	return Sync(c)

@@ -142,10 +142,10 @@ func (c *Client) doRestApi(ctx context.Context, method string, uri string, body 
 type ExecResult struct {
 	SyncToken     string                 `json:"sync_token"`
 	SyncStatus    map[string]interface{} `json:"sync_status"`
-	TempIdMapping map[string]string      `json:"temp_id_mapping"`
+	TempIdMapping interface{}            `json:"temp_id_mapping"`
 }
 
-func (c *Client) execCommandsWithResult(ctx context.Context, commands Commands) (ExecResult, error) {
+func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
 	var r ExecResult
 	params := commands.UrlValues()
 	if c.Store != nil && c.Store.SyncToken != "" {
@@ -155,7 +155,7 @@ func (c *Client) execCommandsWithResult(ctx context.Context, commands Commands) 
 	}
 
 	if err := c.doApi(ctx, http.MethodPost, "sync", params, &r); err != nil {
-		return r, err
+		return err
 	}
 
 	for _, command := range commands {
@@ -165,16 +165,11 @@ func (c *Client) execCommandsWithResult(ctx context.Context, commands Commands) 
 		}
 
 		if status != "ok" {
-			return r, fmt.Errorf("command %s failed: %v", command.Type, status)
+			return fmt.Errorf("command %s failed: %v", command.Type, status)
 		}
 	}
 
-	return r, nil
-}
-
-func (c *Client) ExecCommands(ctx context.Context, commands Commands) error {
-	_, err := c.execCommandsWithResult(ctx, commands)
-	return err
+	return nil
 }
 
 func (c *Client) QuickCommand(ctx context.Context, text string) error {

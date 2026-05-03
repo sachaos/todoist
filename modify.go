@@ -78,12 +78,5 @@ func Modify(c *cli.Context) error {
 		}
 	}
 
-	if c.IsSet("deadline") {
-		deadlineDate := c.String("deadline")
-		if err := client.UpdateItemDeadline(context.Background(), item_id, deadlineDate); err != nil {
-			return fmt.Errorf("failed to update deadline for task %s: %w", item_id, err)
-		}
-	}
-
 	return Sync(c)
 }
