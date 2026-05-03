@@ -132,6 +132,10 @@ func main() {
 		Name:  "description",
 		Usage: "task description",
 	}
+	deadlineFlag := cli.StringFlag{
+		Name:  "deadline",
+		Usage: "Task deadline date in YYYY-MM-DD format (e.g., 2025-02-12). Separate from due date. Pass empty string to clear the deadline.",
+	}
 
 	app.Flags = []cli.Flag{
 		&cli.BoolFlag{
@@ -323,6 +327,7 @@ func main() {
 				&dateFlag,
 				&reminderFlg,
 				&descriptionFlag,
+				&deadlineFlag,
 			},
 			ArgsUsage: "<Item content>",
 		},
@@ -341,6 +346,7 @@ func main() {
 				&sectionNameFlag,
 				&dateFlag,
 				&descriptionFlag,
+				&deadlineFlag,
 			},
 			ArgsUsage: "<Item ID>",
 		},
