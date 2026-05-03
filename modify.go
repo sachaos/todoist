@@ -41,11 +41,7 @@ func Modify(c *cli.Context) error {
 
 	if c.IsSet("deadline") {
 		deadlineDate := c.String("deadline")
-		if deadlineDate == "" || deadlineDate == "null" {
-			item.Deadline = &todoist.Deadline{Date: ""}
-		} else {
-			item.Deadline = &todoist.Deadline{Date: deadlineDate}
-		}
+		item.Deadline = &todoist.Deadline{Date: deadlineDate}
 	}
 
 	projectID := c.String("project-id")
