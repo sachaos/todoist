@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -36,6 +37,13 @@ func sortItems(itemListPtr *[][]string, byIndex int) {
 }
 
 func List(c *cli.Context) error {
+	if c.Bool("remote") {
+		return listRemote(c)
+	}
+	return listLocal(c)
+}
+
+func listLocal(c *cli.Context) error {
 	client := GetClient(c)
 
 	colorList := ColorList()
@@ -77,6 +85,56 @@ func List(c *cli.Context) error {
 	if c.Bool("priority") == true {
 		// sort output by priority
 		// and no need to use "else block" as items returned by API are already sorted by task id
+		sortItems(&itemList, 1)
+	}
+
+	defer writer.Flush()
+
+	if c.Bool("header") {
+		writer.Write([]string{"ID", "Priority", "DueDate", "Project", "Labels", "Content"})
+	}
+
+	for _, strings := range itemList {
+		writer.Write(strings)
+	}
+
+	return nil
+}
+
+func listRemote(c *cli.Context) error {
+	filter := c.String("filter")
+	if filter == "" {
+		return fmt.Errorf("--remote requires --filter")
+	}
+
+	client := GetClient(c)
+
+	items, err := client.FilterItems(context.Background(), filter, c.Int("limit"))
+	if err != nil {
+		return err
+	}
+
+	colorList := ColorList()
+	var projectIds []string
+	for _, project := range client.Store.Projects {
+		projectIds = append(projectIds, project.GetID())
+	}
+	projectColorHash := GenerateColorHash(projectIds, colorList)
+
+	itemList := [][]string{}
+	for _, item := range items {
+		itemList = append(itemList, []string{
+			IdFormat(item),
+			PriorityFormat(item.Priority),
+			DueDateFormat(item.DateTime(), item.AllDay),
+			ProjectFormat(item.ProjectID, client.Store, projectColorHash, c) +
+				SectionFormat(item.SectionID, client.Store, c),
+			item.LabelsString(),
+			ContentFormat(item),
+		})
+	}
+
+	if c.Bool("priority") {
 		sortItems(&itemList, 1)
 	}
 
