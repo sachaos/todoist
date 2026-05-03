@@ -8,3 +8,4 @@ vendor
 
 # Downloaded API specifications
 todoist-openapi.json
+.playwright-mcp/

@@ -64,6 +64,15 @@ func Add(c *cli.Context) error {
 
 	item.Due = &todoist.Due{String: c.String("date")}
 
+	if c.IsSet("deadline") {
+		deadlineDate := c.String("deadline")
+		if deadlineDate == "" || deadlineDate == "null" {
+			item.Deadline = &todoist.Deadline{Date: ""}
+		} else {
+			item.Deadline = &todoist.Deadline{Date: deadlineDate}
+		}
+	}
+
 	item.AutoReminder = c.Bool("reminder")
 
 	if err := client.AddItem(context.Background(), item); err != nil {

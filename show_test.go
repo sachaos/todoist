@@ -114,6 +114,67 @@ func TestShow_Section(t *testing.T) {
 	}
 }
 
+func TestShow_ItemWithDeadline(t *testing.T) {
+	color.NoColor = true
+
+	store := testStore()
+	// Add a second item with a deadline
+	store.Items = append(store.Items, todoist.Item{
+		BaseItem: todoist.BaseItem{
+			HaveID:        todoist.HaveID{ID: "item-2"},
+			HaveProjectID: todoist.HaveProjectID{ProjectID: "proj-1"},
+			Content:       "Task with deadline",
+		},
+		Deadline: &todoist.Deadline{Date: "2025-02-12"},
+		Priority: 3,
+	})
+	store.ConstructItemTree()
+
+	client := todoist.NewClient(&todoist.Config{})
+	client.Store = store
+
+	ctx := newTestContext(client, []string{"item-2"})
+
+	var buf bytes.Buffer
+	writer = NewTSVWriter(&buf)
+
+	err := Show(ctx)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	output := buf.String()
+	if !bytes.Contains([]byte(output), []byte("Deadline")) {
+		t.Errorf("expected output to contain 'Deadline', got: %s", output)
+	}
+	if !bytes.Contains([]byte(output), []byte("2025-02-12")) {
+		t.Errorf("expected output to contain '2025-02-12', got: %s", output)
+	}
+}
+
+func TestShow_ItemWithoutDeadline(t *testing.T) {
+	color.NoColor = true
+
+	store := testStore()
+	client := todoist.NewClient(&todoist.Config{})
+	client.Store = store
+
+	ctx := newTestContext(client, []string{"item-1"})
+
+	var buf bytes.Buffer
+	writer = NewTSVWriter(&buf)
+
+	err := Show(ctx)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	output := buf.String()
+	if bytes.Contains([]byte(output), []byte("Deadline")) {
+		t.Errorf("expected output NOT to contain 'Deadline' when deadline is nil, got: %s", output)
+	}
+}
+
 func TestShow_NotFound(t *testing.T) {
 	color.NoColor = true
 

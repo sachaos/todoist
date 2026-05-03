@@ -39,6 +39,15 @@ func Modify(c *cli.Context) error {
 
 	item.Due = &todoist.Due{String: c.String("date")}
 
+	if c.IsSet("deadline") {
+		deadlineDate := c.String("deadline")
+		if deadlineDate == "" || deadlineDate == "null" {
+			item.Deadline = &todoist.Deadline{Date: ""}
+		} else {
+			item.Deadline = &todoist.Deadline{Date: deadlineDate}
+		}
+	}
+
 	projectID := c.String("project-id")
 	if projectID == "" {
 		projectID = client.Store.Projects.GetIDByName(c.String("project-name"))

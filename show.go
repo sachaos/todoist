@@ -40,8 +40,12 @@ func Show(c *cli.Context) error {
 		[]string{"Labels", item.LabelsString()},
 		[]string{"Priority", PriorityFormat(item.Priority)},
 		[]string{"DueDate", DueDateFormat(item.DateTime(), item.AllDay)},
-		[]string{"URL", strings.Join(todoist.GetContentURL(item), ",")},
 	}
+	if item.Deadline != nil && item.Deadline.Date != "" {
+		records = append(records, []string{"Deadline", item.Deadline.Date})
+	}
+	records = append(records, []string{"URL", strings.Join(todoist.GetContentURL(item), ",")})
+
 	defer writer.Flush()
 
 	for _, record := range records {

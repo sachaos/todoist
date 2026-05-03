@@ -27,6 +27,11 @@ type Due struct {
 	Lang        string `json:"lang"`
 }
 
+type Deadline struct {
+	Date string `json:"date"`
+	Lang string `json:"lang,omitempty"`
+}
+
 type BaseItem struct {
 	HaveID
 	HaveProjectID
@@ -77,6 +82,7 @@ type Item struct {
 	DateString     string      `json:"date_string"`
 	DayOrder       int         `json:"day_order"`
 	Due            *Due        `json:"due"`
+	Deadline       *Deadline   `json:"deadline"`
 	HasMoreNotes   bool        `json:"has_more_notes"`
 	IsArchived     int         `json:"is_archived"`
 	IsDeleted      bool        `json:"is_deleted"`
@@ -173,6 +179,9 @@ func (item Item) AddParam() interface{} {
 	if item.Due != nil {
 		param["due"] = item.Due
 	}
+	if item.Deadline != nil {
+		param["deadline"] = item.Deadline
+	}
 	if item.SectionID != "" {
 		param["section_id"] = item.SectionID
 	}
@@ -207,6 +216,9 @@ func (item Item) UpdateParam() interface{} {
 	}
 	if item.Due != nil {
 		param["due"] = item.Due
+	}
+	if item.Deadline != nil {
+		param["deadline"] = item.Deadline
 	}
 	if item.Description != "" {
 		param["description"] = item.Description
