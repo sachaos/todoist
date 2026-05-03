@@ -1,6 +1,6 @@
 ---
 description: Read a spec issue, implement the feature, open a PR, and run code review.
-model: claude-opus-4-7
+model: claude-sonnet-4-6
 ---
 
 You are implementing a feature for the todoist CLI. The spec is in a GitHub issue number provided as the argument.
