@@ -64,18 +64,19 @@ func Add(c *cli.Context) error {
 
 	item.Due = &todoist.Due{String: c.String("date")}
 
-	item.AutoReminder = c.Bool("reminder")
-
-	newID, err := client.AddItem(context.Background(), item)
-	if err != nil {
-		return err
-	}
-
 	if c.IsSet("deadline") {
 		deadlineDate := c.String("deadline")
-		if err := client.UpdateItemDeadline(context.Background(), newID, deadlineDate); err != nil {
-			return fmt.Errorf("failed to update deadline for task %s: %w", newID, err)
+		if deadlineDate == "" || deadlineDate == "null" {
+			item.Deadline = &todoist.Deadline{Date: ""}
+		} else {
+			item.Deadline = &todoist.Deadline{Date: deadlineDate}
 		}
+	}
+
+	item.AutoReminder = c.Bool("reminder")
+
+	if err := client.AddItem(context.Background(), item); err != nil {
+		return err
 	}
 
 	return Sync(c)

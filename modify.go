@@ -39,6 +39,15 @@ func Modify(c *cli.Context) error {
 
 	item.Due = &todoist.Due{String: c.String("date")}
 
+	if c.IsSet("deadline") {
+		deadlineDate := c.String("deadline")
+		if deadlineDate == "" || deadlineDate == "null" {
+			item.Deadline = &todoist.Deadline{Date: ""}
+		} else {
+			item.Deadline = &todoist.Deadline{Date: deadlineDate}
+		}
+	}
+
 	projectID := c.String("project-id")
 	if projectID == "" {
 		projectID = client.Store.Projects.GetIDByName(c.String("project-name"))
@@ -66,13 +75,6 @@ func Modify(c *cli.Context) error {
 	if sectionID != "" {
 		if err := client.MoveItemToSection(context.Background(), item, sectionID); err != nil {
 			return err
-		}
-	}
-
-	if c.IsSet("deadline") {
-		deadlineDate := c.String("deadline")
-		if err := client.UpdateItemDeadline(context.Background(), item_id, deadlineDate); err != nil {
-			return fmt.Errorf("failed to update deadline for task %s: %w", item_id, err)
 		}
 	}
 

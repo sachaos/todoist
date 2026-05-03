@@ -179,6 +179,9 @@ func (item Item) AddParam() interface{} {
 	if item.Due != nil {
 		param["due"] = item.Due
 	}
+	if item.Deadline != nil {
+		param["deadline"] = item.Deadline
+	}
 	if item.SectionID != "" {
 		param["section_id"] = item.SectionID
 	}
@@ -214,6 +217,9 @@ func (item Item) UpdateParam() interface{} {
 	if item.Due != nil {
 		param["due"] = item.Due
 	}
+	if item.Deadline != nil {
+		param["deadline"] = item.Deadline
+	}
 	if item.Description != "" {
 		param["description"] = item.Description
 	}
@@ -235,17 +241,11 @@ func (item Item) LabelsString() string {
 	return "@" + strings.Join(item.LabelNames, ",@")
 }
 
-// AddItem creates a new task and returns the new item's real ID.
-// The ID is extracted from the temp_id_mapping returned by the sync API.
-func (c *Client) AddItem(ctx context.Context, item Item) (string, error) {
-	command := NewCommand("item_add", item.AddParam())
-	commands := Commands{command}
-	result, err := c.execCommandsWithResult(ctx, commands)
-	if err != nil {
-		return "", err
+func (c *Client) AddItem(ctx context.Context, item Item) error {
+	commands := Commands{
+		NewCommand("item_add", item.AddParam()),
 	}
-	newID := result.TempIdMapping[command.TempID]
-	return newID, nil
+	return c.ExecCommands(ctx, commands)
 }
 
 func (c *Client) UpdateItem(ctx context.Context, item Item) error {
@@ -275,21 +275,6 @@ func (c *Client) DeleteItem(ctx context.Context, ids []string) error {
 
 func (c *Client) ReopenItem(ctx context.Context, id string) error {
 	return c.doRestApi(ctx, http.MethodPost, "tasks/"+id+"/reopen", nil, nil)
-}
-
-// UpdateItemDeadline sets or clears the deadline date for a task.
-// Pass an empty string or "null" to clear the deadline; pass a YYYY-MM-DD date to set it.
-func (c *Client) UpdateItemDeadline(ctx context.Context, itemID string, deadlineDate string) error {
-	var deadlineValue interface{}
-	if deadlineDate == "" || deadlineDate == "null" {
-		deadlineValue = nil
-	} else {
-		deadlineValue = deadlineDate
-	}
-	body := map[string]interface{}{
-		"deadline_date": deadlineValue,
-	}
-	return c.doRestApi(ctx, http.MethodPost, "tasks/"+itemID, body, nil)
 }
 
 type ItemFilterResponse struct {
