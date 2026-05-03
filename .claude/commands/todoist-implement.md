@@ -33,6 +33,7 @@ Brief a general-purpose Sonnet agent with:
 - Specific files to create/modify and what each change should do
 - Patterns to follow from the existing codebase
 - Reminders: do NOT call `Sync(c)` unless the spec says to; do NOT commit or push; do NOT add features beyond the spec
+- **Tests**: always add a test for the zero-input/no-args guard (e.g. command with no IDs, or a flag that requires another flag) using `newTestContext()` from `show_test.go`. Add any other pure-logic tests that don't require HTTP. Do NOT introduce HTTP mocking infrastructure.
 - After implementing: run `make build` and `make test` and report results
 
 Wait for the agent to complete before proceeding.
@@ -45,7 +46,7 @@ Check the agent's output. If `make build` or `make test` failed, fix the issues 
 
 ```
 git add <changed files>
-git commit -m "<imperative summary>\n\nCo-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>"
+git commit -m "<imperative summary>\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 git push -u origin <branch>
 ```
 

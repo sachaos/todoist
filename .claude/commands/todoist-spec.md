@@ -11,7 +11,11 @@ Check your memory for the active meta-issue number (look for a memory about "met
 
 ## Step 2 — Pick the feature
 
-If the user provided a feature name as an argument, use that. Otherwise:
+If the user provided an **issue number** as the argument (e.g. `#303` or `303`), read that issue with `gh issue view <number> --repo sachaos/todoist` and use it as the spec destination — skip creating a new issue in Step 6 and instead update the existing one.
+
+If the user provided a feature name (text), use that as the topic.
+
+Otherwise:
 - Run `gh issue view <meta-issue> --repo sachaos/todoist` to get the current list
 - Show the user the unchecked items and ask which one to spec
 
@@ -60,9 +64,17 @@ Resolve each one before moving on. State your recommendation for each and ask th
 
 ## Step 6 — Post the issue
 
-Once the user approves the spec, post it as a new GitHub issue:
+Once the user approves the spec:
+
+**If the user pointed to an existing issue in Step 2**, update that issue's body with the final spec:
+```
+gh issue edit <number> --repo sachaos/todoist --body "<spec>"
+```
+
+**Otherwise**, create a new issue:
 - Title: concise, imperative ("Add `X` command to...")
 - Body: the full spec in markdown, opening with "Proposal for [item] tracked in #<meta-issue>"
-- Link it as a sub-issue: `gh api -X POST /repos/sachaos/todoist/issues/<meta-issue>/sub_issues -F sub_issue_id=<new-issue-id>`
+- Attempt to link as a sub-issue: `gh api -X POST /repos/sachaos/todoist/issues/<meta-issue>/sub_issues -F sub_issue_id=<new-issue-id>`
+- If the sub_issues API returns 404, fall back to posting a comment on the meta-issue: `gh issue comment <meta-issue> --repo sachaos/todoist --body "Spec posted: #<new-issue-id>"`
 
-Report the new issue URL to the user.
+Report the issue URL to the user.

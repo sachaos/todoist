@@ -13,7 +13,9 @@ Check your memory for the active meta-issue number. If not found, ask the user b
 
 Run: `gh pr view <PR-number> --repo sachaos/todoist`
 
-Confirm it is open and not a draft. If already merged or closed, report that and stop.
+- If it is a draft or closed without merging, report that and stop.
+- If it is already merged, skip Step 3 and continue with Step 4.
+- Otherwise confirm it is open and proceed.
 
 ## Step 3 — Merge
 
