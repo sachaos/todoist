@@ -3,6 +3,7 @@ package todoist
 import (
 	"context"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -262,6 +263,37 @@ func (c *Client) DeleteItem(ctx context.Context, ids []string) error {
 
 func (c *Client) ReopenItem(ctx context.Context, id string) error {
 	return c.doRestApi(ctx, http.MethodPost, "tasks/"+id+"/reopen", nil, nil)
+}
+
+type ItemFilterResponse struct {
+	Results    []Item  `json:"results"`
+	NextCursor *string `json:"next_cursor"`
+}
+
+// FilterItems calls GET /api/v1/tasks/filter with the given query string,
+// auto-paginating until exhausted (or until limit results are collected when limit > 0).
+// limit <= 0 means "no limit, fetch all pages".
+func (c *Client) FilterItems(ctx context.Context, query string, limit int) ([]Item, error) {
+	var results []Item
+	cursor := ""
+	for {
+		params := url.Values{"query": {query}}
+		if cursor != "" {
+			params.Set("cursor", cursor)
+		}
+		var resp ItemFilterResponse
+		if err := c.doApi(ctx, http.MethodGet, "tasks/filter", params, &resp); err != nil {
+			return nil, err
+		}
+		results = append(results, resp.Results...)
+		if limit > 0 && len(results) >= limit {
+			return results[:limit], nil
+		}
+		if resp.NextCursor == nil || *resp.NextCursor == "" {
+			return results, nil
+		}
+		cursor = *resp.NextCursor
+	}
 }
 
 func (c *Client) MoveItem(ctx context.Context, item *Item, projectId string) error {

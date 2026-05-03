@@ -106,6 +106,15 @@ func main() {
 		Aliases: []string{"p"},
 		Usage:   "sort the output by priority",
 	}
+	remoteFlag := cli.BoolFlag{
+		Name:    "remote",
+		Aliases: []string{"r"},
+		Usage:   "execute filter on Todoist's servers instead of the local parser (requires --filter)",
+	}
+	limitFlag := cli.IntFlag{
+		Name:  "limit",
+		Usage: "cap total results returned when --remote is set (default: no limit)",
+	}
 	reminderFlg := cli.BoolFlag{
 		Name:    "reminder",
 		Aliases: []string{"r"},
@@ -270,8 +279,15 @@ func main() {
 			Flags: []cli.Flag{
 				&filterFlag,
 				&sortPriorityFlag,
+				&remoteFlag,
+				&limitFlag,
 			},
 			ArgsUsage: " ",
+			Description: "By default, --filter is parsed locally and applied to the cached task store.\n" +
+				"With --remote, the filter is sent to Todoist's server for evaluation,\n" +
+				"which supports the full filter syntax including features the local\n" +
+				"parser doesn't handle. --remote requires --filter.\n\n" +
+				"Results auto-paginate; use --limit to cap the total number returned.",
 		},
 		{
 			Name:   "show",
