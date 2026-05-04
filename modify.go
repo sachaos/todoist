@@ -37,11 +37,19 @@ func Modify(c *cli.Context) error {
 		item.LabelNames = names
 	}
 
-	item.Due = &todoist.Due{String: c.String("date")}
+	if c.IsSet("date") {
+		dateValue := c.String("date")
+		item.DateString = dateValue
+		if dateValue == "null" {
+			item.Due = nil
+		} else {
+			item.Due = &todoist.Due{String: dateValue}
+		}
+	}
 
 	if c.IsSet("deadline") {
 		deadlineDate := c.String("deadline")
-		if deadlineDate == "" || deadlineDate == "null" {
+		if deadlineDate == "null" {
 			item.Deadline = &todoist.Deadline{Date: ""}
 		} else {
 			item.Deadline = &todoist.Deadline{Date: deadlineDate}
