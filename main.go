@@ -383,6 +383,13 @@ func main() {
 			ArgsUsage: " ",
 		},
 		{
+			Name:      "filters",
+			Usage:     "Show all filters",
+			Action:    Filters,
+			ArgsUsage: " ",
+			Description: "Lists all saved filters with their ID, name, query, and favorite status. Filters are displayed in their Todoist UI order.",
+		},
+		{
 			Name:      "projects",
 			Usage:     "Show all projects",
 			Action:    Projects,
