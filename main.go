@@ -111,6 +111,11 @@ func main() {
 		Aliases: []string{"r"},
 		Usage:   "execute filter on Todoist's servers instead of the local parser (requires --filter)",
 	}
+	remoteFlagNoFilterRequired := cli.BoolFlag{
+		Name:    "remote",
+		Aliases: []string{"r"},
+		Usage:   "execute filter on Todoist's servers instead of the local parser",
+	}
 	limitFlag := cli.IntFlag{
 		Name:  "limit",
 		Usage: "cap total results returned when --remote is set (default: no limit)",
@@ -311,6 +316,23 @@ func main() {
 				&filterFlag,
 			},
 			ArgsUsage: " ",
+		},
+		{
+			Name:    "today",
+			Aliases: []string{"tod"},
+			Usage:   "Show tasks due today",
+			Action:  Today,
+			Flags: []cli.Flag{
+				&filterFlag,
+				&sortPriorityFlag,
+				&remoteFlagNoFilterRequired,
+				&limitFlag,
+			},
+			ArgsUsage: " ",
+			Description: "Displays all active tasks across all projects with a due date of today.\n" +
+				"Use --filter to further narrow results.\n" +
+				"By default, --filter is parsed locally. Use --remote to evaluate\n" +
+				"the filter on Todoist's servers.",
 		},
 		{
 			Name:    "add",
