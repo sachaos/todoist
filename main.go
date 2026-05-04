@@ -313,6 +313,23 @@ func main() {
 			ArgsUsage: " ",
 		},
 		{
+			Name:    "today",
+			Aliases: []string{"tod"},
+			Usage:   "Show tasks due today",
+			Action:  Today,
+			Flags: []cli.Flag{
+				&filterFlag,
+				&sortPriorityFlag,
+				&remoteFlag,
+				&limitFlag,
+			},
+			ArgsUsage: " ",
+			Description: "Displays all active tasks across all projects with a due date of today.\n" +
+				"Use --filter to further narrow results.\n" +
+				"By default, --filter is parsed locally. Use --remote to evaluate\n" +
+				"the filter on Todoist's servers.",
+		},
+		{
 			Name:    "add",
 			Aliases: []string{"a"},
 			Usage:   "Add task",
