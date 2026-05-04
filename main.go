@@ -111,6 +111,11 @@ func main() {
 		Aliases: []string{"r"},
 		Usage:   "execute filter on Todoist's servers instead of the local parser (requires --filter)",
 	}
+	remoteFlagNoFilterRequired := cli.BoolFlag{
+		Name:    "remote",
+		Aliases: []string{"r"},
+		Usage:   "execute filter on Todoist's servers instead of the local parser",
+	}
 	limitFlag := cli.IntFlag{
 		Name:  "limit",
 		Usage: "cap total results returned when --remote is set (default: no limit)",
@@ -320,7 +325,7 @@ func main() {
 			Flags: []cli.Flag{
 				&filterFlag,
 				&sortPriorityFlag,
-				&remoteFlag,
+				&remoteFlagNoFilterRequired,
 				&limitFlag,
 			},
 			ArgsUsage: " ",
