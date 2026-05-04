@@ -6,12 +6,14 @@ type Store struct {
 	DayOrders          interface{}   `json:"day_orders"`
 	DayOrdersTimestamp string        `json:"day_orders_timestamp"`
 	Filters            []struct {
-		Color     string `json:"color"`
-		ID        string `json:"id"`
-		IsDeleted bool   `json:"is_deleted"`
-		ItemOrder int    `json:"item_order"`
-		Name      string `json:"name"`
-		Query     string `json:"query"`
+		ID        string `json:"id"`        // The ID of the filter.
+		Name      string `json:"name"`      // The name of the filter.
+		Query     string `json:"query"`     // The query to search for. Examples of searches can be found in the Todoist help page.
+		Color     string `json:"color"`    // The color of the filter icon. Refer to the name column in the Colors guide for more info.
+		ItemOrder int    `json:"item_order"`     // Filter's order in the filter list (where the smallest value should place the filter at the top).
+		IsDeleted bool   `json:"is_deleted"`    // Whether the filter is marked as deleted (a true or false value).
+		IsFavorite bool  `json:"is_favorite"`   // Whether the filter is a favorite (a true or false value).
+		IsFrozen  bool   `json:"is_frozen"`     // Filters from a canceled subscription cannot be changed. This is a read-only attribute (a true or false value).
 	} `json:"filters"`
 	FullSync          bool   `json:"full_sync"`
 	Items             Items  `json:"items"`

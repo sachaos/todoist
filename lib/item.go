@@ -214,11 +214,17 @@ func (item Item) UpdateParam() interface{} {
 	if item.Priority != 0 {
 		param["priority"] = item.Priority
 	}
-	if item.Due != nil {
+	if item.DateString == "null" || item.DateString == "" {
+		param["due"] = nil
+	} else if item.Due != nil {
 		param["due"] = item.Due
 	}
 	if item.Deadline != nil {
-		param["deadline"] = item.Deadline
+		if item.Deadline.Date == "" {
+			param["deadline"] = nil
+		} else {
+			param["deadline"] = item.Deadline
+		}
 	}
 	if item.Description != "" {
 		param["description"] = item.Description
