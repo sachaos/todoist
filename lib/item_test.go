@@ -58,6 +58,30 @@ func TestItem_MoveToSectionParam(t *testing.T) {
 	}
 }
 
+func TestItem_UpdateParam_PriorityPreserved(t *testing.T) {
+	item := Item{
+		BaseItem: BaseItem{HaveID: HaveID{ID: "item-1"}},
+		Priority: 3,
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	if param["priority"] != 3 {
+		t.Errorf("expected priority 3 to be included, got %v", param["priority"])
+	}
+}
+
+func TestItem_UpdateParam_ZeroPriorityOmitted(t *testing.T) {
+	item := Item{
+		BaseItem: BaseItem{HaveID: HaveID{ID: "item-1"}},
+		Priority: 0,
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	if _, ok := param["priority"]; ok {
+		t.Errorf("expected priority to be absent when zero, got %v", param["priority"])
+	}
+}
+
 func TestItem_LabelsString(t *testing.T) {
 	item1 := Item{
 		LabelNames: []string{"important", "work", "unknown_label"},
