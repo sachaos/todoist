@@ -42,7 +42,7 @@ func GetClient(c *cli.Context) *todoist.Client {
 // isHelpCommand returns true if the given arguments represent a help invocation
 // that should skip authentication and config setup.
 func isHelpCommand(cliArgs []string, osArgs []string) bool {
-	if len(cliArgs) == 0 || cliArgs[0] == "help" || cliArgs[0] == "h" {
+	if len(cliArgs) == 0 || cliArgs[0] == "help" || cliArgs[0] == "h" || cliArgs[0] == "version" {
 		return true
 	}
 	for _, a := range osArgs {
@@ -524,6 +524,12 @@ func main() {
 			Usage:     "Quick add a task",
 			Action:    Quick,
 			ArgsUsage: "<Item content>",
+		},
+		{
+			Name:      "version",
+			Usage:     "Show version information",
+			Action:    Version,
+			ArgsUsage: " ",
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
