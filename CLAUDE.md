@@ -45,6 +45,8 @@ make release VERSION=x.y.z
 
 ## Architecture
 
+**For detailed lib/CLI boundary guidelines and contributor guidance, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).**
+
 ### Core Structure
 
 The codebase is organized into two main layers:
