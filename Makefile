@@ -11,7 +11,7 @@ build: prepare
 
 .PHONY: test
 test: prepare
-	go test -v
+	go test -v ./...
 
 .PHONY: prepare
 prepare: filter_parser.go
