@@ -122,7 +122,9 @@ It has following parameters:
 $ brew install todoist-cli-go
 ```
 
-The formula was previously named `todoist-cli` but was renamed to `todoist-cli-go` to free up the `todoist-cli` name for the official Doist CLI. The `sachaos/todoist` tap is no longer required.
+> [!IMPORTANT]
+> The formula name is **`todoist-cli-go`**, not `todoist-cli`.
+> `todoist-cli` is a separate formula for the [official Doist CLI](https://github.com/Doist/todoist-cli), which is a different tool. This formula was previously named `todoist-cli` but was renamed to make room for the official one. The `sachaos/todoist` tap is no longer required.
 
 ### AUR
 
