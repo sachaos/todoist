@@ -116,11 +116,13 @@ It has following parameters:
 
 ## Install
 
-### Homebrew (Mac OS)
+### Homebrew (Mac OS / Linux)
 
 ```
-$ brew install sachaos/todoist/todoist
+$ brew install todoist-cli-go
 ```
+
+The formula was previously named `todoist-cli` but was renamed to `todoist-cli-go` to free up the `todoist-cli` name for the official Doist CLI. The `sachaos/todoist` tap is no longer required.
 
 ### AUR
 
