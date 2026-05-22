@@ -116,7 +116,7 @@ It has following parameters:
 
 ## Install
 
-### Homebrew (Mac OS / Linux)
+### Homebrew (Mac OS)
 
 ```
 $ brew install todoist-cli-go
