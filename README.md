@@ -118,13 +118,21 @@ It has following parameters:
 
 ### Homebrew (Mac OS)
 
+From homebrew-core:
+
 ```
 $ brew install todoist-cli-go
 ```
 
+Or from this project's tap:
+
+```
+$ brew install sachaos/todoist/todoist
+```
+
 > [!IMPORTANT]
-> The formula name is **`todoist-cli-go`**, not `todoist-cli`.
-> `todoist-cli` is a separate formula for the [official Doist CLI](https://github.com/Doist/todoist-cli), which is a different tool. This formula was previously named `todoist-cli` but was renamed to make room for the official one. The `sachaos/todoist` tap is no longer required.
+> The homebrew-core formula name is **`todoist-cli-go`**, not `todoist-cli`.
+> `todoist-cli` is a separate formula for the [official Doist CLI](https://github.com/Doist/todoist-cli), which is a different tool. This formula was previously named `todoist-cli` but was renamed to make room for the official one.
 
 ### AUR
 
