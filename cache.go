@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
 
 	"github.com/sachaos/todoist/lib"
@@ -23,7 +22,7 @@ func LoadCache(filename string, s *todoist.Store) error {
 }
 
 func ReadCache(filename string, s *todoist.Store) error {
-	jsonBytes, err := ioutil.ReadFile(filename)
+	jsonBytes, err := os.ReadFile(filename)
 	if err != nil {
 		return CommandFailed
 	}
@@ -61,7 +60,7 @@ func WriteCache(filename string, s *todoist.Store) error {
 	if err != nil {
 		return err
 	}
-	err2 := ioutil.WriteFile(filename, buf, os.ModePerm)
+	err2 := os.WriteFile(filename, buf, os.ModePerm)
 	if err2 != nil {
 		return errors.New("Couldn't write to the cache file")
 	}
