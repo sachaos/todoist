@@ -9,7 +9,7 @@ import (
 	"github.com/sachaos/todoist/lib"
 )
 
-const currentSchemaVersion = 1
+const currentSchemaVersion = todoist.CurrentSchemaVersion
 
 func LoadCache(filename string, s *todoist.Store) error {
 	err := ReadCache(filename, s)
@@ -39,7 +39,9 @@ func ReadCache(filename string, s *todoist.Store) error {
 		// Old or mismatched cache: force a full resync on next sync call.
 		s.SyncToken = "*"
 		s.SchemaVersion = currentSchemaVersion
-		_ = WriteCache(filename, s)
+		if err := WriteCache(filename, s); err != nil {
+			return err
+		}
 		return nil
 	}
 

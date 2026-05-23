@@ -25,6 +25,17 @@ func TestReadCache_FileNotFound(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func assertCacheFileSchemaVersion(t *testing.T, path string, want int) {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	require.NoError(t, err)
+	var stored struct {
+		SchemaVersion int `json:"schema_version"`
+	}
+	require.NoError(t, json.Unmarshal(data, &stored))
+	assert.Equal(t, want, stored.SchemaVersion, "schema_version in cache file on disk")
+}
+
 func TestReadCache_OldCache_NoSchemaVersion(t *testing.T) {
 	// Old caches have no schema_version field; json.Unmarshal sets missing
 	// int fields to 0, which != currentSchemaVersion, so SyncToken must be
@@ -38,6 +49,7 @@ func TestReadCache_OldCache_NoSchemaVersion(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "*", s.SyncToken)
 	assert.Equal(t, currentSchemaVersion, s.SchemaVersion)
+	assertCacheFileSchemaVersion(t, path, currentSchemaVersion)
 }
 
 func TestReadCache_WrongSchemaVersion(t *testing.T) {
@@ -51,6 +63,7 @@ func TestReadCache_WrongSchemaVersion(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "*", s.SyncToken)
 	assert.Equal(t, currentSchemaVersion, s.SchemaVersion)
+	assertCacheFileSchemaVersion(t, path, currentSchemaVersion)
 }
 
 func TestReadCache_CorrectSchemaVersion_PreservesSyncToken(t *testing.T) {
