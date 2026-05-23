@@ -9,6 +9,8 @@ import (
 	"github.com/sachaos/todoist/lib"
 )
 
+const currentSchemaVersion = 1
+
 func LoadCache(filename string, s *todoist.Store) error {
 	err := ReadCache(filename, s)
 	if err != nil {
@@ -21,12 +23,27 @@ func LoadCache(filename string, s *todoist.Store) error {
 }
 
 func ReadCache(filename string, s *todoist.Store) error {
-	jsonString, err := ioutil.ReadFile(filename)
+	jsonBytes, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return CommandFailed
 	}
-	err = json.Unmarshal(jsonString, &s)
-	if err != nil {
+
+	// Two-pass: check schema version before full unmarshal so that a
+	// schema change never leaves the cache in a broken state.
+	var meta struct {
+		SchemaVersion int `json:"schema_version"`
+	}
+	json.Unmarshal(jsonBytes, &meta) // error ignored: missing field yields 0
+
+	if meta.SchemaVersion != currentSchemaVersion {
+		// Old or mismatched cache: force a full resync on next sync call.
+		s.SyncToken = "*"
+		s.SchemaVersion = currentSchemaVersion
+		_ = WriteCache(filename, s)
+		return nil
+	}
+
+	if err := json.Unmarshal(jsonBytes, s); err != nil {
 		return CommandFailed
 	}
 	s.ConstructItemTree()
