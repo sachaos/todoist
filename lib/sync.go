@@ -60,6 +60,7 @@ type Store struct {
 		Type         string      `json:"type"`
 	} `json:"reminders"`
 	SyncToken     string              `json:"sync_token"`
+	SchemaVersion int                 `json:"schema_version"`
 	TempIDMapping struct{}            `json:"temp_id_mapping"`
 	User          User                `json:"user"`
 	RootItem      *Item               `json:"-"`
