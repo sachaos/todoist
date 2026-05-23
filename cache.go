@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
 
 	"github.com/sachaos/todoist/lib"
 )
+
+const currentSchemaVersion = todoist.CurrentSchemaVersion
 
 func LoadCache(filename string, s *todoist.Store) error {
 	err := ReadCache(filename, s)
@@ -21,12 +22,29 @@ func LoadCache(filename string, s *todoist.Store) error {
 }
 
 func ReadCache(filename string, s *todoist.Store) error {
-	jsonString, err := ioutil.ReadFile(filename)
+	jsonBytes, err := os.ReadFile(filename)
 	if err != nil {
 		return CommandFailed
 	}
-	err = json.Unmarshal(jsonString, &s)
-	if err != nil {
+
+	// Two-pass: check schema version before full unmarshal so that a
+	// schema change never leaves the cache in a broken state.
+	var meta struct {
+		SchemaVersion int `json:"schema_version"`
+	}
+	json.Unmarshal(jsonBytes, &meta) // error ignored: missing field yields 0
+
+	if meta.SchemaVersion != currentSchemaVersion {
+		// Old or mismatched cache: force a full resync on next sync call.
+		s.SyncToken = "*"
+		s.SchemaVersion = currentSchemaVersion
+		if err := WriteCache(filename, s); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if err := json.Unmarshal(jsonBytes, s); err != nil {
 		return CommandFailed
 	}
 	s.ConstructItemTree()
@@ -42,7 +60,7 @@ func WriteCache(filename string, s *todoist.Store) error {
 	if err != nil {
 		return err
 	}
-	err2 := ioutil.WriteFile(filename, buf, os.ModePerm)
+	err2 := os.WriteFile(filename, buf, os.ModePerm)
 	if err2 != nil {
 		return errors.New("Couldn't write to the cache file")
 	}

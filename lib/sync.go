@@ -1,5 +1,7 @@
 package todoist
 
+const CurrentSchemaVersion = 1
+
 type Store struct {
 	CollaboratorStates []interface{} `json:"collaborator_states"`
 	Collaborators      []interface{} `json:"collaborators"`
@@ -60,6 +62,7 @@ type Store struct {
 		Type         string      `json:"type"`
 	} `json:"reminders"`
 	SyncToken     string              `json:"sync_token"`
+	SchemaVersion int                 `json:"schema_version"`
 	TempIDMapping struct{}            `json:"temp_id_mapping"`
 	User          User                `json:"user"`
 	RootItem      *Item               `json:"-"`

@@ -169,6 +169,12 @@ Use the **REST API** (`doRestApi`) when:
 
 **Do NOT call `Sync(c)`** when the command operates on completed tasks or resources that were never in the cache. The cache stays internally consistent because it never held those items. Examples: `reopen`. Add a comment in the handler explaining the omission so future maintainers don't add it back by mistake.
 
+### Cache schema version
+
+`lib/sync.go` defines `CurrentSchemaVersion`. **Bump this constant whenever the `Store` struct changes in a way that would make an existing cache incompatible** — adding a field with a new type, renaming a field, changing a field's JSON tag, or removing a field that the app relies on. Do NOT bump it for purely additive changes where the old cache would still work correctly (e.g. adding a nullable field that defaults to zero/nil).
+
+When `ReadCache` sees a version mismatch it resets `SyncToken = "*"`, forcing a full resync on the next run. This is intentional — the user gets a clean cache rather than corrupted data.
+
 ### doRestApi behavior
 
 `doRestApi` in `lib/todoist.go` treats both **200 OK** and **204 No Content** as success. When adding a new REST-based lib function, always check the OpenAPI spec (at `todoist-openapi.json` in the repo root) to confirm which status code the endpoint returns — don't assume 200.

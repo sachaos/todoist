@@ -189,6 +189,7 @@ func (c *Client) Sync(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	c.Store.SchemaVersion = CurrentSchemaVersion
 	c.Store.ConstructItemTree()
 	return nil
 }
