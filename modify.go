@@ -34,13 +34,19 @@ func Modify(c *cli.Context) error {
 	if c.IsSet("priority") {
 		item.Priority = priorityMapping[c.Int("priority")]
 	}
-	if labelNames := c.String("label-names"); labelNames != "" {
-		stringNames := strings.Split(labelNames, ",")
-		names := []string{}
-		for _, stringName := range stringNames {
-			names = append(names, strings.TrimSpace(stringName))
+	if c.IsSet("label-names") {
+		labelNames := c.String("label-names")
+		if labelNames == "" {
+			item.LabelNames = []string{}
+			item.ClearLabelNames = true
+		} else {
+			stringNames := strings.Split(labelNames, ",")
+			names := []string{}
+			for _, stringName := range stringNames {
+				names = append(names, strings.TrimSpace(stringName))
+			}
+			item.LabelNames = names
 		}
-		item.LabelNames = names
 	}
 
 	if c.IsSet("date") {

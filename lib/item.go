@@ -70,28 +70,32 @@ type Item struct {
 	HaveParentID
 	HaveIndent
 	HaveSectionID
-	ChildItem      *Item       `json:"-"`
-	BrotherItem    *Item       `json:"-"`
-	Description    string      `json:"description"`
-	AllDay         bool        `json:"all_day"`
-	AssignedByUID  string      `json:"assigned_by_uid"`
-	Checked        bool        `json:"checked"`
-	Collapsed      bool        `json:"collapsed"`
-	DateAdded      string      `json:"added_at"`
-	DateLang       string      `json:"date_lang"`
-	DateString     string      `json:"date_string"`
-	DayOrder       int         `json:"day_order"`
-	Due            *Due        `json:"due"`
-	Deadline       *Deadline   `json:"deadline"`
-	HasMoreNotes   bool        `json:"has_more_notes"`
-	IsArchived     int         `json:"is_archived"`
-	IsDeleted      bool        `json:"is_deleted"`
-	ItemOrder      int         `json:"item_order"`
-	LabelNames     []string    `json:"labels"`
-	Priority       int         `json:"priority"`
-	AutoReminder   bool        `json:"auto_reminder"`
-	ResponsibleUID interface{} `json:"responsible_uid"`
-	SyncID         interface{} `json:"sync_id"`
+	ChildItem   *Item `json:"-"`
+	BrotherItem *Item `json:"-"`
+	// ClearLabelNames signals UpdateParam to send labels=[] to the API,
+	// allowing the user to explicitly clear all labels on a task. Set by
+	// modify.go when --label-names is explicitly passed as an empty string.
+	ClearLabelNames bool        `json:"-"`
+	Description     string      `json:"description"`
+	AllDay          bool        `json:"all_day"`
+	AssignedByUID   string      `json:"assigned_by_uid"`
+	Checked         bool        `json:"checked"`
+	Collapsed       bool        `json:"collapsed"`
+	DateAdded       string      `json:"added_at"`
+	DateLang        string      `json:"date_lang"`
+	DateString      string      `json:"date_string"`
+	DayOrder        int         `json:"day_order"`
+	Due             *Due        `json:"due"`
+	Deadline        *Deadline   `json:"deadline"`
+	HasMoreNotes    bool        `json:"has_more_notes"`
+	IsArchived      int         `json:"is_archived"`
+	IsDeleted       bool        `json:"is_deleted"`
+	ItemOrder       int         `json:"item_order"`
+	LabelNames      []string    `json:"labels"`
+	Priority        int         `json:"priority"`
+	AutoReminder    bool        `json:"auto_reminder"`
+	ResponsibleUID  interface{} `json:"responsible_uid"`
+	SyncID          interface{} `json:"sync_id"`
 }
 
 type Items []Item
@@ -208,7 +212,7 @@ func (item Item) UpdateParam() interface{} {
 	if item.DateString == "null" {
 		param["date_string"] = ""
 	}
-	if len(item.LabelNames) != 0 {
+	if len(item.LabelNames) != 0 || item.ClearLabelNames {
 		param["labels"] = item.LabelNames
 	}
 	if item.Priority != 0 {
