@@ -10,13 +10,13 @@ import (
 
 var priorityRegex = regexp.MustCompile("^p([1-4])$")
 
-func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, labels todoist.Labels) (result bool, err error) {
+func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects) (result bool, err error) {
 	result = false
 	switch e.(type) {
 	case BoolInfixOpExpr:
 		e := e.(BoolInfixOpExpr)
-		lr, err := Eval(e.left, item, projects, labels)
-		rr, err := Eval(e.right, item, projects, labels)
+		lr, err := Eval(e.left, item, projects)
+		rr, err := Eval(e.right, item, projects)
 		if err != nil {
 			return false, nil
 		}
@@ -31,7 +31,7 @@ func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, la
 		return EvalProject(e, item.GetProjectID(), projects), err
 	case LabelExpr:
 		e := e.(LabelExpr)
-		return EvalLabel(e, item.GetLabelNames(), labels), err
+		return EvalLabel(e, item.GetLabelNames()), err
 	case StringExpr:
 		switch item.(type) {
 		case *todoist.Item:
@@ -46,7 +46,7 @@ func Eval(e Expression, item todoist.AbstractItem, projects todoist.Projects, la
 		return EvalDate(e, item.DateTime()), err
 	case NotOpExpr:
 		e := e.(NotOpExpr)
-		r, err := Eval(e.expr, item, projects, labels)
+		r, err := Eval(e.expr, item, projects)
 		if err != nil {
 			return false, nil
 		}
@@ -109,7 +109,7 @@ func EvalProject(e ProjectExpr, projectID string, projects todoist.Projects) boo
 	return false
 }
 
-func EvalLabel(e LabelExpr, labelNames []string, labels todoist.Labels) bool {
+func EvalLabel(e LabelExpr, labelNames []string) bool {
 	if e.name == "" {
 		return len(labelNames) == 0
 	}
