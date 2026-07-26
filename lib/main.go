@@ -12,7 +12,7 @@ var (
 	FindFailed = errors.New("Find Failed")
 )
 
-const (
+var (
 	Server = "https://api.todoist.com/api/v1/"
 )
 
