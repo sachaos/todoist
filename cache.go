@@ -44,6 +44,10 @@ func ReadCache(filename string, s *todoist.Store) error {
 		return nil
 	}
 
+	// Reset before unmarshal: decoding into a populated store merges into
+	// existing slice elements instead of replacing them.
+	*s = todoist.Store{}
+
 	if err := json.Unmarshal(jsonBytes, s); err != nil {
 		return CommandFailed
 	}
