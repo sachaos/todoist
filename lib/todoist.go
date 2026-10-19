@@ -185,9 +185,18 @@ func (c *Client) QuickCommand(ctx context.Context, text string) error {
 func (c *Client) Sync(ctx context.Context) error {
 	params := url.Values{"sync_token": {"*"}, "resource_types": {"[\"all\"]"}}
 
-	err := c.doApi(ctx, http.MethodPost, "sync", params, &c.Store)
+	// Decode into a fresh store: decoding into the cache-populated store
+	// merges each incoming item into whatever item previously occupied the
+	// same slice index, and null fields (e.g. section_id) keep stale values.
+	store := Store{}
+	err := c.doApi(ctx, http.MethodPost, "sync", params, &store)
 	if err != nil {
 		return err
+	}
+	if c.Store == nil {
+		c.Store = &store
+	} else {
+		*c.Store = store
 	}
 	c.Store.SchemaVersion = CurrentSchemaVersion
 	c.Store.ConstructItemTree()
