@@ -82,6 +82,39 @@ func TestItem_UpdateParam_ZeroPriorityOmitted(t *testing.T) {
 	}
 }
 
+func TestItem_UpdateParam_ClearLabelNames(t *testing.T) {
+	item := Item{
+		BaseItem:        BaseItem{HaveID: HaveID{ID: "item-1"}},
+		LabelNames:      []string{},
+		ClearLabelNames: true,
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	v, ok := param["labels"]
+	if !ok {
+		t.Fatal("expected labels to be present when ClearLabelNames is true")
+	}
+	labels, ok := v.([]string)
+	if !ok {
+		t.Fatalf("expected labels to be []string, got %T", v)
+	}
+	if len(labels) != 0 {
+		t.Errorf("expected empty labels, got %v", labels)
+	}
+}
+
+func TestItem_UpdateParam_EmptyLabelNamesOmittedWithoutClearFlag(t *testing.T) {
+	item := Item{
+		BaseItem:   BaseItem{HaveID: HaveID{ID: "item-1"}},
+		LabelNames: []string{},
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	if _, ok := param["labels"]; ok {
+		t.Error("expected labels to be absent when empty and ClearLabelNames is false")
+	}
+}
+
 func TestItem_LabelsString(t *testing.T) {
 	item1 := Item{
 		LabelNames: []string{"important", "work", "unknown_label"},
