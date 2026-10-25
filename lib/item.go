@@ -70,28 +70,36 @@ type Item struct {
 	HaveParentID
 	HaveIndent
 	HaveSectionID
-	ChildItem      *Item       `json:"-"`
-	BrotherItem    *Item       `json:"-"`
-	Description    string      `json:"description"`
-	AllDay         bool        `json:"all_day"`
-	AssignedByUID  string      `json:"assigned_by_uid"`
-	Checked        bool        `json:"checked"`
-	Collapsed      bool        `json:"collapsed"`
-	DateAdded      string      `json:"added_at"`
-	DateLang       string      `json:"date_lang"`
-	DateString     string      `json:"date_string"`
-	DayOrder       int         `json:"day_order"`
-	Due            *Due        `json:"due"`
-	Deadline       *Deadline   `json:"deadline"`
-	HasMoreNotes   bool        `json:"has_more_notes"`
-	IsArchived     int         `json:"is_archived"`
-	IsDeleted      bool        `json:"is_deleted"`
-	ItemOrder      int         `json:"item_order"`
-	LabelNames     []string    `json:"labels"`
-	Priority       int         `json:"priority"`
-	AutoReminder   bool        `json:"auto_reminder"`
-	ResponsibleUID interface{} `json:"responsible_uid"`
-	SyncID         interface{} `json:"sync_id"`
+	ChildItem   *Item `json:"-"`
+	BrotherItem *Item `json:"-"`
+	// ClearContent signals UpdateParam to send content="" to the API,
+	// allowing the user to explicitly clear a task's content. Set by
+	// modify.go when --content is explicitly passed as an empty string.
+	ClearContent bool `json:"-"`
+	// ClearDescription signals UpdateParam to send description="" to the API,
+	// allowing the user to explicitly clear a task's description. Set by
+	// modify.go when --description is explicitly passed as an empty string.
+	ClearDescription bool        `json:"-"`
+	Description      string      `json:"description"`
+	AllDay           bool        `json:"all_day"`
+	AssignedByUID    string      `json:"assigned_by_uid"`
+	Checked          bool        `json:"checked"`
+	Collapsed        bool        `json:"collapsed"`
+	DateAdded        string      `json:"added_at"`
+	DateLang         string      `json:"date_lang"`
+	DateString       string      `json:"date_string"`
+	DayOrder         int         `json:"day_order"`
+	Due              *Due        `json:"due"`
+	Deadline         *Deadline   `json:"deadline"`
+	HasMoreNotes     bool        `json:"has_more_notes"`
+	IsArchived       int         `json:"is_archived"`
+	IsDeleted        bool        `json:"is_deleted"`
+	ItemOrder        int         `json:"item_order"`
+	LabelNames       []string    `json:"labels"`
+	Priority         int         `json:"priority"`
+	AutoReminder     bool        `json:"auto_reminder"`
+	ResponsibleUID   interface{} `json:"responsible_uid"`
+	SyncID           interface{} `json:"sync_id"`
 }
 
 type Items []Item
@@ -198,7 +206,7 @@ func (item Item) UpdateParam() interface{} {
 	if item.ID != "" {
 		param["id"] = item.ID
 	}
-	if item.Content != "" {
+	if item.Content != "" || item.ClearContent {
 		param["content"] = item.Content
 	}
 	if item.DateString != "" {
@@ -226,7 +234,7 @@ func (item Item) UpdateParam() interface{} {
 			param["deadline"] = item.Deadline
 		}
 	}
-	if item.Description != "" {
+	if item.Description != "" || item.ClearDescription {
 		param["description"] = item.Description
 	}
 	return param

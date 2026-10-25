@@ -82,6 +82,62 @@ func TestItem_UpdateParam_ZeroPriorityOmitted(t *testing.T) {
 	}
 }
 
+func TestItem_UpdateParam_ClearContent(t *testing.T) {
+	item := Item{
+		BaseItem:     BaseItem{HaveID: HaveID{ID: "item-1"}, Content: ""},
+		ClearContent: true,
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	v, ok := param["content"]
+	if !ok {
+		t.Fatal("expected content to be present when ClearContent is true")
+	}
+	if v != "" {
+		t.Errorf("expected empty content, got %v", v)
+	}
+}
+
+func TestItem_UpdateParam_EmptyContentOmittedWithoutClearFlag(t *testing.T) {
+	item := Item{
+		BaseItem: BaseItem{HaveID: HaveID{ID: "item-1"}, Content: ""},
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	if _, ok := param["content"]; ok {
+		t.Error("expected content to be absent when empty and ClearContent is false")
+	}
+}
+
+func TestItem_UpdateParam_ClearDescription(t *testing.T) {
+	item := Item{
+		BaseItem:         BaseItem{HaveID: HaveID{ID: "item-1"}},
+		Description:      "",
+		ClearDescription: true,
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	v, ok := param["description"]
+	if !ok {
+		t.Fatal("expected description to be present when ClearDescription is true")
+	}
+	if v != "" {
+		t.Errorf("expected empty description, got %v", v)
+	}
+}
+
+func TestItem_UpdateParam_EmptyDescriptionOmittedWithoutClearFlag(t *testing.T) {
+	item := Item{
+		BaseItem:    BaseItem{HaveID: HaveID{ID: "item-1"}},
+		Description: "",
+	}
+	param := item.UpdateParam().(map[string]interface{})
+
+	if _, ok := param["description"]; ok {
+		t.Error("expected description to be absent when empty and ClearDescription is false")
+	}
+}
+
 func TestItem_LabelsString(t *testing.T) {
 	item1 := Item{
 		LabelNames: []string{"important", "work", "unknown_label"},

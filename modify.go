@@ -27,9 +27,11 @@ func Modify(c *cli.Context) error {
 	}
 	if c.IsSet("content") {
 		item.Content = c.String("content")
+		item.ClearContent = item.Content == ""
 	}
 	if c.IsSet("description") {
 		item.Description = c.String("description")
+		item.ClearDescription = item.Description == ""
 	}
 	if c.IsSet("priority") {
 		item.Priority = priorityMapping[c.Int("priority")]
