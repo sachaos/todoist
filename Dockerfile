@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:1.26-alpine
 
 RUN apk add --update git bash openssl
 RUN mkdir -p $GOPATH/src/github.com/sachaos/todoist
