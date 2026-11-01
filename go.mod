@@ -1,6 +1,6 @@
 module github.com/sachaos/todoist
 
-go 1.25
+go 1.26
 
 require (
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
